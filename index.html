@@ -287,7 +287,7 @@ async function chat(){
   pending.textContent=answer;
  }catch(err){
   const q=value.toLowerCase();
-  let answer='در نسخه فعلی، پاسخ‌های پایه هیدرویار فعال‌اند. برای مشاوره اختصاصی از تلگرام @Mmdmvt پیام بده.';
+  let answer='پاسخ‌گویی هوشمند موقتاً در دسترس نیست. لطفاً کمی بعد دوباره تلاش کن یا از تلگرام @Mmdmvt پیام بده.';
   if(/قیمت|هزینه|تعرفه|چقدر/.test(q)) answer='تعرفه‌های فعلی: طراحی سایت از ۵ میلیون تومان، پکیج حرفه‌ای از ۱۲ میلیون تومان و پروژه اختصاصی پس از بررسی نیازها توافقی است.';
   else if(/سئو|گوگل|رتبه/.test(q)) answer='برای سئو، نسخه موبایل، سرعت، عنوان و توضیحات صفحات، محتوای مفید و ثبت سایت در Google Search Console مهم‌اند. رتبه اول قابل تضمین نیست.';
   else if(/دامنه|هاست|میزبان/.test(q)) answer='برای شروع، هاست مناسب، دامنه و SSL لازم است. پیش از خرید، منابع، پشتیبان‌گیری و هزینه تمدید را بررسی کن.';
@@ -296,7 +296,7 @@ async function chat(){
   else if(/تماس|تلگرام|ارتباط|مشاوره/.test(q)) answer='برای هماهنگی و مشاوره، از تلگرام @Mmdmvt استفاده کن.';
   else if(/سلام|درود|خوبی/.test(q)) answer='سلام! به هیدرویار خوش اومدی. درباره طراحی سایت، فروشگاه اینترنتی، سئو، دامنه یا هاست سؤال کن.';
   chatHistory.push({role:'assistant',content:answer});
-  pending.textContent=answer+' (پاسخ پایه؛ اتصال به هوش مصنوعی ابری در این نسخه فعال نیست.)';
+  pending.textContent=answer+'';
  }
  input.disabled=false;if(sendBtn)sendBtn.disabled=false;input.focus();messages.scrollTop=messages.scrollHeight;
 }
