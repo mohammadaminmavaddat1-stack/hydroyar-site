@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mohammadaminmavaddat1-stack.github.io/hydroyar-site/sitemap.xml
