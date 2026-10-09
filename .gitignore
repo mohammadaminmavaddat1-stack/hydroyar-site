@@ -12,3 +12,6 @@ index.before-chat-worker-connect-*.html
 index.before-email-only-*.html
 index.html.before-fallback-fix-*.html
 hydroyar-chat-worker/
+.headless-test-profile/
+headless-console.log
+headless-dom.html
