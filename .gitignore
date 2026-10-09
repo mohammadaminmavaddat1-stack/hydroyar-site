@@ -1,0 +1,14 @@
+# Local tests and backups — do not publish these as site content
+.all-inline-check.js
+.auth-check.js
+check-inline.js
+clean-auth.js
+connect-chat.js
+edit-auth.js
+live-check.html
+live-check2.html
+index.before-auth-fix-*.html
+index.before-chat-worker-connect-*.html
+index.before-email-only-*.html
+index.html.before-fallback-fix-*.html
+hydroyar-chat-worker/
