@@ -96,6 +96,46 @@ body.dark .calm-waves .wave3{background:radial-gradient(ellipse at 67% 100%,rgba
 
 .auth-trigger{white-space:nowrap;cursor:pointer}.auth-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.62);backdrop-filter:blur(7px);padding:20px;align-items:center;justify-content:center}.auth-overlay.open{display:flex}.auth-modal{width:min(100%,490px);max-height:90vh;overflow:auto;background:#fff;color:#172033;border:1px solid #e5eaf2;border-radius:24px;padding:28px;box-shadow:0 25px 90px #02061755;position:relative}.auth-close{position:absolute;left:16px;top:14px;border:1px solid #e5eaf2;background:#fff;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:22px;color:#334155}.auth-logo{font-weight:900;font-size:23px;color:#2563eb}.auth-modal h2{margin:8px 0 3px;font-size:25px}.auth-sub{color:#667085;font-size:13px;margin:0 0 18px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#f1f5f9;padding:5px;border-radius:13px;margin:18px 0}.auth-tabs button{border:0;border-radius:10px;padding:10px;background:transparent;color:#475569;font-weight:800;cursor:pointer}.auth-tabs button.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 8px #0f172a12}.auth-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.auth-methods button{border:1px solid #dbe3ef;background:#fff;border-radius:11px;padding:10px;cursor:pointer;color:#334155;font-weight:700}.auth-methods button.active{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}.auth-field{display:block;margin:12px 0;font-size:13px;font-weight:700}.auth-field input{width:100%;margin-top:6px;padding:12px;border:1px solid #d7dfeb;border-radius:11px;background:#fff;color:#172033;outline:0}.auth-field input:focus{border-color:#2563eb;box-shadow:0 0 0 3px #2563eb1c}.auth-submit{width:100%;margin-top:8px}.auth-status{margin-top:13px;padding:12px;border-radius:12px;background:#eff6ff;color:#1e40af;font-size:12px;line-height:1.9}.auth-privacy{font-size:11px;color:#64748b;margin-top:12px;line-height:1.8}.auth-trigger-mobile{display:none}body.dark .auth-modal{background:#111827;color:#e5e7eb;border-color:#29364d}body.dark .auth-close,body.dark .auth-tabs button.active{background:#1f2937;color:#e5e7eb;border-color:#334155}body.dark .auth-tabs{background:#0b1220}body.dark .auth-tabs button{color:#a8b0c0}body.dark .auth-methods button,body.dark .auth-field input{background:#0b1220;color:#e5e7eb;border-color:#334155}body.dark .auth-methods button.active{background:#10244b;color:#93c5fd;border-color:#2563eb}body.dark .auth-sub,body.dark .auth-privacy{color:#a8b0c0}body.dark .auth-status{background:#10244b;color:#bfdbfe}@media(max-width:900px){.auth-trigger-mobile{display:block}.auth-trigger-desktop{display:none}}
 .work-detail{margin-top:12px;padding:9px 13px;font-size:13px}.work-modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:#0f172ab8;padding:20px;align-items:center;justify-content:center}.work-modal-overlay.open{display:flex}.work-modal{position:relative;width:min(100%,620px);max-height:88vh;overflow:auto;padding:28px;background:#fff;color:#172033;border-radius:22px}.work-modal-close{position:absolute;left:15px;top:12px}.work-modal-note{padding:13px;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-size:13px}.delivery-policy{margin-top:24px;padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--card)}.delivery-policy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.delivery-policy-grid>div{padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}.delivery-policy-grid p{font-size:13px;color:var(--muted)}.service-detail-link{display:inline-block;margin-top:12px;color:var(--blue);font-weight:800;font-size:13px}@media(max-width:700px){.delivery-policy-grid{grid-template-columns:1fr}.work-modal{padding:23px 18px}}
+
+/* HydroYar motion system: buttons, navigation, cards, reveal, and pointer-reactive water */
+:root{--motion-ease:cubic-bezier(.22,.75,.25,1);--motion-glow:rgba(6,182,212,.24)}
+a,button,.btn,.navbtn,.theme-toggle,.mobile-menu-btn{transition:color .22s var(--motion-ease),background-color .25s var(--motion-ease),border-color .25s var(--motion-ease),box-shadow .28s var(--motion-ease),transform .28s var(--motion-ease)}
+.btn,.navbtn,.theme-toggle,.mobile-menu-btn{position:relative;isolation:isolate;overflow:hidden}
+.btn:before,.navbtn:before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.35) 48%,transparent 78%);transform:translateX(-130%);transition:transform .65s var(--motion-ease),opacity .25s}
+.btn:hover:before,.navbtn:hover:before{opacity:1;transform:translateX(130%)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 15px 32px rgba(37,99,235,.28),0 0 0 1px rgba(6,182,212,.12)}
+.btn:active,.navbtn:active,.theme-toggle:active{transform:translateY(1px) scale(.98)}
+.btn.light:hover,.navbtn:hover,.theme-toggle:hover,.mobile-menu-btn:hover{border-color:#7dd3fc;box-shadow:0 8px 22px rgba(37,99,235,.12),0 0 0 3px rgba(6,182,212,.08);transform:translateY(-2px)}
+.links a{position:relative;transition:color .2s ease}
+.links a:after{content:"";position:absolute;right:0;left:0;bottom:-7px;height:2px;border-radius:9px;background:linear-gradient(90deg,var(--blue),var(--cyan));transform:scaleX(0);transform-origin:right;transition:transform .28s var(--motion-ease)}
+.links a:hover:after,.links a:focus-visible:after{transform:scaleX(1)}
+.logo-mark{transition:transform .45s var(--motion-ease),filter .35s}
+.logo:hover .logo-mark{transform:translateY(-2px) rotate(-5deg);filter:drop-shadow(0 4px 8px rgba(6,182,212,.35))}
+.feature,.category-card,.step,.work,.price,.shop-card,.template-card,.faq .q,.leadbox,.template-controls{transition:transform .32s var(--motion-ease),box-shadow .32s var(--motion-ease),border-color .28s,background-color .3s}
+.feature:hover,.category-card:hover,.step:hover,.work:hover,.price:hover,.shop-card:hover,.template-card:hover,.faq .q:hover{transform:translateY(-6px);border-color:rgba(6,182,212,.48);box-shadow:0 20px 48px rgba(25,40,80,.12),0 0 0 1px rgba(6,182,212,.05)}
+.category-card .ico,.feature .ico{transition:transform .35s var(--motion-ease),background .3s,color .3s}
+.category-card:hover .ico,.feature:hover .ico{transform:translateY(-3px) rotate(-5deg) scale(1.06);background:#dff8ff;color:#0891b2}
+.workpic,.template-preview{overflow:hidden}
+.workpic .mock{transition:transform .4s var(--motion-ease)}
+.work:hover .mock{transform:translateY(-3px) scale(1.015)}
+.template-preview img{will-change:transform}
+.glass{transition:transform .45s var(--motion-ease),box-shadow .35s}
+.hero-art:hover .dashboard{transform:rotate(-1deg) translateY(-3px)}
+.float-card,.float-card2{transition:transform .4s var(--motion-ease),box-shadow .35s}
+.hero-art:hover .float-card{transform:translateY(-5px)}
+.hero-art:hover .float-card2{transform:translateY(4px)}
+.calm-waves{--pointer-x:0px;--pointer-y:0px}
+.water-back{translate:calc(var(--pointer-x)*-.18) calc(var(--pointer-y)*-.12)}
+.water-main{translate:calc(var(--pointer-x)*-.32) calc(var(--pointer-y)*-.22)}
+.water-front{translate:calc(var(--pointer-x)*-.48) calc(var(--pointer-y)*-.3)}
+.motion-reveal{opacity:0;transform:translateY(20px);transition:opacity .65s var(--motion-ease),transform .65s var(--motion-ease)}
+.motion-reveal.motion-visible{opacity:1;transform:translateY(0)}
+.motion-reveal[data-motion-delay="1"]{transition-delay:.08s}
+.motion-reveal[data-motion-delay="2"]{transition-delay:.16s}
+.motion-reveal[data-motion-delay="3"]{transition-delay:.24s}
+@media(hover:none){.feature:hover,.category-card:hover,.step:hover,.work:hover,.price:hover,.shop-card:hover,.template-card:hover,.faq .q:hover{transform:none;box-shadow:var(--shadow)}.hero-art:hover .dashboard,.hero-art:hover .float-card,.hero-art:hover .float-card2{transform:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.motion-reveal{opacity:1;transform:none}}
+
 </style>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 </head>
@@ -296,4 +336,33 @@ async function chat(){
  }
  input.disabled=false;if(sendBtn)sendBtn.disabled=false;input.focus();messages.scrollTop=messages.scrollHeight;
 }
-</script></body></html>
+</script>
+<script>
+/* HydroYar motion system runtime */
+(function(){
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const revealTargets=document.querySelectorAll('section .section-head, section .feature, section .category-card, section .step, section .work, section .price, section .shop-card, section .template-card, section .faq .q, section .cta');
+  if(!reduce && 'IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('motion-visible');observer.unobserve(entry.target);}
+    }),{threshold:.12,rootMargin:'0px 0px -35px 0px'});
+    revealTargets.forEach((el,i)=>{el.classList.add('motion-reveal');el.dataset.motionDelay=String(i%4);observer.observe(el);});
+  }
+  const waves=document.querySelector('.calm-waves');
+  if(waves && !reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    let frame=0;
+    document.addEventListener('mousemove',e=>{
+      if(frame)return;
+      frame=requestAnimationFrame(()=>{
+        const x=(e.clientX/window.innerWidth-.5)*24;
+        const y=(e.clientY/window.innerHeight-.5)*18;
+        waves.style.setProperty('--pointer-x',x.toFixed(1)+'px');
+        waves.style.setProperty('--pointer-y',y.toFixed(1)+'px');
+        frame=0;
+      });
+    },{passive:true});
+  }
+})();
+</script>
+
+</body></html>
