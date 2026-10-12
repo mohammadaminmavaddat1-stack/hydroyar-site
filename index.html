@@ -136,6 +136,50 @@ a,button,.btn,.navbtn,.theme-toggle,.mobile-menu-btn{transition:color .22s var(-
 @media(hover:none){.feature:hover,.category-card:hover,.step:hover,.work:hover,.price:hover,.shop-card:hover,.template-card:hover,.faq .q:hover{transform:none;box-shadow:var(--shadow)}.hero-art:hover .dashboard,.hero-art:hover .float-card,.hero-art:hover .float-card2{transform:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.motion-reveal{opacity:1;transform:none}}
 
+
+/* Hydroyar premium interaction layer */
+:root { --hy-glow: rgba(66, 211, 255, .38); }
+a, button, .btn, [role="button"], .category-card, .service-card, .price-card, .template-card, .portfolio-card, .faq-item, .theme-toggle, select {
+  -webkit-tap-highlight-color: transparent;
+}
+.btn, button, a.btn, .lead-actions a, .cta a {
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+  transition: transform .24s cubic-bezier(.2,.8,.2,1), box-shadow .24s ease, filter .24s ease, border-color .24s ease;
+  overflow: hidden;
+}
+.btn::before, button::before, a.btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 18%, rgba(255,255,255,.30) 44%, rgba(83,226,255,.22) 52%, transparent 76%);
+  transform: translateX(-135%) skewX(-14deg);
+  transition: transform .62s cubic-bezier(.2,.7,.2,1);
+}
+.btn:hover, button:hover, a.btn:hover, .lead-actions a:hover, .cta a:hover {
+  transform: translateY(-3px) scale(1.025);
+  box-shadow: 0 10px 26px var(--hy-glow), 0 3px 0 rgba(0,0,0,.10);
+  filter: saturate(1.12) brightness(1.04);
+}
+.btn:hover::before, button:hover::before, a.btn:hover::before { transform: translateX(135%) skewX(-14deg); }
+.btn:active, button:active, a.btn:active { transform: translateY(1px) scale(.975); box-shadow: 0 2px 8px var(--hy-glow); }
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible, select:focus-visible {
+  outline: 2px solid #50dfff; outline-offset: 4px; box-shadow: 0 0 0 5px rgba(80,223,255,.15);
+}
+.category-card, .service-card, .price-card, .template-card, .portfolio-card {
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease;
+  transform-style: preserve-3d;
+}
+.category-card:hover, .service-card:hover, .price-card:hover, .template-card:hover, .portfolio-card:hover {
+  transform: perspective(900px) translateY(-6px) rotateX(2deg);
+  box-shadow: 0 18px 36px rgba(20,150,220,.14), 0 0 0 1px rgba(70,210,255,.18);
+}
+a:not(.btn), footer a, .top a { transition: color .2s ease, opacity .2s ease; }
+a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
+
 </style>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 </head>
