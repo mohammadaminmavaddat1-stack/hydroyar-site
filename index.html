@@ -438,5 +438,34 @@ async function chat(){
   }
 })();
 </script>
+<script>
+/* Magnetic cursor interaction adapted for existing HydroYar controls */
+(()=>{
+  const finePointer=window.matchMedia('(hover: hover) and (pointer: fine)');
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const targets=document.querySelectorAll('.btn,.navbtn,.theme-toggle,.mobile-menu-btn,.chatbtn,.auth-trigger,.work-detail');
+  targets.forEach((button)=>{
+    button.classList.add('magnetic-button');
+    const strength=Number(button.dataset.strength)||0.3;
+    let frame=0;
+    const label=button.querySelector('.magnetic-label');
+    function reset(){cancelAnimationFrame(frame);frame=0;button.style.translate='';if(label)label.style.translate='';}
+    button.addEventListener('pointermove',(event)=>{
+      if(event.pointerType!=='mouse'||!finePointer.matches||reduceMotion.matches)return;
+      const clientX=event.clientX,clientY=event.clientY;
+      cancelAnimationFrame(frame);
+      frame=requestAnimationFrame(()=>{
+        const rect=button.getBoundingClientRect();
+        const dx=clientX-(rect.left+rect.width/2);
+        const dy=clientY-(rect.top+rect.height/2);
+        button.style.translate=(dx*strength)+'px '+(dy*strength)+'px';
+        if(label)label.style.translate=(dx*strength*.5)+'px '+(dy*strength*.5)+'px';
+      });
+    },{passive:true});
+    button.addEventListener('pointerleave',reset);
+    reduceMotion.addEventListener('change',reset);
+  });
+})();
+</script>
 
 </body></html>
