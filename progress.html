@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0d10">
+<title>مرکز پیشرفت هیدرویار | وضعیت پروژه</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+:root{color-scheme:dark;--bg:#0b0d10;--panel:#111419;--panel2:#171b21;--line:#292f38;--text:#eef2f7;--muted:#9aa5b4;--blue:#60a5fa;--cyan:#22d3ee;--green:#4ade80;--amber:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -15%,#122d46 0,transparent 45%),var(--bg);color:var(--text);font-family:Vazirmatn,Tahoma,sans-serif;line-height:1.8}a{color:inherit;text-decoration:none}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}.brand{font-size:23px;font-weight:900}.brand span{color:var(--cyan)}.tiny{font:12px monospace;color:var(--muted);direction:ltr}.hero{padding:54px 0 28px}.eyebrow{color:var(--cyan);font-size:13px;font-weight:800;letter-spacing:.4px}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.35;margin:8px 0 14px}.hero p{color:var(--muted);max-width:720px;margin:0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-weight:700}.btn.primary{background:linear-gradient(120deg,#2563eb,#0891b2);border-color:transparent}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.card{background:linear-gradient(145deg,#151a21,#101318);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}.label{font-size:13px;color:var(--muted)}.value{font-size:22px;font-weight:900;margin-top:5px}.status{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;border-radius:30px;padding:4px 10px;background:#12301f;color:var(--green)}.status.pending{background:#332811;color:var(--amber)}.pulse{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor}.section-title{font-size:22px;margin:32px 0 12px}.task{display:flex;gap:13px;align-items:flex-start;padding:17px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.icon{flex:0 0 38px;height:38px;display:grid;place-items:center;border:1px solid #29394a;border-radius:12px;background:#101e2c;color:var(--cyan);font-size:18px}.task h3{font-size:15px;margin:0 0 3px}.task p{font-size:13px;color:var(--muted);margin:0}.right{margin-right:auto;white-space:nowrap}.meter{height:8px;background:#252b34;border-radius:30px;overflow:hidden;margin-top:15px}.meter span{display:block;width:68%;height:100%;background:linear-gradient(90deg,#2563eb,#22d3ee);border-radius:30px}.note{color:var(--muted);font-size:12px;margin-top:12px}.foot{padding:28px 0 45px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:35px}.error{color:#fca5a5}.live{display:flex;gap:10px;align-items:center}.spinner{width:14px;height:14px;border:2px solid #334155;border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:750px){.grid{grid-template-columns:1fr}.hero{padding-top:35px}.task{flex-wrap:wrap}.right{margin-right:51px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><a class="brand" href="./">هیدرو<span>یار</span></a><div class="tiny">PROJECT CONTROL / 01</div></header>
+<main>
+<section class="hero">
+<div class="eyebrow">HYDROYAR • LIVE PROJECT DESK</div>
+<h1>مرکز پیگیری ساخت هیدرویار</h1>
+<p>اینجا می‌تونی وضعیت بخش‌های اصلی سایت رو ببینی. وضعیت اتصال API دستیار هوشمند به‌صورت زنده از سرور بررسی می‌شه؛ باقی موارد بر اساس آخرین کارهای ثبت‌شده نمایش داده می‌شن.</p>
+<div class="actions"><a class="btn primary" href="./">رفتن به سایت اصلی ↗</a><button class="btn" id="refresh" type="button">بررسی دوباره سرور ↻</button></div>
+</section>
+<section class="grid" aria-label="وضعیت فعلی">
+<div class="card"><div class="label">اتصال API دستیار هوشمند</div><div class="value" id="apiStatus"><span class="live"><i class="spinner"></i>در حال بررسی…</span></div><div class="note" id="apiDetail">در حال ارسال درخواست سلامت به سرور</div></div>
+<div class="card"><div class="label">نسخه سایت</div><div class="value">GitHub Pages</div><div class="note">صفحه عمومی هیدرویار</div></div>
+<div class="card"><div class="label">ثبت سفارش و پرداخت</div><div class="value">نیازمند تکمیل</div><div class="note">پرداخت آنلاین هنوز فعال نیست؛ فرم فعلی سفارش را به پیام ارتباطی تبدیل می‌کند.</div></div>
+</section>
+<h2 class="section-title">گزارش کارهای پروژه</h2>
+<section class="card">
+<div class="task"><div class="icon">✓</div><div><h3>انتشار سرور دستیار هوشمند</h3><p>سرویس API روی Cloudflare Worker منتشر شده و این صفحه سلامت endpoint آن را بررسی می‌کند.</p></div><span class="status right"><i class="pulse"></i>منتشر شده</span></div>
+<div class="task"><div class="icon">✦</div><div><h3>دانش دستیار درباره خدمات هیدرویار</h3><p>اطلاعات پایه خدمات، قیمت‌های شروع، نمونه قالب‌ها و راه‌های ارتباطی به دستورالعمل دستیار اضافه شده است؛ کیفیت پاسخ فارسی هنوز نیازمند آزمون زنده است.</p></div><span class="status pending right">در حال آزمون</span></div>
+<div class="task"><div class="icon">⌘</div><div><h3>اتصال چت سایت به API</h3><p>کد صفحه اصلی درخواست را به endpoint سرور می‌فرستد؛ باید از داخل مرورگر و با یک پرسش واقعی، پاسخ نهایی و خطاهای شبکه تأیید شود.</p></div><span class="status pending right">نیازمند تأیید نهایی</span></div>
+<div class="task"><div class="icon">▦</div><div><h3>قالب‌ها و ظاهر سایت</h3><p>کارت‌های قالب، حالت تیره/روشن و افکت‌های بصری در نسخه فعلی وجود دارند؛ نمایش تصاویر و لینک‌های هر قالب باید جداگانه کنترل شود.</p></div><span class="status">در نسخه سایت</span></div>
+<div class="task"><div class="icon">🔒</div><div><h3>ورود کاربران، ذخیره سفارش و پرداخت</h3><p>ورود/ثبت‌نام ایمیلی به Supabase وابسته است. ذخیره سفارش در پایگاه داده و پرداخت آنلاین را فعال‌شده فرض نکن؛ این‌ها کارهای جداگانه‌اند.</p></div><span class="status pending right">باقی‌مانده</span></div>
+</section>
+<h2 class="section-title">قدم بعدی</h2>
+<section class="card"><h3 style="margin-top:0">تأیید عملکرد واقعی چت</h3><p style="color:var(--muted);font-size:14px">اول سلامت سرور بررسی می‌شود. اگر API در دسترس باشد اما چت سایت خطا بدهد، باید درخواست مرورگر، CORS و ساختار پاسخ را بررسی کنیم. این صفحه جایگزین داشبورد داخلی سرور نیست و گزارش‌ها فقط ادعای انجام کارهایی را نشان می‌دهند که واقعاً ثبت شده‌اند.</p><div class="meter"><span></span></div><div class="note">نوار پیشرفت، تخمینی و غیرخودکار است؛ درصد رسمی تکمیل پروژه محسوب نمی‌شود.</div></section>
+</main>
+<footer class="foot">هیدرویار — صفحه پیگیری پروژه • آخرین بررسی زنده: <span id="checkedAt">هنوز بررسی نشده</span><br>این صفحه اطلاعات محرمانه، کلید API یا رمز عبور نمایش نمی‌دهد.</footer>
+</div>
+<script>
+const API='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev';
+async function checkApi(){const s=document.getElementById('apiStatus'),d=document.getElementById('apiDetail'),t=document.getElementById('checkedAt'),b=document.getElementById('refresh');s.innerHTML='<span class="live"><i class="spinner"></i>در حال بررسی…</span>';d.textContent='در حال ارسال درخواست سلامت به سرور';b.disabled=true;try{const r=await fetch(API,{method:'GET',cache:'no-store'});const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch{}if(!r.ok)throw new Error('HTTP '+r.status);s.innerHTML='<span class="status"><i class="pulse"></i>در دسترس</span>';d.textContent='پاسخ سرور دریافت شد؛ '+(j.service||'API پاسخ می‌دهد')+'. این تست فقط سلامت endpoint را تأیید می‌کند، نه پاسخ‌گویی مدل هوش مصنوعی.';}catch(e){s.innerHTML='<span class="status pending">بررسی ناموفق</span>';d.innerHTML='<span class="error">مرورگر نتوانست وضعیت API را تأیید کند: '+String(e.message||e)+'</span>';}finally{t.textContent=new Date().toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'});b.disabled=false;}}
+document.getElementById('refresh').addEventListener('click',checkApi);checkApi();
+</script>
+</body>
+</html>
