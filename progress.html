@@ -102,7 +102,8 @@ try {
  const holos=[holoPanel('AI / ONLINE','reviewing requests','#22d3ee',-5.7,3.1,-2.7),holoPanel('QA / SCAN','checking site errors','#4ade80',5.7,3.4,-2.8),holoPanel('SUPPORT','customer queue: 03','#a78bfa',0,3.2,3.8)];
  const skin=mat('#ff8a24',.42,.2), dark=mat('#172230'), pants=mat('#27384a'), shoe=mat('#0a1018'), screenMat=new THREE.MeshStandardMaterial({color:'#123c50',emissive:'#087b9a',emissiveIntensity:1.1,roughness:.3}), deskMat=mat('#344555',.4,.3);
  const names=['سرپرست تیم','هوش مصنوعی','برنامه‌نویسی','آزمایش خطاها','پشتیبانی مشتری','طراحی سایت','امنیت','انتشار نسخه','مدیریت پروژه','تحلیل داده'];
- const shirts=['#ff8a24','#ff9a36','#f47b16','#ffad45','#ff851b','#f97316','#ffa033','#ff7a18','#ff9b2f','#f58220'];
+ // Hydroyar brand palette: cyan/blue/teal with green, violet, amber and orange accents.
+ const shirts=['#ff8a24','#22d3ee','#60a5fa','#a78bfa','#4ade80','#2dd4bf','#38bdf8','#fbbf24','#818cf8','#f472b6'];
  const workers=[];
  function labelSprite(text){
    const c=document.createElement('canvas');c.width=512;c.height=100;const g=c.getContext('2d');
@@ -129,7 +130,7 @@ try {
    // hips + torso + neck + head
    const hips=new THREE.Mesh(new THREE.BoxGeometry(.52,.24,.32),pants);hips.position.y=1.12;hips.castShadow=true;group.add(hips);
    const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.27,.38,4,8),shirt);torso.position.y=1.58;torso.castShadow=true;group.add(torso);
-   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,.13,10),mat('#e87516',.35,.3));neck.position.y=1.99;group.add(neck);
+   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,.13,10),mat(shirts[i],.35,.3));neck.position.y=1.99;group.add(neck);
    // Reference-inspired compact neon robot: rounded metal shell and a dark face screen, not human skin.
    const shellMat=mat(shirts[i],.34,.35);
    const head=new THREE.Mesh(new THREE.BoxGeometry(i===0?.46:.42,.39,.31),shellMat);head.position.set(0,2.25,0);head.castShadow=true;group.add(head);
@@ -171,7 +172,7 @@ try {
      const pivot=new THREE.Group();pivot.position.set(side*.31,1.92,0);group.add(pivot);
      const upper=limb(pivot,.48,.095,shirt,side*.02,-.22,-.02);upper.rotation.x=.45;
      const elbow=new THREE.Group();elbow.position.set(side*.02,-.42,-.20);pivot.add(elbow);
-     const fore=limb(elbow,.43,.075,skin,0,-.19,-.16);fore.rotation.x=.55;
+     const fore=limb(elbow,.43,.075,shirt,0,-.19,-.16);fore.rotation.x=.55;
      arms.push({pivot,elbow,side});
    }
    // two distinct articulated legs, feet, and walking pivots
