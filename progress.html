@@ -160,8 +160,7 @@ try {
    group.add(mouth);
    if(i===6){for(const side of [-1,1]){const star=new THREE.Mesh(new THREE.OctahedronGeometry(.025),new THREE.MeshBasicMaterial({color:'#a5f3fc'}));star.position.set(side*.145,2.25,-.199);group.add(star);}}
    if(i===0){const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.12,8),mat('#dbeafe',.35,.6));antenna.position.set(0,2.51,0);group.add(antenna);const tip=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),new THREE.MeshBasicMaterial({color:'#fbbf24'}));tip.position.set(0,2.58,0);group.add(tip);}
-   // Duplicate the expressive face on the camera-facing side so the eyes are visible from the isometric view.
-   for(const part of group.children.slice(faceDetailStart)){if(part.position.z<-.15){const mirrored=part.clone();mirrored.position.z=-part.position.z;mirrored.rotation.y+=Math.PI;group.add(mirrored);}}
+   // Keep the face only on the workstation-facing side; remove the duplicated back-facing face.
 
    const chestPanel=new THREE.Mesh(new THREE.BoxGeometry(.23,.18,.035),mat('#0b1822',.3,.5));chestPanel.position.set(0,1.72,-.335);group.add(chestPanel);
    const chestLight=new THREE.Mesh(new THREE.BoxGeometry(.14,.035,.018),new THREE.MeshBasicMaterial({color:shirts[i]}));chestLight.position.set(0,1.74,-.36);group.add(chestLight);
