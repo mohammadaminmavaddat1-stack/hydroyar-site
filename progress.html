@@ -63,8 +63,8 @@ try {
  renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.25;
  const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1420'); scene.fog=new THREE.Fog('#0b1420',17,34);
- const camera=new THREE.PerspectiveCamera(42,1,.1,100); camera.position.set(0,7.5,15);
- const controls=new OrbitControls(camera,renderer.domElement); controls.target.set(0,1.3,0); controls.enableDamping=true; controls.minDistance=8; controls.maxDistance=22; controls.maxPolarAngle=Math.PI*.48;
+ const camera=new THREE.PerspectiveCamera(42,1,.1,100); camera.position.set(10,11,13);
+ const controls=new OrbitControls(camera,renderer.domElement); controls.target.set(0,1.15,0); controls.enableDamping=true; controls.minDistance=8; controls.maxDistance=22; controls.maxPolarAngle=Math.PI*.48;
  scene.add(new THREE.HemisphereLight(0xbfeaff,0x18202d,2.2));
  const key=new THREE.DirectionalLight(0xffffff,3); key.position.set(-5,10,7); key.castShadow=true; key.shadow.mapSize.set(1024,1024); scene.add(key);
  const cyanLight=new THREE.PointLight(0x22d3ee,28,15); cyanLight.position.set(0,4,-4); scene.add(cyanLight);
@@ -93,7 +93,7 @@ try {
  // Floating neon status panels above the support floor
  function holoPanel(title,subtitle,color,x,y,z){const c=document.createElement('canvas');c.width=640;c.height=180;const g=c.getContext('2d');g.fillStyle='rgba(7,18,30,.92)';g.fillRect(5,5,630,170);g.strokeStyle=color;g.lineWidth=5;g.strokeRect(7,7,626,166);g.fillStyle=color;g.font='bold 35px monospace';g.fillText(title,28,66);g.fillStyle='#e6f7ff';g.font='25px monospace';g.fillText(subtitle,28,120);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(2.5,.7),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));m.position.set(x,y,z);scene.add(m);return m;}
  const holos=[holoPanel('AI / ONLINE','reviewing requests','#22d3ee',-5.7,3.1,-2.7),holoPanel('QA / SCAN','checking site errors','#4ade80',5.7,3.4,-2.8),holoPanel('SUPPORT','customer queue: 03','#a78bfa',0,3.2,3.8)];
- const skin=mat('#d5a17e'), dark=mat('#172230'), pants=mat('#27384a'), shoe=mat('#0a1018'), screenMat=new THREE.MeshStandardMaterial({color:'#123c50',emissive:'#087b9a',emissiveIntensity:1.1,roughness:.3}), deskMat=mat('#344555',.4,.3);
+ const skin=mat('#9aa9b8',.42,.55), dark=mat('#172230'), pants=mat('#27384a'), shoe=mat('#0a1018'), screenMat=new THREE.MeshStandardMaterial({color:'#123c50',emissive:'#087b9a',emissiveIntensity:1.1,roughness:.3}), deskMat=mat('#344555',.4,.3);
  const names=['سرپرست تیم','هوش مصنوعی','برنامه‌نویسی','آزمایش خطاها','پشتیبانی مشتری','طراحی سایت','امنیت','انتشار نسخه','مدیریت پروژه','تحلیل داده'];
  const shirts=['#fbbf24','#60a5fa','#4ade80','#a78bfa','#fbbf24','#fb7185','#2dd4bf','#60a5fa','#4ade80','#a78bfa'];
  const workers=[];
@@ -121,32 +121,41 @@ try {
    const shirt=mat(shirts[i],.55,.05);
    // hips + torso + neck + head
    const hips=new THREE.Mesh(new THREE.BoxGeometry(.52,.24,.32),pants);hips.position.y=1.12;hips.castShadow=true;group.add(hips);
-   const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.62,5,10),shirt);torso.position.y=1.68;torso.castShadow=true;group.add(torso);
-   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.18,12),skin);neck.position.y=2.12;group.add(neck);
-   const head=new THREE.Mesh(new THREE.SphereGeometry(i===0?.27:.24,20,16),skin);head.position.y=2.43;head.scale.set(1,1.08,.95);head.castShadow=true;group.add(head);
-   // Mischievous, expressive cartoon faces: visible eyes, eyebrows, nose, grin and little horns.
-   const faceMat=mat('#f0c39b',.8), eyeWhite=mat('#fff7e8',.35), pupilMat=mat('#17202b',.25), mouthMat=mat('#5a2430',.6), browMat=mat('#34252a',.8);
-   const eyeGeo=new THREE.SphereGeometry(.052,12,10), pupilGeo=new THREE.SphereGeometry(.023,10,8);
+   const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.27,.38,4,8),shirt);torso.position.y=1.58;torso.castShadow=true;group.add(torso);
+   const neck=new THREE.Mesh(new THREE.CylinderGeometry(.075,.11,.13,10),mat('#647789',.35,.65));neck.position.y=1.99;group.add(neck);
+   // Reference-inspired compact neon robot: rounded metal shell and a dark face screen, not human skin.
+   const shellMat=mat(i===0?'#f4c34e':shirts[i],.34,.35);
+   const head=new THREE.Mesh(new THREE.BoxGeometry(i===0?.46:.42,.39,.31),shellMat);head.position.set(0,2.25,0);head.castShadow=true;group.add(head);
+   const faceDetailStart=group.children.length;
+   const facePanel=new THREE.Mesh(new THREE.BoxGeometry(.345,.265,.035),mat('#07121b',.22,.15));facePanel.position.set(0,2.25,-.174);group.add(facePanel);
+   const eyeGlow=new THREE.MeshBasicMaterial({color:shirts[i]});
+   const eyeShape=i===2||i===8?'narrow':i===1?'soft':i===6?'round':'square';
    for(const side of [-1,1]){
-     const eye=new THREE.Mesh(eyeGeo,eyeWhite);eye.position.set(side*.085,2.47,-.218);eye.scale.set(1,1.12,.5);group.add(eye);
-     const pupil=new THREE.Mesh(pupilGeo,pupilMat);pupil.position.set(side*.085+.012,2.465,-.245);group.add(pupil);
-     const brow=new THREE.Mesh(new THREE.BoxGeometry(.105,.025,.025),browMat);brow.position.set(side*.085,2.555,-.226);brow.rotation.z=side===-1?-.22:.22;group.add(brow);
+     const eye=new THREE.Mesh(eyeShape==='narrow'?new THREE.BoxGeometry(.075,.025,.025):eyeShape==='round'?new THREE.SphereGeometry(.034,10,8):new THREE.BoxGeometry(.055,.065,.025),eyeGlow);
+     eye.position.set(side*.085,2.285,-.198);group.add(eye);
+     const brow=new THREE.Mesh(new THREE.BoxGeometry(.085,.018,.018),mat('#8da4b5',.4,.35));brow.position.set(side*.085,2.345,-.196);
+     if(i===2||i===8)brow.rotation.z=side===-1?.32:-.32;
+     if(i===1)brow.rotation.z=side===-1?-.2:.2;
+     group.add(brow);
    }
-   const nose=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),faceMat);nose.position.set(0,2.405,-.242);nose.scale.set(.8,.8,.65);group.add(nose);
-   // Give each person a distinct expression instead of copying one mischievous face.
-   const expressions=[
-    {mouth:'#5a2430',smile:.8,brow:.22},{mouth:'#704b42',smile:.35,brow:-.12},
-    {mouth:'#6b2634',smile:.12,brow:.48},{mouth:'#7a3444',smile:.65,brow:-.28},
-    {mouth:'#6b3d30',smile:.7,brow:.08},{mouth:'#8b2f26',smile:.25,brow:.35},
-    {mouth:'#674a80',smile:.5,brow:-.18},{mouth:'#443b35',smile:.18,brow:.02},
-    {mouth:'#7d2344',smile:.9,brow:.4},{mouth:'#5c5148',smile:.3,brow:-.04}
-   ];
-   const expression=expressions[i];
-   const grin=new THREE.Mesh(new THREE.TorusGeometry(.095,.018,6,18,Math.PI),mat(expression.mouth,.6));grin.position.set(0,2.365,-.237);grin.rotation.z=Math.PI;grin.scale.y=expression.smile;group.add(grin);
-   for(const brow of group.children.filter(o=>o.geometry&&o.geometry.type==='BoxGeometry'&&Math.abs(o.position.y-2.555)<.01)){brow.rotation.z+=expression.brow*(brow.position.x<0?-1:1);}
-   const fangMat=mat('#fff1d6',.35);for(const side of [-1,1]){const fang=new THREE.Mesh(new THREE.ConeGeometry(.022,.055,8),fangMat);fang.position.set(side*.052,2.36,-.254);fang.rotation.z=Math.PI;group.add(fang);}
-   const hornMat=mat('#fbbf24',.4,.15);for(const side of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.065,.16,8),hornMat);horn.position.set(side*.15,2.64,-.01);horn.rotation.z=side*.35;group.add(horn);}
-   const cheekMat=mat('#ef8d88',.8);for(const side of [-1,1]){const cheek=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),cheekMat);cheek.position.set(side*.15,2.405,-.22);cheek.scale.set(1,.65,.45);group.add(cheek);}
+   // Different screen expressions: playful smile, shy glance, grumpy flat line, talker, helper, hurried, dreamy, tidy, competitive, calm.
+   const mouths=[
+    {kind:'smile',color:'#4ade80'},{kind:'flat',color:'#93c5fd'},{kind:'flat',color:'#fb7185'},
+    {kind:'talk',color:'#c4b5fd'},{kind:'smile',color:'#4ade80'},{kind:'talk',color:'#fdba74'},
+    {kind:'smile',color:'#67e8f9'},{kind:'flat',color:'#e5e7eb'},{kind:'smile',color:'#f472b6'},
+    {kind:'soft',color:'#a3e635'}
+   ][i];
+   const mouthMat=new THREE.MeshBasicMaterial({color:mouths.color});
+   let mouth;
+   if(mouths.kind==='smile'||mouths.kind==='soft'){mouth=new THREE.Mesh(new THREE.TorusGeometry(.052,mouths.kind==='soft'?.009:.012,5,14,Math.PI),mouthMat);mouth.position.set(0,2.205,-.199);mouth.rotation.z=Math.PI;mouth.scale.y=mouths.kind==='soft'?.55:.85;}
+   else if(mouths.kind==='talk'){mouth=new THREE.Mesh(new THREE.CircleGeometry(.034,12),mouthMat);mouth.position.set(0,2.205,-.199);mouth.scale.y=1.2;}
+   else {mouth=new THREE.Mesh(new THREE.BoxGeometry(i===2?.105:.075,.012,.018),mouthMat);mouth.position.set(0,2.205,-.199);}
+   group.add(mouth);
+   if(i===6){for(const side of [-1,1]){const star=new THREE.Mesh(new THREE.OctahedronGeometry(.025),new THREE.MeshBasicMaterial({color:'#a5f3fc'}));star.position.set(side*.145,2.25,-.199);group.add(star);}}
+   if(i===0){const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.012,.018,.12,8),mat('#dbeafe',.35,.6));antenna.position.set(0,2.51,0);group.add(antenna);const tip=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),new THREE.MeshBasicMaterial({color:'#fbbf24'}));tip.position.set(0,2.58,0);group.add(tip);}
+   // Duplicate the expressive face on the camera-facing side so the eyes are visible from the isometric view.
+   for(const part of group.children.slice(faceDetailStart)){if(part.position.z<-.15){const mirrored=part.clone();mirrored.position.z=-part.position.z;mirrored.rotation.y+=Math.PI;group.add(mirrored);}}
+
    const chestPanel=new THREE.Mesh(new THREE.BoxGeometry(.23,.18,.035),mat('#0b1822',.3,.5));chestPanel.position.set(0,1.72,-.335);group.add(chestPanel);
    const chestLight=new THREE.Mesh(new THREE.BoxGeometry(.14,.035,.018),new THREE.MeshBasicMaterial({color:shirts[i]}));chestLight.position.set(0,1.74,-.36);group.add(chestLight);
    // LED face indicators point toward each workstation
@@ -183,6 +192,7 @@ try {
    const sitting=[1,3,6,8].includes(i);
    if(sitting){
     hips.position.y=.78;torso.position.y=1.34;neck.position.y=1.78;head.position.y=2.09;
+    group.children.forEach(part=>{if(part!==head&&part!==neck&&part.position.y>=2.0&&part.position.y<2.7)part.position.y-=.16;});
     arms.forEach(a=>{a.pivot.position.y=1.56;a.pivot.rotation.x=-.65;});
     legs.forEach(l=>{l.hip.position.y=.78;l.hip.rotation.x=-.85;l.knee.rotation.x=1.25;});
     tag.position.y=2.63;
