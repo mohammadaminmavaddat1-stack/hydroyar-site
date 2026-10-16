@@ -82,6 +82,14 @@ try {
  sx.fillStyle='#102c3a';sx.fillRect(0,0,1024,256);sx.strokeStyle='#22d3ee';sx.lineWidth=8;sx.strokeRect(12,12,1000,232);sx.fillStyle='#d5f8ff';sx.font='bold 90px monospace';sx.textAlign='center';sx.fillText('HYDROYAR  /  SUPPORT',512,155);
  const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(4.7,1.15),new THREE.MeshBasicMaterial({map:signTex}));sign.position.set(0,4.5,-7.48);scene.add(sign);
+ // Large live-style team dashboard directly below the HYDROYAR SUPPORT sign.
+ const boardCanvas=document.createElement('canvas');boardCanvas.width=1200;boardCanvas.height=260;const bg=boardCanvas.getContext('2d');
+ bg.fillStyle='#07131f';bg.fillRect(0,0,1200,260);bg.strokeStyle='#22d3ee';bg.lineWidth=7;bg.strokeRect(8,8,1184,244);
+ bg.fillStyle='#e0fbff';bg.font='bold 42px sans-serif';bg.fillText('وضعیت تیم هیدرویار',34,62);
+ const boardItems=[['● آنلاین','در حال پاسخ‌گویی','#4ade80'],['▣ وب‌سایت','بررسی صفحات','#60a5fa'],['⌘ توسعه','ساخت و اصلاح','#c4b5fd'],['✓ کیفیت','آزمایش خطاها','#fbbf24']];
+ boardItems.forEach((it,j)=>{const xx=35+j*292;bg.fillStyle=it[2];bg.font='bold 31px sans-serif';bg.fillText(it[0],xx,125);bg.fillStyle='#d5e6f3';bg.font='24px sans-serif';bg.fillText(it[1],xx,175);bg.fillStyle=it[2];bg.fillRect(xx,205,210,7);});
+ const boardTex=new THREE.CanvasTexture(boardCanvas);boardTex.colorSpace=THREE.SRGBColorSpace;
+ const teamBoard=new THREE.Mesh(new THREE.PlaneGeometry(6.6,1.43),new THREE.MeshBasicMaterial({map:boardTex,side:THREE.DoubleSide}));teamBoard.position.set(0,3.25,-7.46);scene.add(teamBoard);
  // Floating neon status panels above the support floor
  function holoPanel(title,subtitle,color,x,y,z){const c=document.createElement('canvas');c.width=640;c.height=180;const g=c.getContext('2d');g.fillStyle='rgba(7,18,30,.92)';g.fillRect(5,5,630,170);g.strokeStyle=color;g.lineWidth=5;g.strokeRect(7,7,626,166);g.fillStyle=color;g.font='bold 35px monospace';g.fillText(title,28,66);g.fillStyle='#e6f7ff';g.font='25px monospace';g.fillText(subtitle,28,120);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(2.5,.7),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));m.position.set(x,y,z);scene.add(m);return m;}
  const holos=[holoPanel('AI / ONLINE','reviewing requests','#22d3ee',-5.7,3.1,-2.7),holoPanel('QA / SCAN','checking site errors','#4ade80',5.7,3.4,-2.8),holoPanel('SUPPORT','customer queue: 03','#a78bfa',0,3.2,3.8)];
@@ -99,9 +107,13 @@ try {
  function limb(parent,length,radius,material,x,y,z){const mesh=new THREE.Mesh(new THREE.CapsuleGeometry(radius,length-radius*2,4,8),material);mesh.position.set(x,y,z);mesh.castShadow=true;parent.add(mesh);return mesh;}
  for(let i=0;i<10;i++){
    const row=i<5?0:1,col=i%5,x=(col-2)*2.9,z=row===0?1.9:-2.1;
-   // desk, monitor and keyboard
+   // desk, monitor, keyboard, and a proper office chair at every workstation
    const desk=box(2.05,.13,1.05,deskMat,x,.92,z);
    box(.09,.9,.09,mat('#263644'),x-.82,.46,z);box(.09,.9,.09,mat('#263644'),x+.82,.46,z);
+   const chairMat=mat(i%2?'#334155':'#25384a',.45,.25);
+   box(.66,.13,.66,chairMat,x,.53,z+.98);box(.66,.62,.12,chairMat,x,.88,z+1.25);
+   const chairStem=box(.09,.38,.09,mat('#718096',.35,.65),x,.31,z+.98);
+   box(.62,.06,.62,mat('#263644',.4,.6),x,.08,z+.98);
    box(.85,.58,.07,mat('#0b1119',.3,.2),x,1.34,z-.28);
    const screen=new THREE.Mesh(new THREE.PlaneGeometry(.74,.45),screenMat);screen.position.set(x,1.35,z-.235);scene.add(screen);
    box(.55,.025,.28,mat('#101820'),x,1.01,z+.16);
@@ -121,7 +133,17 @@ try {
      const brow=new THREE.Mesh(new THREE.BoxGeometry(.105,.025,.025),browMat);brow.position.set(side*.085,2.555,-.226);brow.rotation.z=side===-1?-.22:.22;group.add(brow);
    }
    const nose=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),faceMat);nose.position.set(0,2.405,-.242);nose.scale.set(.8,.8,.65);group.add(nose);
-   const grin=new THREE.Mesh(new THREE.TorusGeometry(.095,.018,6,18,Math.PI),mouthMat);grin.position.set(0,2.365,-.237);grin.rotation.z=Math.PI;grin.scale.y=.65;group.add(grin);
+   // Give each person a distinct expression instead of copying one mischievous face.
+   const expressions=[
+    {mouth:'#5a2430',smile:.8,brow:.22},{mouth:'#704b42',smile:.35,brow:-.12},
+    {mouth:'#6b2634',smile:.12,brow:.48},{mouth:'#7a3444',smile:.65,brow:-.28},
+    {mouth:'#6b3d30',smile:.7,brow:.08},{mouth:'#8b2f26',smile:.25,brow:.35},
+    {mouth:'#674a80',smile:.5,brow:-.18},{mouth:'#443b35',smile:.18,brow:.02},
+    {mouth:'#7d2344',smile:.9,brow:.4},{mouth:'#5c5148',smile:.3,brow:-.04}
+   ];
+   const expression=expressions[i];
+   const grin=new THREE.Mesh(new THREE.TorusGeometry(.095,.018,6,18,Math.PI),mat(expression.mouth,.6));grin.position.set(0,2.365,-.237);grin.rotation.z=Math.PI;grin.scale.y=expression.smile;group.add(grin);
+   for(const brow of group.children.filter(o=>o.geometry&&o.geometry.type==='BoxGeometry'&&Math.abs(o.position.y-2.555)<.01)){brow.rotation.z+=expression.brow*(brow.position.x<0?-1:1);}
    const fangMat=mat('#fff1d6',.35);for(const side of [-1,1]){const fang=new THREE.Mesh(new THREE.ConeGeometry(.022,.055,8),fangMat);fang.position.set(side*.052,2.36,-.254);fang.rotation.z=Math.PI;group.add(fang);}
    const hornMat=mat('#fbbf24',.4,.15);for(const side of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.065,.16,8),hornMat);horn.position.set(side*.15,2.64,-.01);horn.rotation.z=side*.35;group.add(horn);}
    const cheekMat=mat('#ef8d88',.8);for(const side of [-1,1]){const cheek=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),cheekMat);cheek.position.set(side*.15,2.405,-.22);cheek.scale.set(1,.65,.45);group.add(cheek);}
@@ -157,7 +179,15 @@ try {
     {name:'خیال‌پرداز',color:'#67e8f9',style:6}, {name:'منظم',color:'#e5e7eb',style:7},
     {name:'رقابت‌جو',color:'#f472b6',style:8}, {name:'آرام',color:'#a3e635',style:9}
    ];
-   workers.push({group,legs,arms,phase:i*.72,leader:i===0,baseX:x,baseZ:z+.82,prankPhase:i*1.17,prankNext:2+i*.81,prankMode:0,prankUntil:0,personality:personalities[i%personalities.length]});
+   // Some teammates sit at their chairs while others remain standing and walk around.
+   const sitting=[1,3,6,8].includes(i);
+   if(sitting){
+    hips.position.y=.78;torso.position.y=1.34;neck.position.y=1.78;head.position.y=2.09;
+    arms.forEach(a=>{a.pivot.position.y=1.56;a.pivot.rotation.x=-.65;});
+    legs.forEach(l=>{l.hip.position.y=.78;l.hip.rotation.x=-.85;l.knee.rotation.x=1.25;});
+    tag.position.y=2.63;
+   }
+   workers.push({group,legs,arms,phase:i*.72,leader:i===0,baseX:x,baseZ:z+.82,prankPhase:i*1.17,prankNext:2+i*.81,prankMode:0,prankUntil:0,personality:personalities[i%personalities.length],sitting});
  }
  // two rows of overhead luminous ceiling panels
  for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
@@ -167,9 +197,9 @@ try {
  function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();for(const w of workers){const p=t*3+w.phase;
    w.group.position.y=.025+Math.abs(Math.sin(p))*.035;
    // Wander in small bounded loops around the desks so figures never drift out of the room.
-   w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*.42;
-   w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*.28;
-   w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
+   w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*(w.sitting?.035:.42);
+   w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*(w.sitting?.025:.28);
+   if(!w.sitting)w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
    w.arms.forEach((a,j)=>{a.pivot.rotation.x=-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=-.2+Math.sin(p*1.7+j)*.12;});
    // Ten different recognizable everyday moods; not everybody acts mischievously.
    if(t>w.prankNext){w.prankMode=1+Math.floor(Math.random()*3);w.prankUntil=t+1.0+Math.random()*1.4;w.prankNext=t+2.5+Math.random()*5;}
