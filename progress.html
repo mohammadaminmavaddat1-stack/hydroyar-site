@@ -79,6 +79,9 @@ try {
  sx.fillStyle='#102c3a';sx.fillRect(0,0,1024,256);sx.strokeStyle='#22d3ee';sx.lineWidth=8;sx.strokeRect(12,12,1000,232);sx.fillStyle='#d5f8ff';sx.font='bold 90px monospace';sx.textAlign='center';sx.fillText('HYDROYAR  /  SUPPORT',512,155);
  const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(4.7,1.15),new THREE.MeshBasicMaterial({map:signTex}));sign.position.set(0,4.5,-7.48);scene.add(sign);
+ // Floating neon status panels above the support floor
+ function holoPanel(title,subtitle,color,x,y,z){const c=document.createElement('canvas');c.width=640;c.height=180;const g=c.getContext('2d');g.fillStyle='rgba(7,18,30,.92)';g.fillRect(5,5,630,170);g.strokeStyle=color;g.lineWidth=5;g.strokeRect(7,7,626,166);g.fillStyle=color;g.font='bold 35px monospace';g.fillText(title,28,66);g.fillStyle='#e6f7ff';g.font='25px monospace';g.fillText(subtitle,28,120);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const m=new THREE.Mesh(new THREE.PlaneGeometry(2.5,.7),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide,depthWrite:false}));m.position.set(x,y,z);scene.add(m);return m;}
+ const holos=[holoPanel('AI / ONLINE','reviewing requests','#22d3ee',-5.7,3.1,-2.7),holoPanel('QA / SCAN','checking site errors','#4ade80',5.7,3.4,-2.8),holoPanel('SUPPORT','customer queue: 03','#a78bfa',0,3.2,3.8)];
  const skin=mat('#d5a17e'), dark=mat('#172230'), pants=mat('#27384a'), shoe=mat('#0a1018'), screenMat=new THREE.MeshStandardMaterial({color:'#123c50',emissive:'#087b9a',emissiveIntensity:1.1,roughness:.3}), deskMat=mat('#344555',.4,.3);
  const names=['سرپرست تیم','هوش مصنوعی','برنامه‌نویسی','آزمایش خطاها','پشتیبانی مشتری','طراحی سایت','امنیت','انتشار نسخه','مدیریت پروژه','تحلیل داده'];
  const shirts=['#fbbf24','#60a5fa','#4ade80','#a78bfa','#fbbf24','#fb7185','#2dd4bf','#60a5fa','#4ade80','#a78bfa'];
@@ -106,9 +109,14 @@ try {
    const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.62,5,10),shirt);torso.position.y=1.68;torso.castShadow=true;group.add(torso);
    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.18,12),skin);neck.position.y=2.12;group.add(neck);
    const head=new THREE.Mesh(new THREE.SphereGeometry(i===0?.27:.24,20,16),skin);head.position.y=2.43;head.scale.set(1,1.08,.95);head.castShadow=true;group.add(head);
-   const hair=new THREE.Mesh(new THREE.SphereGeometry(i===0?.275:.245,16,10,0,Math.PI*2,0,Math.PI*.48),mat(i===0?'#30251b':'#29252a'));hair.position.set(0,2.52,-.015);group.add(hair);
-   // eyes face the desk, toward negative Z
-   const eyeMat=mat('#17202b');for(const ex of [-.085,.085]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.025,8,8),eyeMat);eye.position.set(ex,2.45,-.225);group.add(eye);}
+   // compact robot shell, antenna and luminous face display
+   const headShell=new THREE.Mesh(new THREE.BoxGeometry(.39,.31,.12),mat('#25394a',.35,.55));headShell.position.set(0,2.43,-.205);headShell.castShadow=true;group.add(headShell);
+   const visor=new THREE.Mesh(new THREE.BoxGeometry(.30,.105,.035),new THREE.MeshStandardMaterial({color:shirts[i],emissive:shirts[i],emissiveIntensity:1.8,metalness:.25,roughness:.25}));visor.position.set(0,2.46,-.279);group.add(visor);
+   const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.018,.025,.18,8),trimMat);antenna.position.set(0,2.70,0);group.add(antenna);
+   const antennaTip=new THREE.Mesh(new THREE.SphereGeometry(.055,12,8),new THREE.MeshBasicMaterial({color:shirts[i]}));antennaTip.position.set(0,2.81,0);group.add(antennaTip);
+   const chestPanel=new THREE.Mesh(new THREE.BoxGeometry(.23,.18,.035),mat('#0b1822',.3,.5));chestPanel.position.set(0,1.72,-.335);group.add(chestPanel);
+   const chestLight=new THREE.Mesh(new THREE.BoxGeometry(.14,.035,.018),new THREE.MeshBasicMaterial({color:shirts[i]}));chestLight.position.set(0,1.74,-.36);group.add(chestLight);
+   // LED face indicators point toward each workstation
    // articulated arms with forearms reaching toward keyboard
    const arms=[];
    for(const side of [-1,1]){
@@ -142,7 +150,7 @@ try {
    w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
    w.arms.forEach((a,j)=>{a.pivot.rotation.x=-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=-.2+Math.sin(p*1.7+j)*.12;});
    w.group.rotation.y=Math.sin(p*.35)*.035;
- }controls.update();renderer.render(scene,camera);}
+ }holos.forEach((h,i)=>{h.position.y=[3.1,3.4,3.2][i]+Math.sin(t*1.3+i)*.09;h.rotation.y=Math.sin(t*.6+i)*.035;});controls.update();renderer.render(scene,camera);}
  animate();
 } catch(err){console.error('3D support room failed to initialize:',err);canvas.style.display='none';}
 </script>
