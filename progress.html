@@ -155,7 +155,7 @@ try {
    w.group.rotation.y=Math.sin(p*.35)*.035;
  }holos.forEach((h,i)=>{h.position.y=[3.1,3.4,3.2][i]+Math.sin(t*1.3+i)*.09;h.rotation.y=Math.sin(t*.6+i)*.035;});controls.update();renderer.render(scene,camera);}
  animate();
-} catch(err){console.error('3D support room failed to initialize:',err);canvas.style.display='none';}
+} catch(err){console.error('3D support room failed to initialize:',err);host.classList.remove('real-3d');canvas.style.display='none';const msg=document.createElement('div');msg.setAttribute('role','alert');msg.style.cssText='position:absolute;inset:12px;z-index:5;display:grid;place-items:center;text-align:center;padding:18px;border:1px solid #f87171;border-radius:12px;background:#101820;color:#fecaca;font:14px/1.8 sans-serif';msg.textContent='رندر سه‌بعدی اجرا نشد؛ جزئیات خطا در Console مرورگر ثبت شده است. نمایش جایگزین فعال شد.';host.appendChild(msg);host.querySelectorAll('.worker').forEach(el=>el.style.display='block');}
 </script>
 </body>
 </html>
