@@ -112,11 +112,19 @@ try {
    const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.62,5,10),shirt);torso.position.y=1.68;torso.castShadow=true;group.add(torso);
    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.09,.11,.18,12),skin);neck.position.y=2.12;group.add(neck);
    const head=new THREE.Mesh(new THREE.SphereGeometry(i===0?.27:.24,20,16),skin);head.position.y=2.43;head.scale.set(1,1.08,.95);head.castShadow=true;group.add(head);
-   // compact robot shell, antenna and luminous face display
-   const headShell=new THREE.Mesh(new THREE.BoxGeometry(.39,.31,.12),mat('#25394a',.35,.55));headShell.position.set(0,2.43,-.205);headShell.castShadow=true;group.add(headShell);
-   const visor=new THREE.Mesh(new THREE.BoxGeometry(.30,.105,.035),new THREE.MeshStandardMaterial({color:shirts[i],emissive:shirts[i],emissiveIntensity:1.8,metalness:.25,roughness:.25}));visor.position.set(0,2.46,-.279);group.add(visor);
-   const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.018,.025,.18,8),trimMat);antenna.position.set(0,2.70,0);group.add(antenna);
-   const antennaTip=new THREE.Mesh(new THREE.SphereGeometry(.055,12,8),new THREE.MeshBasicMaterial({color:shirts[i]}));antennaTip.position.set(0,2.81,0);group.add(antennaTip);
+   // Mischievous, expressive cartoon faces: visible eyes, eyebrows, nose, grin and little horns.
+   const faceMat=mat('#f0c39b',.8), eyeWhite=mat('#fff7e8',.35), pupilMat=mat('#17202b',.25), mouthMat=mat('#5a2430',.6), browMat=mat('#34252a',.8);
+   const eyeGeo=new THREE.SphereGeometry(.052,12,10), pupilGeo=new THREE.SphereGeometry(.023,10,8);
+   for(const side of [-1,1]){
+     const eye=new THREE.Mesh(eyeGeo,eyeWhite);eye.position.set(side*.085,2.47,-.218);eye.scale.set(1,1.12,.5);group.add(eye);
+     const pupil=new THREE.Mesh(pupilGeo,pupilMat);pupil.position.set(side*.085+.012,2.465,-.245);group.add(pupil);
+     const brow=new THREE.Mesh(new THREE.BoxGeometry(.105,.025,.025),browMat);brow.position.set(side*.085,2.555,-.226);brow.rotation.z=side===-1?-.22:.22;group.add(brow);
+   }
+   const nose=new THREE.Mesh(new THREE.SphereGeometry(.035,10,8),faceMat);nose.position.set(0,2.405,-.242);nose.scale.set(.8,.8,.65);group.add(nose);
+   const grin=new THREE.Mesh(new THREE.TorusGeometry(.095,.018,6,18,Math.PI),mouthMat);grin.position.set(0,2.365,-.237);grin.rotation.z=Math.PI;grin.scale.y=.65;group.add(grin);
+   const fangMat=mat('#fff1d6',.35);for(const side of [-1,1]){const fang=new THREE.Mesh(new THREE.ConeGeometry(.022,.055,8),fangMat);fang.position.set(side*.052,2.36,-.254);fang.rotation.z=Math.PI;group.add(fang);}
+   const hornMat=mat('#fbbf24',.4,.15);for(const side of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.065,.16,8),hornMat);horn.position.set(side*.15,2.64,-.01);horn.rotation.z=side*.35;group.add(horn);}
+   const cheekMat=mat('#ef8d88',.8);for(const side of [-1,1]){const cheek=new THREE.Mesh(new THREE.SphereGeometry(.035,8,8),cheekMat);cheek.position.set(side*.15,2.405,-.22);cheek.scale.set(1,.65,.45);group.add(cheek);}
    const chestPanel=new THREE.Mesh(new THREE.BoxGeometry(.23,.18,.035),mat('#0b1822',.3,.5));chestPanel.position.set(0,1.72,-.335);group.add(chestPanel);
    const chestLight=new THREE.Mesh(new THREE.BoxGeometry(.14,.035,.018),new THREE.MeshBasicMaterial({color:shirts[i]}));chestLight.position.set(0,1.74,-.36);group.add(chestLight);
    // LED face indicators point toward each workstation
