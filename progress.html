@@ -26,7 +26,7 @@
 <div class="team-head"><div><h2>تیم کوچولوی پشتیبانی هیدرویار</h2><p>هرکدوم مشغول یک بخش از کارهای سایت‌اند.</p></div><span class="status"><i class="pulse"></i>میز کار تیم</span></div>
 <div class="team-board"><div class="board-notes"><div class="board-note">🧠 بررسی پاسخ‌های هوش مصنوعی</div><div class="board-note">🛠️ رفع خطاهای سایت</div><div class="board-note">💬 رسیدگی به مشتری‌ها</div></div></div>
 <div class="team-floor" aria-label="یک رهبر و نه کارمند متحرک"><canvas id="team3d" aria-label="اتاق سه‌بعدی تیم پشتیبانی هیدرویار"></canvas><div class="worker leader" style="--delay:-.6s"><span class="bubble">⭐</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">سرپرست تیم</div></div><div class="worker" style="--delay:-.2s"><span class="bubble">💡</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">هوش مصنوعی</div></div><div class="worker" style="--delay:-1.1s"><span class="bubble">⌨️</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">برنامه‌نویسی</div></div><div class="worker" style="--delay:-.7s"><span class="bubble">🔍</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">آزمایش خطاها</div></div><div class="worker" style="--delay:-1.6s"><span class="bubble">💬</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">پشتیبانی مشتری</div></div><div class="worker" style="--delay:-.4s"><span class="bubble">🎨</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">طراحی سایت</div></div><div class="worker" style="--delay:-1.3s"><span class="bubble">🛡️</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">امنیت</div></div><div class="worker" style="--delay:-.9s"><span class="bubble">🚀</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">انتشار نسخه</div></div><div class="worker" style="--delay:-.8s"><span class="bubble">📋</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">مدیریت پروژه</div></div><div class="worker" style="--delay:-1.4s"><span class="bubble">📊</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">تحلیل داده</div></div></div>
-<div class="note">اتاق سه‌بعدی با Three.js ساخته شده؛ هر ۱۰ شخصیت دو پای مفصلی و حرکت خودکار دارند. برای چرخاندن دوربین، داخل اتاق کلیک کن و بکش.</div>
+<div class="note">اتاق سه‌بعدی با Three.js ساخته شده؛ هر ۱۰ شخصیت حرکت می‌کنند و با کلیک و کشیدن می‌توانی دوربین را بچرخانی. افکت‌های صوتی بازی با دکمه روشن/خاموش فعال می‌شوند.</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="soundToggle" type="button" aria-pressed="false">🔊 صدای بازی: خاموش</button><span class="note" id="soundHint">برای پخش صدا، یک بار دکمه را بزن.</span></div>
 </section>
 <section class="grid" aria-label="وضعیت فعلی">
 <div class="card"><div class="label">اتصال API دستیار هوشمند</div><div class="value" id="apiStatus"><span class="live"><i class="spinner"></i>در حال بررسی…</span></div><div class="note" id="apiDetail">در حال ارسال درخواست سلامت به سرور</div></div>
@@ -141,7 +141,7 @@ try {
    }
    const tag=labelSprite(names[i]);tag.position.set(0,2.98,.05);group.add(tag);
    if(i===0){const crown= new THREE.Mesh(new THREE.ConeGeometry(.13,.22,5),mat('#fbbf24',.35,.2));crown.position.set(0,2.85,0);group.add(crown);}
-   workers.push({group,legs,arms,phase:i*.72,leader:i===0});
+   workers.push({group,legs,arms,phase:i*.72,leader:i===0,baseX:x,baseZ:z+.82});
  }
  // two rows of overhead luminous ceiling panels
  for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
@@ -150,12 +150,18 @@ try {
  const clock=new THREE.Clock();
  function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();for(const w of workers){const p=t*3+w.phase;
    w.group.position.y=.025+Math.abs(Math.sin(p))*.035;
+   // Wander in small bounded loops around the desks so figures never drift out of the room.
+   w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*.42;
+   w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*.28;
    w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
    w.arms.forEach((a,j)=>{a.pivot.rotation.x=-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=-.2+Math.sin(p*1.7+j)*.12;});
    w.group.rotation.y=Math.sin(p*.35)*.035;
  }holos.forEach((h,i)=>{h.position.y=[3.1,3.4,3.2][i]+Math.sin(t*1.3+i)*.09;h.rotation.y=Math.sin(t*.6+i)*.035;});controls.update();renderer.render(scene,camera);}
  animate();
 } catch(err){console.error('3D support room failed to initialize:',err);host.classList.remove('real-3d');canvas.style.display='none';const msg=document.createElement('div');msg.setAttribute('role','alert');msg.style.cssText='position:absolute;inset:12px;z-index:5;display:grid;place-items:center;text-align:center;padding:18px;border:1px solid #f87171;border-radius:12px;background:#101820;color:#fecaca;font:14px/1.8 sans-serif';msg.textContent='رندر سه‌بعدی اجرا نشد؛ جزئیات خطا در Console مرورگر ثبت شده است. نمایش جایگزین فعال شد.';host.appendChild(msg);host.querySelectorAll('.worker').forEach(el=>el.style.display='block');}
+</script>
+<script>
+(()=>{const btn=document.getElementById('soundToggle'),hint=document.getElementById('soundHint');if(!btn)return;let ctx=null,timer=null,on=false,step=0;const notes=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46];function blip(freq,duration=.09,type='square',vol=.035){if(!ctx||ctx.state!=='running')return;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+duration)}function tick(){blip(notes[step%notes.length],.075,'square',.025);if(step%4===0)blip(130,.11,'triangle',.035);step++}btn.addEventListener('click',async()=>{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')await ctx.resume();on=!on;btn.setAttribute('aria-pressed',String(on));btn.textContent=on?'🔇 صدای بازی: روشن':'🔊 صدای بازی: خاموش';hint.textContent=on?'افکت‌های ۸ بیتی فعال‌اند؛ دوباره بزن تا خاموش شوند.':'صدا خاموش است.';if(on){tick();timer=setInterval(tick,360)}else{clearInterval(timer);timer=null}})})();
 </script>
 </body>
 </html>
