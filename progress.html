@@ -76,6 +76,13 @@ try {
  function box(w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
  box(18,6,.25,wallMat,0,3,-7.8); box(.25,6,16,wallMat,-9,3,0); // right wall stays open; left and back walls remain; no ceiling mesh
  for(let x=-8;x<=8;x+=2) box(.035,5,.04,trimMat,x,3,-7.64);
+ // Large architectural window mounted directly on the back wall, with a glowing night skyline.
+ const windowCanvas=document.createElement('canvas');windowCanvas.width=900;windowCanvas.height=500;const wx=windowCanvas.getContext('2d');
+ const sky=wx.createLinearGradient(0,0,0,500);sky.addColorStop(0,'#071629');sky.addColorStop(.65,'#123a58');sky.addColorStop(1,'#f07824');wx.fillStyle=sky;wx.fillRect(0,0,900,500);
+ wx.fillStyle='#0a1b2b';for(let j=0;j<24;j++){const bw=18+(j*17)%38,bh=90+(j*53)%230,bx=j*39;wx.fillRect(bx,390-bh,bw,bh);wx.fillStyle=j%3===0?'#ffb45c':'#43d9f4';for(let yy=410-bh;yy<380;yy+=27)for(let xx=bx+5;xx<bx+bw-3;xx+=12){wx.fillRect(xx,yy,4,7);}wx.fillStyle='#0a1b2b';}
+ const windowTex=new THREE.CanvasTexture(windowCanvas);windowTex.colorSpace=THREE.SRGBColorSpace;
+ const windowGlass=new THREE.Mesh(new THREE.PlaneGeometry(4.1,2.35),new THREE.MeshBasicMaterial({map:windowTex}));windowGlass.position.set(6.05,3.35,-7.62);scene.add(windowGlass);
+ const frameMat=mat('#ff8a24',.3,.55);box(4.28,.12,.12,frameMat,6.05,4.58,-7.53);box(4.28,.12,.12,frameMat,6.05,2.12,-7.53);box(.12,2.55,.12,frameMat,3.91,3.35,-7.53);box(.12,2.55,.12,frameMat,8.19,3.35,-7.53);box(.07,2.35,.1,trimMat,6.05,3.35,-7.51);box(4.1,.07,.1,trimMat,6.05,3.35,-7.51);
  box(5,.8,.16,mat('#123748',.4,.25),0,4.5,-7.62);
  // glowing wall sign
  const signCanvas=document.createElement('canvas');signCanvas.width=1024;signCanvas.height=256;const sx=signCanvas.getContext('2d');
@@ -189,7 +196,7 @@ try {
     {name:'رقابت‌جو',color:'#f472b6',style:8}, {name:'آرام',color:'#a3e635',style:9}
    ];
    // Some teammates sit at their chairs while others remain standing and walk around.
-   const sitting=[1,3,6,8].includes(i);
+   const sitting=true;
    if(sitting){
     hips.position.y=.78;torso.position.y=1.34;neck.position.y=1.78;head.position.y=2.09;
     group.children.forEach(part=>{if(part!==head&&part!==neck&&part.position.y>=2.0&&part.position.y<2.7)part.position.y-=.16;});
@@ -205,14 +212,14 @@ try {
  host.classList.add('real-3d');resize();new ResizeObserver(resize).observe(host);
  const clock=new THREE.Clock();
  function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();for(const w of workers){const p=t*3+w.phase;
-   w.group.position.y=.025+Math.abs(Math.sin(p))*.035;
+   w.group.position.y=w.sitting?0:.025+Math.abs(Math.sin(p))*.035;
    // Wander in small bounded loops around the desks so figures never drift out of the room.
-   w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*(w.sitting?.035:.42);
-   w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*(w.sitting?.025:.28);
+   w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*(w.sitting?.008:.42);
+   w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*(w.sitting?.008:.28);
    if(!w.sitting)w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
-   w.arms.forEach((a,j)=>{a.pivot.rotation.x=-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=-.2+Math.sin(p*1.7+j)*.12;});
+   w.arms.forEach((a,j)=>{a.pivot.rotation.x=w.sitting?-.65:-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(w.sitting?.08:.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=w.sitting?-.42:-.2+Math.sin(p*1.7+j)*.12;});
    // Ten different recognizable everyday moods; not everybody acts mischievously.
-   if(t>w.prankNext){w.prankMode=1+Math.floor(Math.random()*3);w.prankUntil=t+1.0+Math.random()*1.4;w.prankNext=t+2.5+Math.random()*5;}
+   if(!w.sitting&&t>w.prankNext){w.prankMode=1+Math.floor(Math.random()*3);w.prankUntil=t+1.0+Math.random()*1.4;w.prankNext=t+2.5+Math.random()*5;}
    const active=t<w.prankUntil, style=w.personality.style;
    w.group.rotation.y=Math.sin(p*.35)*.035;
    if(active){
