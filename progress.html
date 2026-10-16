@@ -257,13 +257,6 @@ try {
   ['کارها رو اولویت‌بندی کردم 📋','اول چیزهایی که سفارش میارن.','بعدش پرداخت و حساب کاربری.'],
   ['آمار سایت رو دیدی؟ 📊','باید بازدید رو به سفارش تبدیل کنیم.','پس مسیر ثبت درخواست رو ساده می‌کنیم.']
  ];
- function paintSpeech(bubble,text,name){
-   const g=bubble.ctx;g.clearRect(0,0,720,190);g.fillStyle='rgba(6,17,29,.97)';g.strokeStyle='#22d3ee';g.lineWidth=5;
-   g.beginPath();g.roundRect(12,10,696,145,28);g.fill();g.stroke();
-   g.beginPath();g.moveTo(330,154);g.lineTo(356,181);g.lineTo(378,154);g.closePath();g.fill();g.stroke();
-   g.fillStyle='#22d3ee';g.font='bold 25px sans-serif';g.textAlign='right';g.direction='rtl';g.fillText('🔔  '+name,680,48);
-   g.fillStyle='#f1f8ff';g.font='bold 27px sans-serif';g.fillText(text,680,105);bubble.texture.needsUpdate=true;
- }
  let speakerIndex=-1,nextDialogueAt=0;const dialogueIndices=workers.map(()=>-1);
  // two rows of overhead luminous ceiling panels
  for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
