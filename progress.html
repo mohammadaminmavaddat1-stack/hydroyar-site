@@ -26,7 +26,7 @@
 <div class="team-head"><div><h2>تیم کوچولوی پشتیبانی هیدرویار</h2><p>هرکدوم مشغول یک بخش از کارهای سایت‌اند.</p></div><span class="status"><i class="pulse"></i>میز کار تیم</span></div>
 <div class="team-board"><div class="board-notes"><div class="board-note">🧠 بررسی پاسخ‌های هوش مصنوعی</div><div class="board-note">🛠️ رفع خطاهای سایت</div><div class="board-note">💬 رسیدگی به مشتری‌ها</div></div></div>
 <div class="team-floor" aria-label="یک رهبر و نه کارمند متحرک"><canvas id="team3d" aria-label="اتاق سه‌بعدی تیم پشتیبانی هیدرویار"></canvas><div class="worker leader" style="--delay:-.6s"><span class="bubble">⭐</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">سرپرست تیم</div></div><div class="worker" style="--delay:-.2s"><span class="bubble">💡</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">هوش مصنوعی</div></div><div class="worker" style="--delay:-1.1s"><span class="bubble">⌨️</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">برنامه‌نویسی</div></div><div class="worker" style="--delay:-.7s"><span class="bubble">🔍</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">آزمایش خطاها</div></div><div class="worker" style="--delay:-1.6s"><span class="bubble">💬</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">پشتیبانی مشتری</div></div><div class="worker" style="--delay:-.4s"><span class="bubble">🎨</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">طراحی سایت</div></div><div class="worker" style="--delay:-1.3s"><span class="bubble">🛡️</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">امنیت</div></div><div class="worker" style="--delay:-.9s"><span class="bubble">🚀</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">انتشار نسخه</div></div><div class="worker" style="--delay:-.8s"><span class="bubble">📋</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">مدیریت پروژه</div></div><div class="worker" style="--delay:-1.4s"><span class="bubble">📊</span><div class="head"></div><div class="body"></div><div class="legs"><i></i><i></i></div><div class="desk"></div><div class="caption">تحلیل داده</div></div></div>
-<div class="note">اتاق سه‌بعدی با Three.js ساخته شده؛ اعضای تیم به نوبت حباب گفت‌وگو نشان می‌دهند و هنگام حرف‌زدن کمی به اطراف می‌چرخند. با کلیک و کشیدن دوربین را بچرخان؛ افکت صوتی هم جداگانه روشن/خاموش می‌شود. فعلاً گفت‌وگوها نمونه‌های آماده‌اند و برای تولید هر جمله دلخواه باید به هوش مصنوعی زنده وصل شوند.</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="soundToggle" type="button" aria-pressed="false">🔊 صدای بازی: خاموش</button><span class="note" id="soundHint">برای پخش صدا، یک بار دکمه را بزن.</span></div>
+<div class="note">اتاق سه‌بعدی با Three.js ساخته شده؛ چند عضو تیم می‌توانند هم‌زمان حباب گفت‌وگو داشته باشند. هنگام شروع هر پیام، اعلان صوتی کوتاه پخش می‌شود؛ موسیقی و صدای تکرارشونده حذف شده‌اند. با کلیک و کشیدن دوربین را بچرخان. فعلاً جمله‌ها نمونه‌های آماده‌اند و برای تولید گفت‌وگوی آزاد باید هوش مصنوعی زنده وصل شود.</div><div class="actions" style="margin-top:12px"><button class="btn primary" id="soundToggle" type="button" aria-pressed="false">🔔 اعلان صوتی: خاموش</button><span class="note" id="soundHint">برای فعال‌کردن صدای اعلان پیام‌ها، دکمه را بزن.</span></div>
 </section>
 <section class="grid" aria-label="وضعیت فعلی">
 <div class="card"><div class="label">اتصال API دستیار هوشمند</div><div class="value" id="apiStatus"><span class="live"><i class="spinner"></i>در حال بررسی…</span></div><div class="note" id="apiDetail">در حال ارسال درخواست سلامت به سرور</div></div>
@@ -206,12 +206,21 @@ try {
    }
    workers.push({group,legs,arms,phase:i*.72,leader:i===0,baseX:x,baseZ:z+.82,prankPhase:i*1.17,prankNext:2+i*.81,prankMode:0,prankUntil:0,personality:personalities[i%personalities.length],sitting});
  }
- // One animated dialogue bubble that moves between teammates and displays their conversation.
- const speechCanvas=document.createElement('canvas');speechCanvas.width=720;speechCanvas.height=190;
- const speechCtx=speechCanvas.getContext('2d');
- const speechTexture=new THREE.CanvasTexture(speechCanvas);speechTexture.colorSpace=THREE.SRGBColorSpace;
- const speechBubble=new THREE.Sprite(new THREE.SpriteMaterial({map:speechTexture,transparent:true,depthWrite:false}));
- speechBubble.scale.set(2.65,.7,1);speechBubble.visible=false;scene.add(speechBubble);
+ // Several independent dialogue bubbles can remain visible at once.
+ const activeBubbles=[];
+ function makeSpeechBubble(){
+   const c=document.createElement('canvas');c.width=720;c.height=190;const g=c.getContext('2d');
+   const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+   const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));sprite.scale.set(2.25,.59,1);sprite.visible=false;scene.add(sprite);
+   return {canvas:c,ctx:g,texture:tex,sprite,until:0,workerIndex:0,lane:0};
+ }
+ function paintSpeech(bubble,text,name){
+   const g=bubble.ctx;g.clearRect(0,0,720,190);g.fillStyle='rgba(6,17,29,.97)';g.strokeStyle='#22d3ee';g.lineWidth=5;
+   g.beginPath();g.roundRect(12,10,696,145,28);g.fill();g.stroke();
+   g.beginPath();g.moveTo(330,154);g.lineTo(356,181);g.lineTo(378,154);g.closePath();g.fill();g.stroke();
+   g.fillStyle='#22d3ee';g.font='bold 25px sans-serif';g.textAlign='right';g.direction='rtl';g.fillText('🔔  '+name,680,48);
+   g.fillStyle='#f1f8ff';g.font='bold 27px sans-serif';g.fillText(text,680,105);bubble.texture.needsUpdate=true;
+ }
  const conversations=[
   ['بچه‌ها، سایت رو بررسی کردم!','عالیه؛ خطاهای باقی‌مونده چی؟','دارم تست می‌کنم، الان خبر می‌دم.'],
   ['هوش مصنوعی آماده‌ی کمکه 🤖','پس جواب مشتری رو دقیق بده!','چشم، اول نیازش رو می‌پرسم.'],
@@ -224,23 +233,32 @@ try {
   ['کارها رو اولویت‌بندی کردم 📋','اول چیزهایی که سفارش میارن.','بعدش پرداخت و حساب کاربری.'],
   ['آمار سایت رو دیدی؟ 📊','باید بازدید رو به سفارش تبدیل کنیم.','پس مسیر ثبت درخواست رو ساده می‌کنیم.']
  ];
- function paintSpeech(text,name){
-   speechCtx.clearRect(0,0,720,190);speechCtx.fillStyle='rgba(6,17,29,.96)';speechCtx.strokeStyle='#22d3ee';speechCtx.lineWidth=5;
-   speechCtx.beginPath();speechCtx.roundRect(12,10,696,145,28);speechCtx.fill();speechCtx.stroke();
-   speechCtx.beginPath();speechCtx.moveTo(330,154);speechCtx.lineTo(356,181);speechCtx.lineTo(378,154);speechCtx.closePath();speechCtx.fill();speechCtx.stroke();
-   speechCtx.fillStyle='#22d3ee';speechCtx.font='bold 25px sans-serif';speechCtx.textAlign='right';speechCtx.direction='rtl';speechCtx.fillText(name,680,48);
-   speechCtx.fillStyle='#f1f8ff';speechCtx.font='bold 27px sans-serif';speechCtx.fillText(text,680,105);
-   speechTexture.needsUpdate=true;
+ function paintSpeech(bubble,text,name){
+   const g=bubble.ctx;g.clearRect(0,0,720,190);g.fillStyle='rgba(6,17,29,.97)';g.strokeStyle='#22d3ee';g.lineWidth=5;
+   g.beginPath();g.roundRect(12,10,696,145,28);g.fill();g.stroke();
+   g.beginPath();g.moveTo(330,154);g.lineTo(356,181);g.lineTo(378,154);g.closePath();g.fill();g.stroke();
+   g.fillStyle='#22d3ee';g.font='bold 25px sans-serif';g.textAlign='right';g.direction='rtl';g.fillText('🔔  '+name,680,48);
+   g.fillStyle='#f1f8ff';g.font='bold 27px sans-serif';g.fillText(text,680,105);bubble.texture.needsUpdate=true;
  }
- let speakerIndex=0,dialogueIndex=0,nextDialogueAt=0;
+ let speakerIndex=-1,nextDialogueAt=0;const dialogueIndices=workers.map(()=>-1);
  // two rows of overhead luminous ceiling panels
  for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
  const resize=()=>{const w=Math.max(320,host.clientWidth),h=Math.max(300,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
  host.classList.add('real-3d');resize();new ResizeObserver(resize).observe(host);
  const clock=new THREE.Clock();
  function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();
-   if(t>=nextDialogueAt){speakerIndex=(speakerIndex+1)%workers.length;dialogueIndex=(dialogueIndex+1)%conversations[speakerIndex].length;paintSpeech(conversations[speakerIndex][dialogueIndex],names[speakerIndex]);speechBubble.visible=true;nextDialogueAt=t+3.4;}
-   const speaker=workers[speakerIndex];if(speaker){speechBubble.position.set(speaker.group.position.x,3.32,speaker.group.position.z-.05);speechBubble.position.y+=Math.sin(t*3)*.035;}
+   if(t>=nextDialogueAt){
+     speakerIndex=(speakerIndex+1)%workers.length;dialogueIndices[speakerIndex]=(dialogueIndices[speakerIndex]+1)%conversations[speakerIndex].length;
+     let bubble=activeBubbles.find(b=>!b.sprite.visible)||activeBubbles.find(b=>b.until<=t);
+     if(!bubble&&activeBubbles.length<3){bubble=makeSpeechBubble();activeBubbles.push(bubble);}
+     if(!bubble){bubble=activeBubbles.reduce((a,b)=>a.until<b.until?a:b);}
+     bubble.workerIndex=speakerIndex;bubble.lane=activeBubbles.indexOf(bubble);bubble.until=t+4.2;bubble.sprite.visible=true;
+     paintSpeech(bubble,conversations[speakerIndex][dialogueIndices[speakerIndex]],names[speakerIndex]);
+     if(window.hydroyarNotify)window.hydroyarNotify();
+     nextDialogueAt=t+1.65;
+   }
+   activeBubbles.forEach((b,i)=>{if(t>=b.until){b.sprite.visible=false;return;}const w=workers[b.workerIndex];if(w){b.sprite.position.set(w.group.position.x,3.28+(i%3)*.42,w.group.position.z-.05);b.sprite.position.y+=Math.sin(t*3+i)*.002;}});
+   const speaker=workers[speakerIndex];
    for(const w of workers){const p=t*3+w.phase;
    w.group.position.y=w.sitting?0:.025+Math.abs(Math.sin(p))*.035;
    // Wander in small bounded loops around the desks so figures never drift out of the room.
@@ -271,9 +289,10 @@ try {
    // Ten different recognizable everyday moods; not everybody acts mischievously.
    if(!w.sitting&&t>w.prankNext){w.prankMode=1+Math.floor(Math.random()*3);w.prankUntil=t+1.0+Math.random()*1.4;w.prankNext=t+2.5+Math.random()*5;}
    const active=t<w.prankUntil, style=w.personality.style;
-   // The active speaker turns their head/upper body gently as if addressing teammates.
+   // Every teammate with a currently visible bubble may speak at the same time.
+   const isSpeaking=activeBubbles.some(b=>b.sprite.visible&&b.workerIndex===workers.indexOf(w)&&t<b.until);
    w.group.rotation.y=Math.sin(p*.35)*.035;
-   if(w===speaker){w.group.rotation.y+=Math.sin(t*2.4+w.phase)*.12;w.group.rotation.x=Math.sin(t*3.1+w.phase)*.018;}
+   if(isSpeaking){w.group.rotation.y+=Math.sin(t*2.4+w.phase)*.12;w.group.rotation.x=Math.sin(t*3.1+w.phase)*.018;}
    if(active){
     if(style===0){w.group.rotation.y+=Math.sin(t*8+w.prankPhase)*.7;w.arms.forEach((a,j)=>a.pivot.rotation.z=a.side*(.12+Math.sin(t*10+j)*.6));}
     else if(style===1){w.group.rotation.y-=.42;w.group.position.x+=Math.sin(t*2+w.prankPhase)*.04;}
@@ -291,7 +310,7 @@ try {
 } catch(err){console.error('3D support room failed to initialize:',err);host.classList.remove('real-3d');canvas.style.display='none';const msg=document.createElement('div');msg.setAttribute('role','alert');msg.style.cssText='position:absolute;inset:12px;z-index:5;display:grid;place-items:center;text-align:center;padding:18px;border:1px solid #f87171;border-radius:12px;background:#101820;color:#fecaca;font:14px/1.8 sans-serif';msg.textContent='رندر سه‌بعدی اجرا نشد؛ جزئیات خطا در Console مرورگر ثبت شده است. نمایش جایگزین فعال شد.';host.appendChild(msg);host.querySelectorAll('.worker').forEach(el=>el.style.display='block');}
 </script>
 <script>
-(()=>{const btn=document.getElementById('soundToggle'),hint=document.getElementById('soundHint');if(!btn)return;let ctx=null,timer=null,on=false,step=0;const notes=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46];function blip(freq,duration=.09,type='square',vol=.035){if(!ctx||ctx.state!=='running')return;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+duration)}function tick(){blip(notes[step%notes.length],.075,'square',.025);if(step%4===0)blip(130,.11,'triangle',.035);step++}btn.addEventListener('click',async()=>{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')await ctx.resume();on=!on;btn.setAttribute('aria-pressed',String(on));btn.textContent=on?'🔇 صدای بازی: روشن':'🔊 صدای بازی: خاموش';hint.textContent=on?'افکت‌های ۸ بیتی فعال‌اند؛ دوباره بزن تا خاموش شوند.':'صدا خاموش است.';if(on){tick();timer=setInterval(tick,360)}else{clearInterval(timer);timer=null}})})();
+(()=>{const btn=document.getElementById('soundToggle'),hint=document.getElementById('soundHint');if(!btn)return;let ctx=null,on=false;function notify(){if(!on||!ctx||ctx.state!=='running')return;const now=ctx.currentTime;const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(880,now);o.frequency.exponentialRampToValueAtTime(660,now+.09);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.045,now+.012);g.gain.exponentialRampToValueAtTime(.0001,now+.14);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+.15)}window.hydroyarNotify=notify;btn.addEventListener('click',async()=>{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')await ctx.resume();on=!on;btn.setAttribute('aria-pressed',String(on));btn.textContent=on?'🔔 اعلان صوتی: روشن':'🔔 اعلان صوتی: خاموش';hint.textContent=on?'فقط هنگام ظاهرشدن حباب پیام، یک صدای اعلان کوتاه پخش می‌شود؛ موسیقی وجود ندارد.':'اعلان صوتی خاموش است؛ حباب‌های گفت‌وگو همچنان نمایش داده می‌شوند.';if(on)notify()})})();
 </script>
 </body>
 </html>
