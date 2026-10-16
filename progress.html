@@ -216,7 +216,27 @@ try {
    w.group.position.x=w.baseX+Math.sin(t*.42+w.phase)*(w.sitting?.008:.42);
    w.group.position.z=w.baseZ+Math.cos(t*.34+w.phase)*(w.sitting?.008:.28);
    if(!w.sitting)w.legs.forEach((l,j)=>{const swing=Math.sin(p+(j?Math.PI:0));l.hip.rotation.x=swing*.52;l.knee.rotation.x=Math.max(0,-swing)*.65;});
-   w.arms.forEach((a,j)=>{a.pivot.rotation.x=w.sitting?-.65:-.28+Math.sin(p*1.5+j)*.12;a.pivot.rotation.z=a.side*(w.sitting?.08:.12+Math.sin(p*2+j)*.05);a.elbow.rotation.x=w.sitting?-.42:-.2+Math.sin(p*1.7+j)*.12;});
+   // Personality-led desk work: every teammate keeps their hands aimed at the keyboard,
+   // but their typing rhythm and occasional gestures communicate a distinct character.
+   w.arms.forEach((a,j)=>{
+     if(w.sitting){
+       const style=w.personality.style, rhythm=t*[2.8,1.15,1.7,3.4,2.2,5.2,.65,1.9,4.4,1.25][style]+w.phase+j*1.7;
+       const tap=Math.sin(rhythm), fine=Math.sin(rhythm*1.65+j);
+       const typing=[.16,.035,.10,.20,.12,.27,.025,.075,.23,.045][style];
+       const gesture=[.10,.025,.07,.20,.08,.12,.035,.025,.16,.02][style];
+       a.pivot.rotation.x=-.65+tap*typing;
+       a.pivot.rotation.z=a.side*(.055+fine*gesture*(style===3&&j===0?1.5:1));
+       a.elbow.rotation.x=-.42+Math.max(0,tap)*typing*.85+fine*[.06,.02,.10,.08,.05,.13,.015,.025,.11,.02][style];
+       // The talkative teammate briefly explains with one hand; the other stays on the keys.
+       if(style===3&&j===0)a.pivot.rotation.z+=Math.max(0,Math.sin(t*1.7+w.phase))*.16;
+       // The dreamer pauses between slow keystrokes; the orderly one uses short precise movements.
+       if(style===6&&tap<-.65){a.pivot.rotation.x=-.61;a.elbow.rotation.x=-.38;}
+     }else{
+       a.pivot.rotation.x=-.28+Math.sin(p*1.5+j)*.12;
+       a.pivot.rotation.z=a.side*(.12+Math.sin(p*2+j)*.05);
+       a.elbow.rotation.x=-.2+Math.sin(p*1.7+j)*.12;
+     }
+   });
    // Ten different recognizable everyday moods; not everybody acts mischievously.
    if(!w.sitting&&t>w.prankNext){w.prankMode=1+Math.floor(Math.random()*3);w.prankUntil=t+1.0+Math.random()*1.4;w.prankNext=t+2.5+Math.random()*5;}
    const active=t<w.prankUntil, style=w.personality.style;
