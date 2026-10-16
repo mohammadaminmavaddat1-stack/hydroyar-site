@@ -74,7 +74,7 @@ try {
  const floor=new THREE.Mesh(new THREE.PlaneGeometry(18,16),floorMat); floor.rotation.x=-Math.PI/2; floor.position.y=0; floor.receiveShadow=true; scene.add(floor);
  const grid=new THREE.GridHelper(18,36,'#236079','#1b3041'); grid.position.y=.012; scene.add(grid);
  function box(w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
- box(18,6,.25,wallMat,0,3,-7.8); box(.25,6,16,wallMat,-9,3,0); // right wall intentionally removed for an open-room camera view
+ box(18,6,.25,wallMat,0,3,-7.8); box(.25,6,16,wallMat,-9,3,0); // right wall stays open; left and back walls remain; no ceiling mesh
  for(let x=-8;x<=8;x+=2) box(.035,5,.04,trimMat,x,3,-7.64);
  box(5,.8,.16,mat('#123748',.4,.25),0,4.5,-7.62);
  // glowing wall sign
