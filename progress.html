@@ -170,8 +170,8 @@ try {
    for(const side of [-1,1]){
      const pivot=new THREE.Group();pivot.position.set(side*.31,1.92,0);group.add(pivot);
      const upper=limb(pivot,.48,.095,shirt,side*.02,-.22,-.02);upper.rotation.x=.45;
-     const elbow=new THREE.Group();elbow.position.set(side*.02,-.42,-.03);pivot.add(elbow);
-     const fore=limb(elbow,.43,.075,skin,0,-.19,-.1);fore.rotation.x=.55;
+     const elbow=new THREE.Group();elbow.position.set(side*.02,-.42,-.20);pivot.add(elbow);
+     const fore=limb(elbow,.43,.075,skin,0,-.19,-.16);fore.rotation.x=.55;
      arms.push({pivot,elbow,side});
    }
    // two distinct articulated legs, feet, and walking pivots
