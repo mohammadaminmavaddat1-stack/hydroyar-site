@@ -227,7 +227,7 @@ a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 <div class="step"><span class="num">۰۲ / طراحی</span><h3>راهکار</h3><p>ساختار، ظاهر و امکانات مناسب پیشنهاد می‌شود.</p></div>
 <div class="step"><span class="num">۰۳ / توسعه</span><h3>ساخت</h3><p>پروژه پیاده‌سازی، تست و برای شما آماده می‌شود.</p></div>
 <div class="step"><span class="num">۰۴ / تحویل</span><h3>رشد</h3><p>تحویل نهایی و امکان توسعه در مراحل بعدی.</p></div>
-</div><div class="delivery-policy"><h3>زمان‌بندی، پرداخت و پشتیبانی</h3><div class="delivery-policy-grid"><div><b>زمان تحویل</b><p>پس از مشخص‌شدن امکانات، محتوای لازم و پیچیدگی پروژه، زمان‌بندی مکتوب اعلام می‌شود. تغییر دامنهٔ کار ممکن است زمان تحویل را تغییر دهد.</p></div><div><b>شرایط پرداخت</b><p>مبلغ نهایی و مراحل پرداخت پیش از شروع، در پیشنهاد یا توافق مکتوب مشخص می‌شود. پرداخت آنلاین فعال است</p></div><div><b>پشتیبانی پس از تحویل</b><p>مدت و محدودهٔ پشتیبانی و هزینهٔ توسعه‌های بعدی باید در توافق پروژه روشن شود؛ پشتیبانی نامحدود بدون توافق وعده داده نمی‌شود.</p></div></div><a class="btn" href="#order">ثبت درخواست و دریافت برآورد</a></div></div></section>
+</div><div class="delivery-policy"><h3>زمان‌بندی، پرداخت و پشتیبانی</h3><div class="delivery-policy-grid"><div><b>زمان تحویل</b><p>پس از مشخص‌شدن امکانات، محتوای لازم و پیچیدگی پروژه، زمان‌بندی مکتوب اعلام می‌شود. تغییر دامنهٔ کار ممکن است زمان تحویل را تغییر دهد.</p></div><div><b>شرایط پرداخت</b><p>مبلغ نهایی و مراحل پرداخت پیش از شروع، در پیشنهاد یا توافق مکتوب مشخص می‌شود. پرداخت آنلاین هنوز فعال نشده است؛ تا زمان اتصال درگاه، سفارش‌ها برای هماهنگی ارسال می‌شوند.</p></div><div><b>پشتیبانی پس از تحویل</b><p>مدت و محدودهٔ پشتیبانی و هزینهٔ توسعه‌های بعدی باید در توافق پروژه روشن شود؛ پشتیبانی نامحدود بدون توافق وعده داده نمی‌شود.</p></div></div><a class="btn" href="#order">ثبت درخواست و دریافت برآورد</a></div></div></section>
 
 
 <section id="templates" class="band"><div class="wrap">
@@ -352,10 +352,42 @@ function submitLead(e){
  openTelegramDraft(message,'leadStatus');
 }
 
-function chooseTemplate(el,name){document.querySelectorAll('.template-card').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');const type=el.dataset.template;const sel=document.getElementById('templateType');if(sel)sel.value=type;const result=document.getElementById('templateResult');if(result){result.className='template-result show';result.innerHTML='<b>انتخاب شما: '+name+'</b><p>این قالب نقطه شروع است؛ برای نهایی‌کردن طراحی، امکانات و هزینه باید نیازهای پروژه بررسی شود.</p><a class="btn" href="#order">درخواست مشاوره درباره این قالب</a>'}}
-function recommendTemplate(e){e.preventDefault();const types={shop:'فروشگاه اینترنتی',company:'سایت شرکتی و خدمات حرفه‌ای',food:'سایت رستوران و کافه',realestate:'سایت املاک',personal:'سایت شخصی و رزومه',education:'سایت آموزشی',clinic:'سایت پزشکی و کلینیک',service:'سایت خدماتی',webapp:'وب‌اپلیکیشن اختصاصی'};const goals={sales:'فروش آنلاین و ثبت سفارش',leads:'جذب مشتری و دریافت درخواست',brand:'معرفی برند و اعتمادسازی',booking:'رزرو یا نوبت‌دهی',portal:'ارائه خدمات از طریق پنل'};const type=document.getElementById('templateType').value;const goal=document.getElementById('templateGoal').value;const budget=document.getElementById('templateBudget').value;const style=document.getElementById('templateStyle').value;const features=document.getElementById('templateFeatures').value.trim();const out=document.getElementById('templateResult');out.className='template-result show';out.innerHTML='<h3>پیشنهاد اولیه هیدرویار: '+types[type]+'</h3><p><b>هدف اصلی:</b> '+goals[goal]+'</p><p><b>سبک بصری:</b> '+style+'</p><p><b>بودجه:</b> '+budget+'</p><p><b>امکانات مدنظر:</b> '+(features||'در جلسه نیازسنجی مشخص شود')+'</p><p>پیشنهاد می‌کنیم ابتدا نسخه واکنش‌گرا با صفحات ضروری ساخته شود و امکانات پیشرفته در صورت نیاز اضافه شوند. این پیشنهاد برآورد قطعی قیمت یا زمان نیست؛ هزینه و زمان پس از بررسی جزئیات مشخص می‌شود.</p><a class="btn" href="https://t.me/mmdmvt" target="_blank" rel="noopener">ارسال درخواست مشاوره در تلگرام</a> <a class="btn light" href="https://t.me/mmdmvt" target="_blank" rel="noopener">مشاوره در تلگرام</a>'}
-
-function openWorkDetails(button){const card=button.closest('.work');if(!card)return;const title=card.querySelector('h3')?.textContent||'نمونه مفهومی';const desc=card.querySelector('.workbody p')?.textContent||'نمونه نمایشی';const modal=document.getElementById('workModal');document.getElementById('workModalTitle').textContent=title;document.getElementById('workModalDescription').textContent=desc;const list=document.getElementById('workModalFeatures');list.replaceChildren();const items=title.includes('فروشگاه')?['ساختار دسته‌بندی و صفحه محصول','طراحی واکنش‌گرا','مسیر سفارش و تماس']:title.includes('شرکتی')?['معرفی خدمات و برند','صفحات اطلاعاتی و راه تماس','دعوت به ثبت درخواست']:title.includes('رستوران')?['نمایش منو و اطلاعات مجموعه','مسیر تماس و سفارش','نمایش مناسب موبایل']:title.includes('املاک')?['ساختار نمایش فایل‌ها','فیلتر و جست‌وجوی قابل توسعه','فرم درخواست مشاوره']:title.includes('رزومه')?['معرفی و مهارت‌ها','سوابق و نمونه‌کارها','راه ارتباطی حرفه‌ای']:['داشبورد و ساختار پنل','فرم ثبت درخواست','امکان توسعه بر اساس نیاز'];items.forEach(t=>{const li=document.createElement('li');li.textContent=t;list.appendChild(li)});modal.classList.add('open');document.body.style.overflow='hidden'}function closeWorkDetails(){const m=document.getElementById('workModal');if(m)m.classList.remove('open');if(!document.getElementById('authOverlay')?.classList.contains('open'))document.body.style.overflow=''}document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWorkDetails()});
+document.querySelectorAll('.template-card[data-template][onclick]').forEach(card=>{card.setAttribute('role','link');card.tabIndex=0;card.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();card.click();}});});
+function chooseTemplate(el,name){
+ document.querySelectorAll('.template-card').forEach(x=>x.classList.remove('selected'));
+ el.classList.add('selected');
+ const sel=document.getElementById('templateType');if(sel)sel.value=el.dataset.template;
+ const result=document.getElementById('templateResult');if(!result)return;
+ result.className='template-result show';result.replaceChildren();
+ const title=document.createElement('b');title.textContent='انتخاب شما: '+name;result.appendChild(title);
+ const p=document.createElement('p');p.textContent='این قالب نقطه شروع است؛ برای نهایی‌کردن طراحی، امکانات و هزینه باید نیازهای پروژه بررسی شود.';result.appendChild(p);
+ const link=document.createElement('a');link.className='btn';link.href='#order';link.textContent='درخواست مشاوره درباره این قالب';result.appendChild(link);
+}
+function recommendTemplate(e){
+ e.preventDefault();
+ const types={shop:'فروشگاه اینترنتی',company:'سایت شرکتی و خدمات حرفه‌ای',food:'سایت رستوران و کافه',realestate:'سایت املاک',personal:'سایت شخصی و رزومه',education:'سایت آموزشی',clinic:'سایت پزشکی و کلینیک',service:'سایت خدماتی',webapp:'وب‌اپلیکیشن اختصاصی'};
+ const goals={sales:'فروش آنلاین و ثبت سفارش',leads:'جذب مشتری و دریافت درخواست',brand:'معرفی برند و اعتمادسازی',booking:'رزرو یا نوبت‌دهی',portal:'ارائه خدمات از طریق پنل'};
+ const type=document.getElementById('templateType').value;
+ const goal=document.getElementById('templateGoal').value;
+ const budget=document.getElementById('templateBudget').value;
+ const style=document.getElementById('templateStyle').value;
+ const features=document.getElementById('templateFeatures').value.trim();
+ const out=document.getElementById('templateResult');
+ out.className='template-result show';
+ out.replaceChildren();
+ const title=document.createElement('h3');
+ title.textContent='پیشنهاد اولیه هیدرویار: '+(types[type]||types.shop);
+ out.appendChild(title);
+ const addInfo=(label,value)=>{const p=document.createElement('p');const b=document.createElement('b');b.textContent=label+' ';p.appendChild(b);p.appendChild(document.createTextNode(value));out.appendChild(p);};
+ addInfo('هدف اصلی:',goals[goal]||goals.leads);
+ addInfo('سبک بصری:',style);
+ addInfo('بودجه:',budget);
+ addInfo('امکانات مدنظر:',features||'در جلسه نیازسنجی مشخص شود');
+ const note=document.createElement('p');
+ note.textContent='این پیشنهاد اولیه است و برآورد قطعی قیمت یا زمان نیست؛ هزینه و زمان پس از بررسی جزئیات مشخص می‌شود.';
+ out.appendChild(note);
+ const link=document.createElement('a');link.className='btn';link.href='https://t.me/mmdmvt';link.target='_blank';link.rel='noopener noreferrer';link.textContent='ارسال درخواست مشاوره در تلگرام';out.appendChild(link);
+}function openWorkDetails(button){const card=button.closest('.work');if(!card)return;const title=card.querySelector('h3')?.textContent||'نمونه مفهومی';const desc=card.querySelector('.workbody p')?.textContent||'نمونه نمایشی';const modal=document.getElementById('workModal');document.getElementById('workModalTitle').textContent=title;document.getElementById('workModalDescription').textContent=desc;const list=document.getElementById('workModalFeatures');list.replaceChildren();const items=title.includes('فروشگاه')?['ساختار دسته‌بندی و صفحه محصول','طراحی واکنش‌گرا','مسیر سفارش و تماس']:title.includes('شرکتی')?['معرفی خدمات و برند','صفحات اطلاعاتی و راه تماس','دعوت به ثبت درخواست']:title.includes('رستوران')?['نمایش منو و اطلاعات مجموعه','مسیر تماس و سفارش','نمایش مناسب موبایل']:title.includes('املاک')?['ساختار نمایش فایل‌ها','فیلتر و جست‌وجوی قابل توسعه','فرم درخواست مشاوره']:title.includes('رزومه')?['معرفی و مهارت‌ها','سوابق و نمونه‌کارها','راه ارتباطی حرفه‌ای']:['داشبورد و ساختار پنل','فرم ثبت درخواست','امکان توسعه بر اساس نیاز'];items.forEach(t=>{const li=document.createElement('li');li.textContent=t;list.appendChild(li)});modal.classList.add('open');document.body.style.overflow='hidden'}function closeWorkDetails(){const m=document.getElementById('workModal');if(m)m.classList.remove('open');if(!document.getElementById('authOverlay')?.classList.contains('open'))document.body.style.overflow=''}document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWorkDetails()});
 let authMode="login",authMethod="email";
 // Authentication: email/password via Supabase. Phone OTP is not enabled in project settings.
 function authText(id, text){const el=document.getElementById(id);if(el)el.textContent=text;}
