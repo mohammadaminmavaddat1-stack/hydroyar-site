@@ -200,7 +200,7 @@ try {
     hips.position.y=.78;torso.position.y=1.34;neck.position.y=1.78;head.position.y=2.09;
     group.children.forEach(part=>{if(part!==head&&part!==neck&&part.position.y>=2.0&&part.position.y<2.7)part.position.y-=.16;});
     arms.forEach(a=>{a.pivot.position.y=1.56;a.pivot.rotation.x=.9;});
-    legs.forEach(l=>{l.hip.position.y=.78;l.hip.rotation.x=-.85;l.knee.rotation.x=1.25;});
+    legs.forEach(l=>{l.hip.position.y=.78;l.hip.rotation.x=.9;l.knee.rotation.x=-.9;});
     tag.position.y=2.63;
    }
    workers.push({group,legs,arms,phase:i*.72,leader:i===0,baseX:x,baseZ:z+.82,prankPhase:i*1.17,prankNext:2+i*.81,prankMode:0,prankUntil:0,personality:personalities[i%personalities.length],sitting});
