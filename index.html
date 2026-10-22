@@ -305,7 +305,7 @@ document.addEventListener('click',function(e){const m=document.getElementById('s
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');if(m&&m.classList.contains('mobile-open')){m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','باز کردن منو')}}});
 document.querySelectorAll('#siteLinks a').forEach(a=>a.addEventListener('click',()=>{const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));
 const HYDROYAR_PROJECT_NOTIFY_ENDPOINT='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev/notify-project';
-/* Public Turnstile site key goes here after the anti-spam widget is created. Never put the secret key in this page. */
+/* Public Turnstile site key. The secret key remains only in the Cloudflare Worker. */
 const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='0x4AAAAAAFhhGitfF1ERilUr';
 let hydroYarTurnstileLoader=null;
 function loadHydroYarTurnstile(){
@@ -315,47 +315,85 @@ function loadHydroYarTurnstile(){
   const script=document.createElement('script');
   script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
   script.async=true;script.defer=true;
-  script.onload=()=>resolve(Boolean(window.turnstile));
-  script.onerror=()=>resolve(false);
+  script.onload=()=>{const ready=Boolean(window.turnstile);if(!ready)hydroYarTurnstileLoader=null;resolve(ready);};
+  script.onerror=()=>{hydroYarTurnstileLoader=null;resolve(false);};
   document.head.appendChild(script);
  });
  return hydroYarTurnstileLoader;
 }
-async function getHydroYarTurnstileToken(){
- if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY||!await loadHydroYarTurnstile())return '';
+async function getHydroYarTurnstileToken(formSelector){
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY)return {token:'',error:'missing-site-key'};
+ if(!await loadHydroYarTurnstile())return {token:'',error:'script-load-failed'};
+ const form=document.querySelector(formSelector);
+ if(!form)return {token:'',error:'form-not-found'};
+ const oldHost=form.querySelector('.hydroyar-turnstile-host');
+ if(oldHost)oldHost.remove();
+ const node=document.createElement('div');
+ node.className='hydroyar-turnstile-host';
+ node.setAttribute('aria-label','Cloudflare security verification');
+ node.style.cssText='display:flex;justify-content:flex-start;align-items:center;max-width:100%;overflow-x:auto;margin:12px 0;min-height:65px';
+ const anchor=form.querySelector('.lead-actions')||form.querySelector('button[type="submit"]');
+ if(anchor)form.insertBefore(node,anchor);else form.appendChild(node);
+ node.scrollIntoView({behavior:'smooth',block:'nearest'});
  return new Promise(resolve=>{
-  const node=document.createElement('div');
-  node.style.cssText='position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden';
-  document.body.appendChild(node);
-  let widgetId=null,finished=false;
-  const finish=token=>{
+  let widgetId=null,finished=false,timer=null;
+  const finish=(token,error)=>{
    if(finished)return;finished=true;
-   try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
-   node.remove();resolve(token||'');
+   if(timer)clearTimeout(timer);
+   if(token){
+    try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
+    node.remove();
+   }else{
+    try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
+    node.setAttribute('data-turnstile-error',String(error||'verification-failed'));
+   }
+   resolve({token:token||'',error:String(error||'')});
   };
+  timer=setTimeout(()=>finish('','challenge-timeout'),120000);
   try{
    widgetId=window.turnstile.render(node,{
-    sitekey:HYDROYAR_PROJECT_NOTIFY_SITE_KEY,size:'invisible',
-    callback:token=>finish(token),
-    'error-callback':()=>finish(''),
-    'timeout-callback':()=>finish('')
+    sitekey:HYDROYAR_PROJECT_NOTIFY_SITE_KEY,
+    execution:'execute',
+    appearance:'execute',
+    callback:token=>finish(token,''),
+    'error-callback':code=>finish('','turnstile-error-'+String(code||'challenge-error')),
+    'expired-callback':()=>finish('','token-expired'),
+    'timeout-callback':()=>finish('','challenge-timeout')
    });
    window.turnstile.execute(widgetId);
-   setTimeout(()=>finish(''),15000);
-  }catch{finish('');}
+  }catch(error){finish('',String(error&&error.message||'render-failed'));}
  });
 }
-async function notifyHydroYarProject(type,fields){
- if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY)return false;
- const turnstileToken=await getHydroYarTurnstileToken();
- if(!turnstileToken)return false;
- const response=await fetch(HYDROYAR_PROJECT_NOTIFY_ENDPOINT,{
-  method:'POST',headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({...fields,type,turnstileToken,website:''})
- });
+function setNotificationFailure(statusId,reason){
+ const status=document.getElementById(statusId);if(!status)return;
+ status.className='lead-status show';
+ let detail='ارسال خودکار درخواست تأیید نشد؛ هیچ اعلان موفقی ثبت نشده. لطفاً دوباره تلاش کن.';
+ if(reason==='script-load-failed')detail='اتصال به سرویس امنیتی Cloudflare برقرار نشد. اتصال اینترنت یا افزونه‌های مسدودکننده را بررسی کن و دوباره تلاش کن.';
+ else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='تأیید امنیتی کامل نشد. بخش تأیید را تکمیل کن و دوباره درخواست را بفرست.';
+ else if(String(reason).startsWith('server-403'))detail='Cloudflare درخواست را تأیید نکرد. دامنهٔ ویجت و تنظیمات Turnstile باید بررسی شوند.';
+ else if(reason==='network-error')detail='ارتباط با سرور هیدرویار برقرار نشد. کمی بعد دوباره تلاش کن.';
+ status.textContent=detail;
+}
+async function notifyHydroYarProject(type,fields,formSelector){
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY)return {ok:false,reason:'missing-site-key'};
+ const verification=await getHydroYarTurnstileToken(formSelector);
+ if(!verification.token)return {ok:false,reason:verification.error||'verification-failed'};
+ let response;
+ try{
+  response=await fetch(HYDROYAR_PROJECT_NOTIFY_ENDPOINT,{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({...fields,type,turnstileToken:verification.token,website:''})
+  });
+ }catch(error){
+  console.warn('HydroYar project notification network failure.');
+  return {ok:false,reason:'network-error'};
+ }
  const result=await response.json().catch(()=>({}));
- if(!response.ok||result.ok!==true)return false;
- return true;
+ if(!response.ok||result.ok!==true){
+  console.warn('HydroYar project notification rejected:',response.status,String(result.error||'unknown error'));
+  return {ok:false,reason:'server-'+response.status};
+ }
+ return {ok:true};
 }
 function setNotificationSuccess(statusId){
  const status=document.getElementById(statusId);if(!status)return;
@@ -387,10 +425,13 @@ async function submitPurchase(e){
  const message=['سلام، می‌خواهم درباره سفارش زیر با هیدرویار هماهنگ کنم.',summary,'نام: '+name,'شماره تماس: '+mobile].join('\n');
  if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'purchaseStatus');return;}
  try{
-  const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary});
-  if(delivered){setNotificationSuccess('purchaseStatus');return;}
- }catch(error){console.warn('HydroYar Telegram notification unavailable; opening manual Telegram draft.',error);}
- openTelegramDraft(message,'purchaseStatus');
+  const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary},'#checkout form');
+  if(delivered.ok){setNotificationSuccess('purchaseStatus');return;}
+  setNotificationFailure('purchaseStatus',delivered.reason);
+ }catch(error){
+  console.warn('HydroYar project notification failed.');
+  setNotificationFailure('purchaseStatus','network-error');
+ }
 }
 function pickCategory(el){document.querySelectorAll('.category-card').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('leadCategory').value=el.dataset.cat;document.getElementById('leadbox').scrollIntoView({behavior:'smooth',block:'center'})}
 async function submitLead(e){
@@ -416,10 +457,13 @@ async function submitLead(e){
  ].join('\n');
  if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'leadStatus');return;}
  try{
-  const delivered=await notifyHydroYarProject('lead',body);
-  if(delivered){setNotificationSuccess('leadStatus');return;}
- }catch(error){console.warn('HydroYar Telegram notification unavailable; opening manual Telegram draft.',error);}
- openTelegramDraft(message,'leadStatus');
+  const delivered=await notifyHydroYarProject('lead',body,'#leadbox form');
+  if(delivered.ok){setNotificationSuccess('leadStatus');return;}
+  setNotificationFailure('leadStatus',delivered.reason);
+ }catch(error){
+  console.warn('HydroYar project notification failed.');
+  setNotificationFailure('leadStatus','network-error');
+ }
 }
 
 document.querySelectorAll('.template-card[data-template][onclick]').forEach(card=>{card.setAttribute('role','link');card.tabIndex=0;card.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();card.click();}});});
