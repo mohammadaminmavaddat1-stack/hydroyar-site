@@ -80,12 +80,17 @@ document.getElementById('refresh').addEventListener('click',checkApi);checkApi()
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
 </script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js';
 const host=document.querySelector('.team-floor'), canvas=document.getElementById('team3d');
 try {
+ // Load optional 3D dependencies inside the error boundary so the support page still works if a CDN or WebGL fails.
+ const loadModule=(url,label)=>Promise.race([import(url),new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),8000))]);
+ const [THREE,controlsModule]=await Promise.all([
+  loadModule('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js','Three.js'),
+  loadModule('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js','OrbitControls')
+ ]);
+ const {OrbitControls}=controlsModule;
  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
- renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.25;
  const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1420'); scene.fog=new THREE.Fog('#0b1420',17,34);
  const camera=new THREE.PerspectiveCamera(42,1,.1,100); camera.position.set(10,11,13);
