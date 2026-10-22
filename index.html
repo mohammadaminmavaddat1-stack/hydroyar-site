@@ -306,7 +306,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'){const m=doc
 document.querySelectorAll('#siteLinks a').forEach(a=>a.addEventListener('click',()=>{const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));
 const HYDROYAR_PROJECT_NOTIFY_ENDPOINT='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev/notify-project';
 /* Public Turnstile site key goes here after the anti-spam widget is created. Never put the secret key in this page. */
-const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='';
+const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='0x4AAAAAAFhhGitfF1ERilUr';
 let hydroYarTurnstileLoader=null;
 function loadHydroYarTurnstile(){
  if(window.turnstile)return Promise.resolve(true);
