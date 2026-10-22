@@ -141,5 +141,19 @@ await check("payment-policy guard prevents unsupported checkout claims", async (
   assert.ok(!/سیستم پرداخت امن|درگاه پرداخت امن/.test(data.answer), "unsupported live checkout claim detected");
   assert.equal(data.team?.agentCount, 10);
 });
+await check("pricing answers use only verified starting-price guidance", async () => {
+  const r = await request(WORKER, {
+    method: "POST",
+    headers: { Origin: ORIGIN, "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: [{ role: "user", content: "قیمت سایت فروشگاهی چقدر است؟" }] }),
+    timeoutMs: 90000
+  });
+  assert.equal(r.status, 200);
+  const data = await r.json();
+  assert.ok(data.answer.includes("۱۲ میلیون تومان"), "verified professional starting price missing");
+  assert.ok(data.answer.includes("فعلاً فعال نیست"), "current payment limitation must be disclosed");
+  assert.ok(data.answer.includes("قیمت نهایی"), "answer must explain that the final store price depends on scope");
+  assert.equal(data.team?.agentCount, 10);
+});
 console.log("\nResult: " + results.filter(x => x.ok).length + "/" + results.length + " checks passed.");
 if (results.some(x => !x.ok)) process.exitCode = 1;
