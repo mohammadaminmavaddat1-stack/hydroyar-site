@@ -304,6 +304,64 @@ function toggleMobileMenu(){const m=document.getElementById('siteLinks'),b=docum
 document.addEventListener('click',function(e){const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');if(!m||!m.classList.contains('mobile-open'))return;if(!m.contains(e.target)&&e.target!==b){m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','باز کردن منو')}});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');if(m&&m.classList.contains('mobile-open')){m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','باز کردن منو')}}});
 document.querySelectorAll('#siteLinks a').forEach(a=>a.addEventListener('click',()=>{const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));
+const HYDROYAR_PROJECT_NOTIFY_ENDPOINT='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev/notify-project';
+/* Public Turnstile site key goes here after the anti-spam widget is created. Never put the secret key in this page. */
+const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='';
+let hydroYarTurnstileLoader=null;
+function loadHydroYarTurnstile(){
+ if(window.turnstile)return Promise.resolve(true);
+ if(hydroYarTurnstileLoader)return hydroYarTurnstileLoader;
+ hydroYarTurnstileLoader=new Promise(resolve=>{
+  const script=document.createElement('script');
+  script.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async=true;script.defer=true;
+  script.onload=()=>resolve(Boolean(window.turnstile));
+  script.onerror=()=>resolve(false);
+  document.head.appendChild(script);
+ });
+ return hydroYarTurnstileLoader;
+}
+async function getHydroYarTurnstileToken(){
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY||!await loadHydroYarTurnstile())return '';
+ return new Promise(resolve=>{
+  const node=document.createElement('div');
+  node.style.cssText='position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden';
+  document.body.appendChild(node);
+  let widgetId=null,finished=false;
+  const finish=token=>{
+   if(finished)return;finished=true;
+   try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
+   node.remove();resolve(token||'');
+  };
+  try{
+   widgetId=window.turnstile.render(node,{
+    sitekey:HYDROYAR_PROJECT_NOTIFY_SITE_KEY,size:'invisible',
+    callback:token=>finish(token),
+    'error-callback':()=>finish(''),
+    'timeout-callback':()=>finish('')
+   });
+   window.turnstile.execute(widgetId);
+   setTimeout(()=>finish(''),15000);
+  }catch{finish('');}
+ });
+}
+async function notifyHydroYarProject(type,fields){
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY)return false;
+ const turnstileToken=await getHydroYarTurnstileToken();
+ if(!turnstileToken)return false;
+ const response=await fetch(HYDROYAR_PROJECT_NOTIFY_ENDPOINT,{
+  method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({...fields,type,turnstileToken,website:''})
+ });
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok||result.ok!==true)return false;
+ return true;
+}
+function setNotificationSuccess(statusId){
+ const status=document.getElementById(statusId);if(!status)return;
+ status.className='lead-status show';
+ status.textContent='درخواست به هیدرویار رسید و اعلان تلگرام ارسال شد. بررسی اولیهٔ هوشمند آغاز می‌شود؛ اگر تصمیم مدیر لازم باشد، پیام پیگیری جداگانه می‌آید. این مرحله به معنی تأیید قرارداد یا پرداخت نیست.';
+}
 function normalizePhone(v){return String(v||'').replace(/[\s\-()]/g,'').replace(/^\+98/,'0').replace(/^0098/,'0')}
 document.querySelectorAll('input[type="tel"]').forEach(i=>i.addEventListener('blur',()=>{i.value=normalizePhone(i.value)}));
 let currentProduct='';
@@ -319,16 +377,23 @@ function openTelegramDraft(text,statusId){
  if(tab) tab.opener=null;
  else window.location.href=url;
 }
-function submitPurchase(e){
+async function submitPurchase(e){
  e.preventDefault();
  const summary=document.getElementById('orderSummary').innerText.replace(/\s+/g,' ').trim();
  const name=document.getElementById('buyName').value.trim();
  const mobile=document.getElementById('buyPhone').value.trim();
+ const product=currentProduct==='site'?'طراحی سایت':currentProduct==='ai'?'دستیار هوشمند':'خدمت هیدرویار';
+ const price=summary.replace(product,'').trim();
  const message=['سلام، می‌خواهم درباره سفارش زیر با هیدرویار هماهنگ کنم.',summary,'نام: '+name,'شماره تماس: '+mobile].join('\n');
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'purchaseStatus');return;}
+ try{
+  const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary});
+  if(delivered){setNotificationSuccess('purchaseStatus');return;}
+ }catch(error){console.warn('HydroYar Telegram notification unavailable; opening manual Telegram draft.',error);}
  openTelegramDraft(message,'purchaseStatus');
 }
 function pickCategory(el){document.querySelectorAll('.category-card').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('leadCategory').value=el.dataset.cat;document.getElementById('leadbox').scrollIntoView({behavior:'smooth',block:'center'})}
-function submitLead(e){
+async function submitLead(e){
  e.preventDefault();
  const body={
   businessName:document.getElementById('leadBusiness').value.trim(),
@@ -349,6 +414,11 @@ function submitLead(e){
   'راه ارتباطی: '+(body.social||'ذکر نشده'),
   'نیاز پروژه: '+body.need
  ].join('\n');
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'leadStatus');return;}
+ try{
+  const delivered=await notifyHydroYarProject('lead',body);
+  if(delivered){setNotificationSuccess('leadStatus');return;}
+ }catch(error){console.warn('HydroYar Telegram notification unavailable; opening manual Telegram draft.',error);}
  openTelegramDraft(message,'leadStatus');
 }
 
