@@ -393,12 +393,12 @@ async function notifyHydroYarProject(type,fields,formSelector){
   console.warn('HydroYar project notification rejected:',response.status,String(result.error||'unknown error'));
   return {ok:false,reason:'server-'+response.status};
  }
- return {ok:true};
+ return {ok:true,ticketCode:String(result.ticketCode||'')};
 }
-function setNotificationSuccess(statusId){
+function setNotificationSuccess(statusId,ticketCode){
  const status=document.getElementById(statusId);if(!status)return;
  status.className='lead-status show';
- status.textContent='درخواست به هیدرویار رسید و اعلان تلگرام ارسال شد. بررسی اولیهٔ هوشمند آغاز می‌شود؛ اگر تصمیم مدیر لازم باشد، پیام پیگیری جداگانه می‌آید. این مرحله به معنی تأیید قرارداد یا پرداخت نیست.';
+ status.textContent='درخواست در سامانه پشتیبانی ثبت شد و به پشتیبانی اطلاع داده شد.'+(ticketCode?'\nکد پیگیری: '+ticketCode:'')+' این مرحله به معنی تأیید قرارداد یا پرداخت نیست.';
 }
 function normalizePhone(v){return String(v||'').replace(/[\s\-()]/g,'').replace(/^\+98/,'0').replace(/^0098/,'0')}
 document.querySelectorAll('input[type="tel"]').forEach(i=>i.addEventListener('blur',()=>{i.value=normalizePhone(i.value)}));
@@ -426,7 +426,7 @@ async function submitPurchase(e){
  if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'purchaseStatus');return;}
  try{
   const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary},'#checkout form');
-  if(delivered.ok){setNotificationSuccess('purchaseStatus');return;}
+  if(delivered.ok){setNotificationSuccess('purchaseStatus',delivered.ticketCode);return;}
   setNotificationFailure('purchaseStatus',delivered.reason);
  }catch(error){
   console.warn('HydroYar project notification failed.');
@@ -458,7 +458,7 @@ async function submitLead(e){
  if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'leadStatus');return;}
  try{
   const delivered=await notifyHydroYarProject('lead',body,'#leadbox form');
-  if(delivered.ok){setNotificationSuccess('leadStatus');return;}
+  if(delivered.ok){setNotificationSuccess('leadStatus',delivered.ticketCode);return;}
   setNotificationFailure('leadStatus',delivered.reason);
  }catch(error){
   console.warn('HydroYar project notification failed.');
@@ -529,7 +529,15 @@ async function chat(){
   if(!response.ok)throw new Error(data.error||'فعلاً پاسخ دریافت نشد؛ دوباره تلاش کن.');
   const answer=String(data.answer||'پاسخی دریافت نشد.');
   chatHistory.push({role:'assistant',content:answer});
-  pending.textContent=answer; }catch(err){
+  pending.textContent=answer;
+  if(data.team&&Number(data.team.agentCount)>0){
+   const teamNote=document.createElement('small');
+   const answered=Math.max(0,Math.min(9,Number(data.team.specialistResponses)||0));
+   teamNote.textContent=answered===9?'\u0628\u0631\u0631\u0633\u06cc \u062a\u062e\u0635\u0635\u06cc: ۹ \u0646\u0642\u0634 \u0645\u062a\u062e\u0635\u0635 + \u0647\u0645\u0627\u0647\u0646\u06af\u200c\u06a9\u0646\u0646\u062f\u0647':'\u0628\u0631\u0631\u0633\u06cc \u062a\u062e\u0635\u0635\u06cc: '+answered+' \u0627\u0632 ۹ \u0646\u0642\u0634 \u0645\u062a\u062e\u0635\u0635 + \u0647\u0645\u0627\u0647\u0646\u06af\u200c\u06a9\u0646\u0646\u062f\u0647';
+   teamNote.style.display='block';teamNote.style.marginTop='10px';teamNote.style.paddingTop='7px';teamNote.style.borderTop='1px solid rgba(128,145,170,.25)';teamNote.style.fontSize='12px';teamNote.style.opacity='.8';
+   pending.appendChild(teamNote);
+  }
+ }catch(err){
   const answer='متأسفم، اتصال به دستیار هوشمند موقتاً با مشکل روبه‌رو شد. لطفاً دوباره تلاش کن یا از راه ارتباطی واتساپ/تلگرام پیام بده.';
   chatHistory.push({role:'assistant',content:answer});
   pending.textContent=answer;
