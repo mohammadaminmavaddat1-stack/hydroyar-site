@@ -83,12 +83,26 @@ await check("progress page returns HTTP 200", async () => {
   assert.equal(r.status, 200);
   assert.ok((await r.text()).includes("<title"));
 });
-await check("worker health endpoint returns HTTP 200", async () => {
+await check("site form exposes the request tracking code and privacy page explains ticket retention", async () => {
+  const site = await request(SITE, { timeoutMs: 30000 });
+  assert.equal(site.status, 200);
+  const siteHtml = await site.text();
+  assert.ok(siteHtml.includes("ticketCode"), "request ticket code is not wired into the form");
+  assert.ok(siteHtml.includes("کد پیگیری"), "request tracking label missing");
+  const privacy = await request(new URL("privacy.html", SITE).href, { timeoutMs: 15000 });
+  assert.equal(privacy.status, 200);
+  const privacyHtml = await privacy.text();
+  assert.ok(privacyHtml.includes("۹۰ روز"), "ticket retention period missing from privacy notice");
+  assert.ok(privacyHtml.includes("Cloudflare KV"), "ticket storage provider not disclosed");
+});
+await check("worker health confirms the private ticket store and Telegram agent", async () => {
   const r = await request(WORKER, { timeoutMs: 15000 });
   assert.equal(r.status, 200);
   const data = await r.json();
   assert.equal(data.ok, true);
   assert.equal(data.service, "HydroYar chat API");
+  assert.equal(data.projectNotifications?.ticketStoreConfigured, true, "private ticket KV binding missing");
+  assert.equal(data.projectNotifications?.privateTelegramAgentConfigured, true, "Telegram webhook secret missing");
 });
 await check("worker CORS preflight permits the site origin", async () => {
   const r = await request(WORKER, {
