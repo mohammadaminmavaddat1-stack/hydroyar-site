@@ -8,6 +8,11 @@
 <meta name="author" content="هیدرویار">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://hydroyar-chat.mohammadaminmavaddat1.workers.dev" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">
 <link rel="canonical" href="https://mohammadaminmavaddat1-stack.github.io/hydroyar-site/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fa_IR">
@@ -19,7 +24,6 @@
 <title>هیدرویار | طراحی سایت، فروشگاه اینترنتی و هوش مصنوعی</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
 :root{--ink:#172033;--muted:#667085;--blue:#2563eb;--blue2:#4f46e5;--cyan:#06b6d4;--bg:#f7f9fc;--line:#e7ebf2;--card:#fff;--shadow:0 18px 55px rgba(25,40,80,.08)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:'Vazirmatn',Tahoma,sans-serif;color:var(--ink);background:#fff;line-height:1.9}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}.wrap{max-width:1220px;margin:auto;padding:0 24px}
 .top{height:34px;background:#111827;color:#dbe4f0;font-size:12px}.top .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}.top a{color:#93c5fd}
@@ -427,6 +431,7 @@ async function submitPurchase(e){
  try{
   const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary},'#checkout form');
   if(delivered.ok){setNotificationSuccess('purchaseStatus',delivered.ticketCode);return;}
+  if(delivered.reason==='network-error'){openTelegramDraft(message,'purchaseStatus');return;}
   setNotificationFailure('purchaseStatus',delivered.reason);
  }catch(error){
   console.warn('HydroYar project notification failed.');
@@ -459,6 +464,7 @@ async function submitLead(e){
  try{
   const delivered=await notifyHydroYarProject('lead',body,'#leadbox form');
   if(delivered.ok){setNotificationSuccess('leadStatus',delivered.ticketCode);return;}
+  if(delivered.reason==='network-error'){openTelegramDraft(message,'leadStatus');return;}
   setNotificationFailure('leadStatus',delivered.reason);
  }catch(error){
   console.warn('HydroYar project notification failed.');
