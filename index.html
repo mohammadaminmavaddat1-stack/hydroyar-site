@@ -278,7 +278,7 @@ a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 <div class="shop-card"><div class="ico">🌐</div><h3>طراحی سایت</h3><p>سایت حرفه‌ای و واکنش‌گرا برای کسب‌وکار شما.</p><div class="shop-price">از ۵ میلیون تومان</div><br><button class="btn" style="width:100%" onclick="startPurchase('site','طراحی سایت','از ۵ میلیون تومان')">ثبت سفارش</button></div>
 <div class="shop-card"><div class="ico">🤖</div><h3>دستیار هوشمند</h3><p>دستیار هوشمند متناسب با فرآیند کسب‌وکار.</p><div class="shop-price">از ۱۲ میلیون تومان</div><br><button class="btn" style="width:100%" onclick="startPurchase('ai','دستیار هوشمند','از ۱۲ میلیون تومان')">ثبت سفارش</button></div>
 <div class="shop-card"><div class="ico">⚙️</div><h3>پروژه اختصاصی</h3><p>برای ابزارها و سیستم‌هایی که نیاز به طراحی ویژه دارند.</p><div class="shop-price">قیمت توافقی</div><br><a class="btn" style="width:100%" href="#order">درخواست بررسی</a></div>
-</div><div class="checkout" id="checkout"><h3>آماده‌سازی درخواست سفارش</h3><p style="color:var(--muted);line-height:1.9">پرداخت آنلاین هنوز فعال نشده است؛ با ادامه، متن سفارش برای ارسال در تلگرام آماده می‌شود. برای نهایی‌شدن، باید خودت پیام را ارسال کنی.</p><div class="summary" id="orderSummary"></div><form class="form" onsubmit="submitPurchase(event)"><div class="checkout-row"><label>نام و نام خانوادگی<input id="buyName" required autocomplete="name" placeholder="مثلاً محمد امین"></label><label>شماره تماس<input id="buyPhone" required type="tel" inputmode="numeric" autocomplete="tel" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><button class="btn" type="submit">ارسال سفارش در تلگرام</button></form><div class="lead-status" id="purchaseStatus" aria-live="polite"></div></div></div></section>
+</div><div class="checkout" id="checkout"><h3>آماده‌سازی درخواست سفارش</h3><p style="color:var(--muted);line-height:1.9">مبلغ‌های نمایش‌داده‌شده قیمت شروع بسته‌های پایه‌اند؛ امکانات اضافی و پروژه‌های اختصاصی پس از بررسی و توافق جداگانه قیمت‌گذاری می‌شوند. بعد از ثبت درخواست، اگر درگاه در حالت واقعی فعال باشد دکمه پرداخت امن نمایش داده می‌شود. ثبت درخواست به‌تنهایی به معنی پرداخت نیست.</p><div class="summary" id="orderSummary"></div><form class="form" onsubmit="submitPurchase(event)"><div class="checkout-row"><label>نام و نام خانوادگی<input id="buyName" required autocomplete="name" placeholder="مثلاً محمد امین"></label><label>شماره تماس<input id="buyPhone" required type="tel" inputmode="numeric" autocomplete="tel" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><button class="btn" type="submit">ارسال سفارش در تلگرام</button></form><div class="lead-status" id="purchaseStatus" aria-live="polite"></div></div></div></section>
 
 <section id="about" class="band"><div class="wrap"><div class="section-head"><span class="eyebrow">درباره هیدرویار</span><h2>یک همراه برای ساخت و رشد محصول دیجیتال</h2><p>هیدرویار روی طراحی، توسعه و بهبود راهکارهای دیجیتال تمرکز دارد؛ از سایت و فروشگاه تا ابزارهای اختصاصی، اتوماسیون و هوش مصنوعی.</p></div></div></section>
 
@@ -309,6 +309,7 @@ document.addEventListener('click',function(e){const m=document.getElementById('s
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');if(m&&m.classList.contains('mobile-open')){m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','باز کردن منو')}}});
 document.querySelectorAll('#siteLinks a').forEach(a=>a.addEventListener('click',()=>{const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');m.classList.remove('mobile-open');b.textContent='☰';b.setAttribute('aria-expanded','false')}));
 const HYDROYAR_PROJECT_NOTIFY_ENDPOINT='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev/notify-project';
+const HYDROYAR_PAYMENT_API='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev';
 /* Public Turnstile site key. The secret key remains only in the Cloudflare Worker. */
 const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='0x4AAAAAAFhhGitfF1ERilUr';
 let hydroYarTurnstileLoader=null;
@@ -419,6 +420,78 @@ function openTelegramDraft(text,statusId){
  if(tab) tab.opener=null;
  else window.location.href=url;
 }
+async function showPaymentAction(statusId,ticketCode,productCode,name,mobile){
+ const status=document.getElementById(statusId);if(!status)return;
+ const old=status.querySelector('[data-hydroyar-payment]');
+ if(old)old.remove();
+ const section=document.createElement('div');section.dataset.hydroyarPayment='true';section.style.marginTop='12px';
+ const note=document.createElement('p');
+ note.style.margin='12px 0';note.style.lineHeight='1.9';note.style.fontSize='13px';
+ note.textContent='در حال بررسی وضعیت درگاه پرداخت…';
+ section.appendChild(note);status.appendChild(section);
+ try{
+  const configResponse=await fetch(HYDROYAR_PAYMENT_API+'/api/payment/status',{cache:'no-store'});
+  const config=await configResponse.json().catch(()=>({}));
+  if(!configResponse.ok||!config.ok)throw new Error('payment-config-unavailable');
+  if(!config.checkoutEnabled){
+   note.textContent='درخواست شما ثبت شد؛ اما شناسه پذیرنده زرین‌پال هنوز به‌صورت امن در سرور تنظیم نشده است. فعلاً پرداخت واقعی انجام ندهید.';
+   return;
+  }
+  if(!['site','ai'].includes(productCode)){
+   note.textContent='برای پروژه اختصاصی، مبلغ و شرایط باید جداگانه توافق شوند؛ پرداخت ثابت خودکار برای این نوع پروژه فعال نیست.';
+   return;
+  }
+  const quoteResponse=await fetch(HYDROYAR_PAYMENT_API+'/api/payment/quote-status',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({ticketCode,name,mobile})
+  });
+  const quote=await quoteResponse.json().catch(()=>({}));
+  if(!quoteResponse.ok||!quote.ok)throw new Error(String(quote.error||'payment-quote-unavailable'));
+  if(!quote.paymentReady){
+   note.textContent='درخواست شما ثبت شده؛ مبلغ نهایی هنوز توسط پشتیبانی تعیین نشده است. پس از ثبت مبلغ در تلگرام، دکمه «بررسی دوباره مبلغ» را بزن.';
+   const refresh=document.createElement('button');
+   refresh.type='button';refresh.className='btn secondary';refresh.style.width='100%';refresh.style.marginTop='8px';
+   refresh.textContent='بررسی دوباره مبلغ';
+   refresh.addEventListener('click',()=>showPaymentAction(statusId,ticketCode,productCode,name,mobile));
+   section.appendChild(refresh);
+   return;
+  }
+  if(quote.productCode!==productCode||!Number.isSafeInteger(Number(quote.amountToman))||Number(quote.amountToman)<=0)throw new Error('invalid-server-quote');
+  const amount=Number(quote.amountToman);
+  const productName=String(quote.productName||'خدمت هیدرویار');
+  note.textContent=(config.mode==='sandbox'?'حالت آزمایشی است؛ پرداخت واقعی انجام نمی‌شود. ':'مبلغ نهایی ثبت‌شده توسط پشتیبانی: ')+amount.toLocaleString('fa-IR')+' تومان — '+productName;
+  const button=document.createElement('button');
+  button.type='button';button.className='btn';button.style.width='100%';button.style.marginTop='8px';
+  button.textContent=(config.mode==='sandbox'?'آزمایش درگاه ':'پرداخت امن ')+amount.toLocaleString('fa-IR')+' تومان';
+  button.addEventListener('click',async()=>{
+   const confirmation=config.mode==='sandbox'
+    ?'درگاه در حالت آزمایشی است و پول واقعی کسر نمی‌شود. آزمایش پرداخت مبلغ '+amount.toLocaleString('fa-IR')+' تومان شروع شود؟'
+    :'مبلغ نهایی ثبت‌شده توسط پشتیبانی '+amount.toLocaleString('fa-IR')+' تومان است. اگر توافق نهایی ندارید، ادامه ندهید. به درگاه امن برویم؟';
+   if(!window.confirm(confirmation))return;
+   button.disabled=true;button.textContent='در حال ایجاد درخواست پرداخت…';
+   try{
+    const response=await fetch(HYDROYAR_PAYMENT_API+'/api/payment/request',{
+     method:'POST',headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({ticketCode,productCode,name,mobile})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.ok||!data.redirectUrl)throw new Error(String(data.message||data.error||'payment-request-failed'));
+    const target=new URL(data.redirectUrl);
+    if(!['www.zarinpal.com','sandbox.zarinpal.com'].includes(target.hostname)||!target.pathname.startsWith('/pg/StartPay/'))throw new Error('unsafe-gateway-url');
+    window.location.assign(target.href);
+   }catch(error){
+    console.warn('HydroYar payment request failed:',String(error?.message||error));
+    note.textContent='درخواست پرداخت ایجاد نشد. دوباره تلاش کن یا با پشتیبانی @Aminmvt تماس بگیر؛ تا وقتی به درگاه معتبر نرفته‌ای، پرداختی انجام نشده است.';
+    button.disabled=false;button.textContent='تلاش دوباره برای پرداخت';
+   }
+  });
+  section.appendChild(button);
+ }catch(error){
+  console.warn('HydroYar payment configuration could not be loaded:',String(error?.message||error));
+  note.textContent='درخواست پشتیبانی ثبت شد؛ وضعیت مبلغ یا درگاه فعلاً قابل دریافت نیست. این پیام به معنی پرداخت موفق نیست.';
+ }
+}
+
 async function submitPurchase(e){
  e.preventDefault();
  const summary=document.getElementById('orderSummary').innerText.replace(/\s+/g,' ').trim();
@@ -430,7 +503,7 @@ async function submitPurchase(e){
  if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){openTelegramDraft(message,'purchaseStatus');return;}
  try{
   const delivered=await notifyHydroYarProject('purchase',{name,mobile,product,price,need:'درخواست اولیه برای '+summary},'#checkout form');
-  if(delivered.ok){setNotificationSuccess('purchaseStatus',delivered.ticketCode);return;}
+  if(delivered.ok){setNotificationSuccess('purchaseStatus',delivered.ticketCode);await showPaymentAction('purchaseStatus',delivered.ticketCode,currentProduct,name,mobile);return;}
   if(delivered.reason==='network-error'){openTelegramDraft(message,'purchaseStatus');return;}
   setNotificationFailure('purchaseStatus',delivered.reason);
  }catch(error){

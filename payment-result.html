@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light">
+<title>نتیجه پرداخت | هیدرویار</title>
+<style>
+:root{font-family:Vazirmatn,Tahoma,Arial,sans-serif;color:#172033;background:#f4f7fb}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}
+main{width:min(100%,560px);background:#fff;border:1px solid #dce5f1;border-radius:24px;box-shadow:0 20px 60px rgba(19,42,79,.08);padding:clamp(24px,5vw,42px)}
+.brand{font-weight:900;font-size:20px;color:#155eef}
+.icon{width:54px;height:54px;border-radius:17px;background:#eef4ff;color:#155eef;display:grid;place-items:center;font-size:26px;margin:8px 0 20px}
+h1{font-size:25px;line-height:1.5;margin:0 0 12px}
+p{color:#526178;line-height:2;margin:8px 0}
+.summary{margin:20px 0;padding:16px;background:#f7f9fc;border:1px solid #e4eaf3;border-radius:14px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;flex-wrap:wrap}
+.label{color:#667085}.value{font-weight:800;overflow-wrap:anywhere}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:12px 18px;border-radius:12px;font-weight:800}
+.primary{background:#155eef;color:#fff}.secondary{border:1px solid #d5dfed;color:#344054;background:#fff}
+.small{font-size:12px;color:#7a8799;margin-top:20px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">هیدرویار</div>
+  <div class="icon" id="stateIcon" aria-hidden="true">…</div>
+  <h1 id="stateTitle">در حال بررسی نتیجه پرداخت…</h1>
+  <p id="stateMessage" role="status" aria-live="polite">نتیجه از سرور هیدرویار استعلام می‌شود. صرفِ بازگشت از درگاه به معنی پرداخت موفق نیست.</p>
+  <div class="summary" id="paymentSummary" hidden>
+    <div class="row"><span class="label">خدمت</span><span class="value" id="productName">—</span></div>
+    <div class="row"><span class="label">مبلغ</span><span class="value" id="amount">—</span></div>
+    <div class="row"><span class="label">کد درخواست</span><span class="value" id="ticketCode">—</span></div>
+    <div class="row" id="referenceRow" hidden><span class="label">شماره مرجع</span><span class="value" id="referenceId">—</span></div>
+    <div class="row"><span class="label">وضعیت</span><span class="value" id="paymentStatus">—</span></div>
+  </div>
+  <div class="actions">
+    <a class="primary" href="https://aminmvt.ir/">بازگشت به هیدرویار</a>
+    <a class="secondary" href="https://t.me/Aminmvt" target="_blank" rel="noopener noreferrer">ارتباط با پشتیبانی</a>
+  </div>
+  <p class="small">برای امنیت، وضعیت پرداخت فقط پس از تأیید سمت سرور نمایش داده می‌شود. اگر وضعیت نامشخص است، دوباره پرداخت نکن و با پشتیبانی تماس بگیر.</p>
+</main>
+<script>
+(function(){
+ const API='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev';
+ const q=new URLSearchParams(location.search);
+ const orderId=String(q.get('orderId')||'').trim();
+ const el=id=>document.getElementById(id);
+ const faNumber=n=>Number(n||0).toLocaleString('fa-IR');
+ function render(title,message,icon){
+  el('stateTitle').textContent=title;
+  el('stateMessage').textContent=message;
+  el('stateIcon').textContent=icon;
+ }
+ async function run(){
+  if(!/^[0-9a-f-]{36}$/i.test(orderId)){
+   render('شناسه پرداخت معتبر نیست','این آدرس نتیجه، کد پرداخت معتبری ندارد. از پشتیبانی کمک بگیر؛ این صفحه هیچ پرداختی را تأیید نمی‌کند.','!');
+   return;
+  }
+  try{
+   const response=await fetch(API+'/api/payment/status?orderId='+encodeURIComponent(orderId),{cache:'no-store'});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.ok||!data.payment)throw new Error('status-unavailable');
+   const p=data.payment;
+   el('paymentSummary').hidden=false;
+   el('productName').textContent=String(p.productName||'—');
+   el('amount').textContent=faNumber(p.amountToman)+' تومان';
+   el('ticketCode').textContent=String(p.ticketCode||'—');
+   el('paymentStatus').textContent=String(p.status||'نامشخص');
+   if(p.referenceId){el('referenceRow').hidden=false;el('referenceId').textContent=String(p.referenceId);}
+   if(p.status==='paid'&&p.mode==='sandbox'){
+    render('تراکنش آزمایشی تأیید شد','این فقط آزمایش درگاه است و به معنی پرداخت واقعی یا تسویه سفارش نیست. برای دریافت وجه واقعی، حالت production باید پس از تأیید حساب پذیرنده فعال شود.','✓');
+    el('paymentStatus').textContent='آزمایشی؛ بدون پرداخت واقعی';
+   }else if(p.status==='paid'){
+    render('پرداخت تأیید شد','درگاه نتیجه را به سرور هیدرویار اعلام کرده و وضعیت پرداخت ثبت شده است. کد درخواست را برای پیگیری نگه دار.','✓');
+    el('paymentStatus').textContent='پرداخت موفق';
+   }else if(p.status==='pending'||p.status==='creating'){
+    render('پرداخت هنوز نهایی نشده','سرور هنوز تأیید نهایی را ثبت نکرده است. چند لحظه بعد دوباره این صفحه را تازه‌سازی کن؛ تا مشخص شدن وضعیت دوباره پرداخت نکن.','…');
+    el('paymentStatus').textContent='در انتظار تأیید';
+   }else if(p.status==='cancelled'){
+    render('پرداخت کامل نشد','پرداخت لغو شده یا درگاه آن را تأیید نکرده است. اگر مبلغی از حسابت کسر شده، قبل از اقدام دوباره با پشتیبانی تماس بگیر.','!');
+    el('paymentStatus').textContent='لغو شده';
+   }else{
+    render('پرداخت تأیید نشد','سرور پرداخت موفقی ثبت نکرده است. اگر مبلغی کسر شده، کد درخواست و رسید بانک را برای پشتیبانی بفرست و تا بررسی، دوباره پرداخت نکن.','!');
+    el('paymentStatus').textContent='ناموفق یا نیازمند بررسی';
+   }
+  }catch(error){
+   console.warn('HydroYar payment status lookup failed');
+   render('وضعیت پرداخت دریافت نشد','اتصال به سامانه بررسی وضعیت موقتاً برقرار نشد. این به معنی موفق یا ناموفق بودن پرداخت نیست؛ دوباره این صفحه را تازه‌سازی کن یا با پشتیبانی تماس بگیر.','!');
+  }
+ }
+ run();
+})();
+</script>
+</body>
+</html>
