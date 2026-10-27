@@ -4,10 +4,11 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 
-const SITE = "https://mohammadaminmavaddat1-stack.github.io/hydroyar-site/";
+const SITE = "https://aminmvt.ir/";
 const PROGRESS = new URL("progress.html", SITE).href;
 const WORKER = "https://hydroyar-chat.mohammadaminmavaddat1.workers.dev";
-const ORIGIN = "https://mohammadaminmavaddat1-stack.github.io";
+const ORIGIN = "https://aminmvt.ir";
+const LEGACY_ORIGIN = "https://mohammadaminmavaddat1-stack.github.io";
 const CURL = process.platform === "win32" ? "curl.exe" : "curl";
 const results = [];
 
@@ -104,7 +105,7 @@ await check("worker health confirms the private ticket store and Telegram agent"
   assert.equal(data.projectNotifications?.ticketStoreConfigured, true, "private ticket KV binding missing");
   assert.equal(data.projectNotifications?.privateTelegramAgentConfigured, true, "Telegram webhook secret missing");
 });
-await check("worker CORS preflight permits the site origin", async () => {
+await check("worker CORS preflight permits custom domain", async () => {
   const r = await request(WORKER, {
     method: "OPTIONS",
     headers: { Origin: ORIGIN, "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type" },
@@ -112,6 +113,16 @@ await check("worker CORS preflight permits the site origin", async () => {
   });
   assert.equal(r.status, 204);
   assert.equal(r.headers.get("access-control-allow-origin"), ORIGIN);
+});
+
+await check("worker CORS preflight preserves legacy GitHub Pages origin", async () => {
+  const r = await request(WORKER, {
+    method: "OPTIONS",
+    headers: { Origin: LEGACY_ORIGIN, "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type" },
+    timeoutMs: 15000
+  });
+  assert.equal(r.status, 204);
+  assert.equal(r.headers.get("access-control-allow-origin"), LEGACY_ORIGIN);
 });
 await check("worker returns a live AI answer from the ten-agent team", async () => {
   const r = await request(WORKER, {
