@@ -200,6 +200,18 @@ a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 .hydroyar-turnstile-feedback{margin:6px 0 0;color:#475569;font-size:12px;line-height:1.8;}
 body.dark .hydroyar-captcha-wrap{background:#111827;border-color:#334155;}
 body.dark .hydroyar-turnstile-feedback{color:#cbd5e1;}
+.auth-extra-btn{display:block;width:100%;margin:8px 0 0;padding:8px;border:0;background:transparent;color:#2563eb;font:inherit;font-size:12px;text-decoration:underline;cursor:pointer;}
+.auth-session-panel{margin:14px 0;padding:16px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;}
+.auth-session-panel p{overflow-wrap:anywhere;margin:0 0 12px;font-size:13px;line-height:1.8;}
+.auth-session-panel button{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:10px;padding:10px 14px;cursor:pointer;font:inherit;font-size:13px;font-weight:800;}
+.auth-status[data-kind="error"]{background:#fef2f2;color:#991b1b;}
+.auth-status[data-kind="success"]{background:#f0fdf4;color:#166534;}
+body.dark .auth-extra-btn{color:#93c5fd;}
+body.dark .auth-session-panel{background:#10244b;border-color:#334155;}
+body.dark .auth-session-panel button{background:#111827;color:#e5e7eb;border-color:#334155;}
+body.dark .auth-status[data-kind="error"]{background:#450a0a;color:#fecaca;}
+body.dark .auth-status[data-kind="success"]{background:#052e16;color:#bbf7d0;}
+.auth-modal [hidden]{display:none!important;}
 </style>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 </head>
@@ -220,7 +232,7 @@ body.dark .hydroyar-turnstile-feedback{color:#cbd5e1;}
 <div class="top"><div class="wrap"><span>راهکارهای دیجیتال برای کسب‌وکارهای رو‌به‌رشد</span><a href="https://t.me/Aminmvt" target="_blank">مشاوره رایگان ←</a></div></div>
 <nav class="nav"><div class="wrap navin"><a class="logo" href="#" aria-label="هیدرویار"><span>هیدرو<i>یار</i></span></a><button class="mobile-menu-btn" id="mobileMenuBtn" type="button" onclick="toggleMobileMenu()" aria-label="باز کردن منو" aria-expanded="false">☰</button><div class="links" id="siteLinks"><a href="#services">خدمات</a><a href="#categories">دسته‌بندی‌ها</a><a href="#templates">قالب‌های آماده</a><a href="#about">درباره ما</a><a href="#portfolio">نمونه‌کارها</a><a href="#process">مراحل همکاری</a><a href="#prices">تعرفه‌ها</a><a href="#shop">فروشگاه</a><a href="#faq">سؤالات متداول</a></div><button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="تغییر حالت روشن و تاریک">🌙</button><a class="navbtn" href="#order">ثبت سفارش</a></div></nav>
 
-<header class="hero"><div class="wrap hero-grid"><div><span class="eyebrow"><span class="dot"></span> طراحی حرفه‌ای • هوش مصنوعی • اتوماسیون</span><h1>کسب‌وکار شما،<br><span>یک قدم جلوتر</span></h1><p>هیدرویار به کسب‌وکارها کمک می‌کند سایت حرفه‌ای، فروشگاه اینترنتی، ابزارهای اختصاصی و راهکارهای هوشمند خودشان را با یک تجربه مدرن و قابل توسعه راه‌اندازی کنند.</p><div class="actions"><a class="btn" href="#order">مشاوره و شروع پروژه</a><a class="btn light" href="#portfolio">مشاهده نمونه‌کارها</a><button class="btn light auth-hero-btn" type="button" onclick="openAuth()">ورود / ثبت‌نام</button></div><div class="trust"><div><b>۲۴/۷</b>پاسخ‌گویی</div><div><b>۱۰۰٪</b>اختصاصی</div><div><b>سریع</b>تحویل پروژه</div></div></div><div class="hero-art"><div class="glass dashboard"><div class="dashbar"><strong>پنل کسب‌وکار</strong><span class="mini"></span></div><div class="chart"><div class="bars"><i style="height:45%"></i><i style="height:62%"></i><i style="height:55%"></i><i style="height:78%"></i><i style="height:70%"></i><i style="height:94%"></i></div></div><div style="display:flex;gap:10px;margin-top:18px"><span class="mini" style="width:45%"></span><span class="mini" style="width:25%"></span></div></div><div class="glass float-card"><strong>رشد واقعی</strong><small>تجربه بهتر برای مشتریان</small><div class="check">● طراحی حرفه‌ای</div></div><div class="glass float-card2"><b>✓ آماده همکاری</b><small style="display:block;margin-top:10px;line-height:2">پروژه شما<br>آماده شروع است</small></div></div></div></header>
+<header class="hero"><div class="wrap hero-grid"><div><span class="eyebrow"><span class="dot"></span> طراحی حرفه‌ای • هوش مصنوعی • اتوماسیون</span><h1>کسب‌وکار شما،<br><span>یک قدم جلوتر</span></h1><p>هیدرویار به کسب‌وکارها کمک می‌کند سایت حرفه‌ای، فروشگاه اینترنتی، ابزارهای اختصاصی و راهکارهای هوشمند خودشان را با یک تجربه مدرن و قابل توسعه راه‌اندازی کنند.</p><div class="actions"><a class="btn" href="#order">مشاوره و شروع پروژه</a><a class="btn light" href="#portfolio">مشاهده نمونه‌کارها</a><button class="btn light auth-hero-btn" id="authHeroBtn" type="button" onclick="openAuth()">ورود / ثبت‌نام</button></div><div class="trust"><div><b>۲۴/۷</b>پاسخ‌گویی</div><div><b>۱۰۰٪</b>اختصاصی</div><div><b>سریع</b>تحویل پروژه</div></div></div><div class="hero-art"><div class="glass dashboard"><div class="dashbar"><strong>پنل کسب‌وکار</strong><span class="mini"></span></div><div class="chart"><div class="bars"><i style="height:45%"></i><i style="height:62%"></i><i style="height:55%"></i><i style="height:78%"></i><i style="height:70%"></i><i style="height:94%"></i></div></div><div style="display:flex;gap:10px;margin-top:18px"><span class="mini" style="width:45%"></span><span class="mini" style="width:25%"></span></div></div><div class="glass float-card"><strong>رشد واقعی</strong><small>تجربه بهتر برای مشتریان</small><div class="check">● طراحی حرفه‌ای</div></div><div class="glass float-card2"><b>✓ آماده همکاری</b><small style="display:block;margin-top:10px;line-height:2">پروژه شما<br>آماده شروع است</small></div></div></div></header>
 
 <section id="services"><div class="wrap"><div class="section-head"><span class="eyebrow">خدمات هیدرویار</span><h2>هر چیزی که برای حضور حرفه‌ای آنلاین لازم دارید</h2><p>از طراحی ظاهر تا پیاده‌سازی امکانات و اتصال سرویس‌های هوشمند.</p></div><div class="features">
 <div class="feature"><div class="ico">🌐</div><h3>طراحی سایت حرفه‌ای</h3><p>سایت شرکتی، شخصی، خدماتی و لندینگ با طراحی مدرن، سریع و واکنش‌گرا.</p><a class="service-detail-link" href="./service-web-design.html">جزئیات این خدمت ←</a></div>
@@ -300,7 +312,7 @@ body.dark .hydroyar-turnstile-feedback{color:#cbd5e1;}
 
 <footer><div class="wrap"><div class="foot"><div><h3>هیدرویار</h3><p>طراحی سایت، برنامه‌نویسی، هوش مصنوعی و راهکارهای دیجیتال اختصاصی.</p></div><div><h3>خدمات</h3><p><a href="#services">طراحی سایت</a></p><p><a href="#services">فروشگاه اینترنتی</a></p><p><a href="#services">هوش مصنوعی</a></p></div><div><h3>دسته‌بندی‌ها</h3><p><a href="#categories">فروشگاه و آنلاین‌شاپ</a></p><p><a href="#categories">املاک</a></p><p><a href="#categories">پزشکی و کلینیک</a></p><p><a href="#categories">رستوران و کافه</a></p><p><a href="#categories">خدمات و شرکت‌ها</a></p></div><div><h3>دسترسی سریع</h3><p><a href="#portfolio">نمونه‌کارها</a></p><p><a href="#prices">تعرفه‌ها</a></p><p><a href="#faq">سؤالات متداول</a></p><p><a href="#about">درباره هیدرویار</a></p></div><div><h3>ارتباط</h3><p><a href="https://wa.me/989166766843" target="_blank" rel="noopener">مشاوره در واتساپ</a></p><p><a href="https://t.me/Aminmvt" target="_blank" rel="noopener">مشاوره در تلگرام</a></p><p>پاسخ‌گویی آنلاین</p></div></div><div class="copy">© ۱۴۰۵ هیدرویار — تمامی حقوق محفوظ است. <span aria-label="پیوندهای حقوقی">| <a href="./privacy.html">حریم خصوصی</a> | <a href="./terms.html">شرایط استفاده</a></span></div></div></footer>
 
-<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
+<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><button type="button" class="auth-extra-btn" id="authForgotPassword" onclick="sendAuthPasswordReset()">فراموشی رمز عبور؟</button><div class="auth-session-panel" id="authSessionPanel" hidden><p id="authSessionUser"></p><button type="button" id="authLogoutBtn" onclick="signOutHydroyar()">خروج از حساب</button></div><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
 <div class="chat"><button class="btn chatbtn" onclick="toggleChat()">🤖</button><div class="chatbox" id="chatbox"><div class="chathead">دستیار هیدرویار</div><div class="messages" id="messages"><div class="msg">سلام 👋 درباره خدمات، قیمت یا سفارش سؤال کن.</div></div><div class="chatinput"><input id="chatinput" placeholder="سؤالت را بنویس..." onkeydown="if(event.key==='Enter')chat()"><button onclick="chat()">ارسال</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -635,15 +647,266 @@ function recommendTemplate(e){
  out.appendChild(note);
  const link=document.createElement('a');link.className='btn';link.href='https://t.me/Aminmvt';link.target='_blank';link.rel='noopener noreferrer';link.textContent='ارسال درخواست مشاوره در تلگرام';out.appendChild(link);
 }function openWorkDetails(button){const card=button.closest('.work');if(!card)return;const title=card.querySelector('h3')?.textContent||'نمونه مفهومی';const desc=card.querySelector('.workbody p')?.textContent||'نمونه نمایشی';const modal=document.getElementById('workModal');document.getElementById('workModalTitle').textContent=title;document.getElementById('workModalDescription').textContent=desc;const list=document.getElementById('workModalFeatures');list.replaceChildren();const items=title.includes('فروشگاه')?['ساختار دسته‌بندی و صفحه محصول','طراحی واکنش‌گرا','مسیر سفارش و تماس']:title.includes('شرکتی')?['معرفی خدمات و برند','صفحات اطلاعاتی و راه تماس','دعوت به ثبت درخواست']:title.includes('رستوران')?['نمایش منو و اطلاعات مجموعه','مسیر تماس و سفارش','نمایش مناسب موبایل']:title.includes('املاک')?['ساختار نمایش فایل‌ها','فیلتر و جست‌وجوی قابل توسعه','فرم درخواست مشاوره']:title.includes('رزومه')?['معرفی و مهارت‌ها','سوابق و نمونه‌کارها','راه ارتباطی حرفه‌ای']:['داشبورد و ساختار پنل','فرم ثبت درخواست','امکان توسعه بر اساس نیاز'];items.forEach(t=>{const li=document.createElement('li');li.textContent=t;list.appendChild(li)});modal.classList.add('open');document.body.style.overflow='hidden'}function closeWorkDetails(){const m=document.getElementById('workModal');if(m)m.classList.remove('open');if(!document.getElementById('authOverlay')?.classList.contains('open'))document.body.style.overflow=''}document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWorkDetails()});
-let authMode="login",authMethod="email";
-// Authentication: email/password via Supabase. Phone OTP is not enabled in project settings.
-function authText(id, text){const el=document.getElementById(id);if(el)el.textContent=text;}
-function authStatus(text, kind='info'){const el=document.getElementById('authStatus');if(!el)return;el.textContent=text;el.dataset.kind=kind;el.setAttribute('aria-live','polite');}
-function setAuthMode(mode){authMode=mode;const reg=mode==='register';document.getElementById('authLoginTab')?.classList.toggle('active',!reg);document.getElementById('authRegisterTab')?.classList.toggle('active',reg);authText('authTitle',reg? '\u0627\u06cc\u062c\u0627\u062f \u062d\u0633\u0627\u0628 \u06a9\u0627\u0631\u0628\u0631\u06cc':'\u0648\u0631\u0648\u062f \u0628\u0647 \u062d\u0633\u0627\u0628 \u06a9\u0627\u0631\u0628\u0631\u06cc');const name=document.getElementById('authName');document.getElementById('authNameWrap').hidden=!reg;name.required=reg;const pw=document.getElementById('authPassword');pw.autocomplete=reg?'new-password':'current-password';document.getElementById('authSubmit').textContent=reg?'\u062b\u0628\u062a\u200c\u0646\u0627\u0645':'\u0648\u0631\u0648\u062f';authStatus(reg?'\u0627\u06cc\u0645\u06cc\u0644 \u0648 \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f. \u0628\u0639\u062f \u0627\u0632 \u062b\u0628\u062a\u200c\u0646\u0627\u0645 \u0645\u0645\u06a9\u0646 \u0627\u0633\u062a \u0644\u0627\u0632\u0645 \u0628\u0627\u0634\u062f \u0627\u06cc\u0645\u06cc\u0644\u062a\u0627\u0646 \u0631\u0627 \u062a\u0623\u06cc\u06cc\u062f \u06a9\u0646\u06cc\u062f.':'\u0627\u06cc\u0645\u06cc\u0644 \u0648 \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u062e\u0648\u062f \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f.');}
-function setAuthMethod(method){authMethod='email';const input=document.getElementById('authIdentity');if(input){input.type='email';input.autocomplete='email';input.placeholder='you@example.com';input.maxLength=254;input.required=true;}document.getElementById('authPasswordWrap').hidden=false;document.getElementById('authPassword').required=true;document.getElementById('authIdentityLabel').firstChild.textContent='\u0627\u06cc\u0645\u06cc\u0644';setAuthMode(authMode);}
-function openAuth(){authText('authLoginTab','\u0648\u0631\u0648\u062f');authText('authRegisterTab','\u062b\u0628\u062a\u200c\u0646\u0627\u0645');document.getElementById('authNameWrap').firstChild.textContent='\u0646\u0627\u0645 \u0648 \u0646\u0627\u0645 \u062e\u0627\u0646\u0648\u0627\u062f\u06af\u06cc';document.getElementById('authName').placeholder='\u0646\u0627\u0645 \u0634\u0645\u0627';document.getElementById('authIdentity').placeholder='you@example.com';document.querySelector('.auth-sub').textContent='\u0628\u0631\u0627\u06cc \u0648\u0631\u0648\u062f \u06cc\u0627 \u0627\u06cc\u062c\u0627\u062f \u062d\u0633\u0627\u0628\u060c \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u062e\u0648\u062f \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f.';document.querySelector('.auth-privacy').textContent='\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0634\u0645\u0627 \u0628\u0631\u0627\u06cc \u0648\u0631\u0648\u062f \u0648 \u0627\u06cc\u062c\u0627\u062f \u062d\u0633\u0627\u0628 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0645\u06cc\u200c\u0634\u0648\u062f. \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u062e\u0648\u062f \u0631\u0627 \u0628\u0627 \u06a9\u0633\u06cc \u0628\u0647 \u0627\u0634\u062a\u0631\u0627\u06a9 \u0646\u06af\u0630\u0627\u0631\u06cc\u062f.';const o=document.getElementById('authOverlay');o.classList.add('open');document.body.style.overflow='hidden';setAuthMode('login');setAuthMethod('email');authStatus('\u0628\u0631\u0627\u06cc \u0627\u062f\u0627\u0645\u0647\u060c \u0627\u06cc\u0645\u06cc\u0644 \u0648 \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f.');}
-function closeAuth(){document.getElementById('authOverlay').classList.remove('open');document.body.style.overflow='';}
-async function submitAuth(event){event.preventDefault();const form=document.getElementById('authForm');if(!form.reportValidity())return;const btn=document.getElementById('authSubmit');const identity=document.getElementById('authIdentity').value.trim();const password=document.getElementById('authPassword').value;const name=document.getElementById('authName').value.trim();if(!hydroyarSupabase){authStatus('\u0627\u062a\u0635\u0627\u0644 \u0628\u0647 \u0633\u0631\u0648\u06cc\u0633 \u062d\u0633\u0627\u0628 \u0641\u0639\u0627\u0644 \u0646\u06cc\u0633\u062a. \u062a\u0646\u0638\u06cc\u0645\u0627\u062a \u0631\u0627 \u0628\u0631\u0631\u0633\u06cc \u06a9\u0646\u06cc\u062f.','error');return;}btn.disabled=true;btn.setAttribute('aria-busy','true');btn.textContent='\u0644\u0637\u0641\u0627\u064b \u0635\u0628\u0631 \u06a9\u0646\u06cc\u062f...';authStatus('\u062f\u0631 \u062d\u0627\u0644 \u0627\u0631\u062a\u0628\u0627\u0637...');try{let result;if(authMode==='register'){result=await hydroyarSupabase.auth.signUp({email:identity,password,options:{data:{full_name:name},emailRedirectTo:window.location.href.split('#')[0]}});if(result.error)throw result.error;if(result.data.session){authStatus('\u062b\u0628\u062a\u200c\u0646\u0627\u0645 \u0645\u0648\u0641\u0642 \u0628\u0648\u062f. \u062d\u0633\u0627\u0628 \u0634\u0645\u0627 \u0648\u0627\u0631\u062f \u0634\u062f.','success');}else{authStatus('\u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062b\u0628\u062a\u200c\u0646\u0627\u0645 \u0627\u0646\u062c\u0627\u0645 \u0634\u062f. \u0627\u06cc\u0645\u06cc\u0644\u062a\u0627\u0646 \u0631\u0627 \u0628\u0631\u0627\u06cc \u062a\u0623\u06cc\u06cc\u062f \u0686\u06a9 \u06a9\u0646\u06cc\u062f.','success');}}else{result=await hydroyarSupabase.auth.signInWithPassword({email:identity,password});if(result.error)throw result.error;authStatus('\u0648\u0631\u0648\u062f \u0645\u0648\u0641\u0642 \u0628\u0648\u062f. \u062e\u0648\u0634 \u0622\u0645\u062f\u06cc\u062f.','success');}if(result.data?.user){const n=result.data.user.user_metadata?.full_name;const email=result.data.user.email;const status=document.getElementById('authStatus');if(status){status.textContent+=' '+(n||email||'');}}}catch(err){const msg=String(err?.message||'');let friendly='\u0627\u0646\u062c\u0627\u0645 \u0639\u0645\u0644\u06cc\u0627\u062a \u0645\u0648\u0641\u0642 \u0646\u0634\u062f. \u0645\u062c\u062f\u062f\u0627\u064b \u062a\u0644\u0627\u0634 \u06a9\u0646\u06cc\u062f.';if(/invalid login credentials/i.test(msg))friendly='\u0627\u06cc\u0645\u06cc\u0644 \u06cc\u0627 \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u0627\u0634\u062a\u0628\u0627\u0647 \u0627\u0633\u062a.';else if(/already registered|user already exists/i.test(msg))friendly='\u0627\u06cc\u0646 \u0627\u06cc\u0645\u06cc\u0644 \u0642\u0628\u0644\u0627\u064b \u062b\u0628\u062a \u0634\u062f\u0647. \u0648\u0627\u0631\u062f \u0634\u0648\u06cc\u062f.';else if(/password should be at least|weak password/i.test(msg))friendly='\u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u0636\u0639\u06cc\u0641 \u0627\u0633\u062a. \u06cc\u06a9 \u0631\u0645\u0632 \u0642\u0648\u06cc\u200c\u062a\u0631 \u0628\u0627 \u062d\u062f\u0627\u0642\u0644 ۸ \u06a9\u0627\u0631\u0627\u06a9\u062a\u0631 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f.';else if(/email not confirmed/i.test(msg))friendly='\u0647\u0646\u0648\u0632 \u0627\u06cc\u0645\u06cc\u0644 \u0634\u0645\u0627 \u062a\u0623\u06cc\u06cc\u062f \u0646\u0634\u062f\u0647. \u0644\u06cc\u0646\u06a9 \u062a\u0623\u06cc\u06cc\u062f \u0631\u0627 \u0627\u0632 \u0627\u06cc\u0645\u06cc\u0644\u062a\u0627\u0646 \u0628\u0627\u0632 \u06a9\u0646\u06cc\u062f.';else if(/fetch|network|failed to fetch/i.test(msg))friendly='\u0627\u062a\u0635\u0627\u0644 \u0628\u0647 \u0633\u0631\u0648\u06cc\u0633 \u0628\u0631\u0642\u0631\u0627\u0631 \u0646\u0634\u062f. \u0627\u06cc\u0646\u062a\u0631\u0646\u062a \u0648 \u062a\u0646\u0638\u06cc\u0645\u0627\u062a \u0633\u0631\u0648\u06cc\u0633 \u0631\u0627 \u0628\u0631\u0631\u0633\u06cc \u06a9\u0646\u06cc\u062f.';authStatus(friendly,'error');console.error('HydroYar auth error:',msg);}finally{btn.disabled=false;btn.removeAttribute('aria-busy');btn.textContent=authMode==='register'?'\u062b\u0628\u062a\u200c\u0646\u0627\u0645':'\u0648\u0631\u0648\u062f';}}
+let authMode='login';
+let authCurrentUser=null;
+let authRecoveryActive=false;
+
+function authStatus(message,kind='info'){
+ const el=document.getElementById('authStatus');
+ if(!el)return;
+ el.textContent=message;
+ el.dataset.kind=kind;
+ el.setAttribute('aria-live','polite');
+}
+function authText(id,text){
+ const el=document.getElementById(id);
+ if(el)el.textContent=text;
+}
+function getAuthRedirectUrl(){
+ return window.location.origin+(window.location.pathname||'/');
+}
+function updateAuthButton(user){
+ const btn=document.getElementById('authHeroBtn');
+ if(!btn)return;
+ btn.textContent=user?'حساب کاربری':'ورود / ثبت‌نام';
+ btn.setAttribute('aria-label',user?'نمایش حساب کاربری':'ورود یا ثبت‌نام');
+}
+function setAuthMode(mode){
+ if(authRecoveryActive){showAuthRecoveryForm();return;}
+ if(authCurrentUser){renderAuthSession(authCurrentUser);return;}
+ authMode=mode==='register'?'register':'login';
+ const reg=authMode==='register';
+ const tabs=document.querySelector('.auth-tabs');
+ const form=document.getElementById('authForm');
+ const nameWrap=document.getElementById('authNameWrap');
+ const nameInput=document.getElementById('authName');
+ const identityLabel=document.getElementById('authIdentityLabel');
+ const identity=document.getElementById('authIdentity');
+ const passwordWrap=document.getElementById('authPasswordWrap');
+ const password=document.getElementById('authPassword');
+ const forgot=document.getElementById('authForgotPassword');
+ const session=document.getElementById('authSessionPanel');
+ if(tabs)tabs.hidden=false;
+ if(form)form.hidden=false;
+ if(nameWrap)nameWrap.hidden=!reg;
+ if(nameInput){nameInput.required=reg;nameInput.autocomplete='name';}
+ if(identityLabel){identityLabel.hidden=false;identityLabel.firstChild.textContent='ایمیل';}
+ if(identity){identity.required=true;identity.type='email';identity.autocomplete='email';identity.placeholder='you@example.com';identity.maxLength=254;}
+ if(passwordWrap){passwordWrap.hidden=false;passwordWrap.firstChild.textContent='رمز عبور';}
+ if(password){password.required=true;password.autocomplete=reg?'new-password':'current-password';password.placeholder='حداقل ۸ کاراکتر';}
+ if(forgot)forgot.hidden=reg;
+ if(session)session.hidden=true;
+ authText('authTitle',reg?'ایجاد حساب کاربری':'ورود به حساب کاربری');
+ const sub=document.querySelector('.auth-sub');
+ if(sub)sub.textContent=reg?'برای ایجاد حساب، ایمیل معتبر و یک رمز عبور قوی وارد کن.':'برای ورود، ایمیل و رمز عبورت را وارد کن.';
+ const loginTab=document.getElementById('authLoginTab');
+ const registerTab=document.getElementById('authRegisterTab');
+ if(loginTab)loginTab.classList.toggle('active',!reg);
+ if(registerTab)registerTab.classList.toggle('active',reg);
+ const btn=document.getElementById('authSubmit');
+ if(btn)btn.textContent=reg?'ثبت‌نام':'ورود';
+ authStatus(reg?'بعد از ثبت‌نام ممکن است برای فعال‌سازی حساب، ایمیلت را تأیید کنی.':'ایمیل و رمز عبور حساب هیدرویار را وارد کن.');
+}
+function renderAuthSession(user){
+ if(!user)return setAuthMode('login');
+ authCurrentUser=user;
+ authRecoveryActive=false;
+ authMode='account';
+ updateAuthButton(user);
+ const tabs=document.querySelector('.auth-tabs');
+ const form=document.getElementById('authForm');
+ const forgot=document.getElementById('authForgotPassword');
+ const panel=document.getElementById('authSessionPanel');
+ if(tabs)tabs.hidden=true;
+ if(form)form.hidden=true;
+ if(forgot)forgot.hidden=true;
+ if(panel)panel.hidden=false;
+ const fullName=String(user.user_metadata?.full_name||'').trim();
+ const identity=String(user.email||user.phone||'');
+ const display=fullName?fullName+(identity?' — '+identity:''):identity||'حساب کاربری شما';
+ authText('authSessionUser','وارد شده‌ای: '+display);
+ authText('authTitle','حساب کاربری');
+ const sub=document.querySelector('.auth-sub');
+ if(sub)sub.textContent='نشست کاربری از طریق سرویس امن احراز هویت مدیریت می‌شود.';
+ authStatus('ورود به حساب برقرار است. می‌توانی از اینجا خارج شوی.','success');
+}
+function showAuthRecoveryForm(){
+ authRecoveryActive=true;
+ authMode='recovery';
+ const overlay=document.getElementById('authOverlay');
+ if(overlay)overlay.classList.add('open');
+ document.body.style.overflow='hidden';
+ const tabs=document.querySelector('.auth-tabs');
+ const form=document.getElementById('authForm');
+ const nameWrap=document.getElementById('authNameWrap');
+ const nameInput=document.getElementById('authName');
+ const identityLabel=document.getElementById('authIdentityLabel');
+ const identity=document.getElementById('authIdentity');
+ const passwordWrap=document.getElementById('authPasswordWrap');
+ const password=document.getElementById('authPassword');
+ const forgot=document.getElementById('authForgotPassword');
+ const panel=document.getElementById('authSessionPanel');
+ if(tabs)tabs.hidden=true;
+ if(form)form.hidden=false;
+ if(nameWrap)nameWrap.hidden=true;
+ if(nameInput)nameInput.required=false;
+ if(identityLabel)identityLabel.hidden=true;
+ if(identity)identity.required=false;
+ if(passwordWrap){passwordWrap.hidden=false;passwordWrap.firstChild.textContent='رمز عبور جدید';}
+ if(password){password.required=true;password.autocomplete='new-password';password.placeholder='رمز جدید؛ حداقل ۸ کاراکتر';password.value='';}
+ if(forgot)forgot.hidden=true;
+ if(panel)panel.hidden=true;
+ authText('authTitle','تغییر رمز عبور');
+ const sub=document.querySelector('.auth-sub');
+ if(sub)sub.textContent='رمز عبور جدیدی انتخاب کن تا دسترسی حسابت بازیابی شود.';
+ const btn=document.getElementById('authSubmit');
+ if(btn)btn.textContent='ثبت رمز جدید';
+ authStatus('لینک بازیابی معتبر است. رمز عبور جدید را وارد کن.');
+}
+function openAuth(){
+ const overlay=document.getElementById('authOverlay');
+ if(overlay)overlay.classList.add('open');
+ document.body.style.overflow='hidden';
+ if(authRecoveryActive){showAuthRecoveryForm();return;}
+ if(authCurrentUser){renderAuthSession(authCurrentUser);return;}
+ setAuthMode('login');
+}
+function closeAuth(){
+ const overlay=document.getElementById('authOverlay');
+ if(overlay)overlay.classList.remove('open');
+ document.body.style.overflow='';
+}
+async function sendAuthPasswordReset(){
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست؛ تنظیمات سایت را بررسی کن.','error');return;}
+ const input=document.getElementById('authIdentity');
+ const button=document.getElementById('authForgotPassword');
+ const email=String(input?.value||'').trim();
+ if(!email||!input.checkValidity()){input?.reportValidity();input?.focus();return;}
+ if(button){button.disabled=true;button.textContent='در حال ارسال لینک…';}
+ try{
+  const {error}=await hydroyarSupabase.auth.resetPasswordForEmail(email,{redirectTo:getAuthRedirectUrl()});
+  if(error)throw error;
+  authStatus('اگر این ایمیل به حسابی تعلق داشته باشد، لینک بازیابی ارسال می‌شود. صندوق ورودی و پوشهٔ هرزنامه را بررسی کن.','success');
+ }catch(error){
+  const message=String(error?.message||'');
+  const friendly=/redirect_to_not_allowed|redirect.*not allowed/i.test(message)
+   ?'آدرس بازگشت در تنظیمات Supabase مجاز نیست؛ باید دامنهٔ aminmvt.ir در Authentication → URL Configuration مجاز شود.'
+   :/rate limit|too many requests/i.test(message)
+    ?'درخواست‌های زیادی ارسال شده؛ کمی بعد دوباره تلاش کن.'
+    :'ارسال لینک بازیابی انجام نشد. اتصال اینترنت و تنظیمات ایمیل Supabase را بررسی کن.';
+  authStatus(friendly,'error');
+ }finally{
+  if(button){button.disabled=false;button.textContent='فراموشی رمز عبور؟';}
+ }
+}
+async function signOutHydroyar(){
+ const button=document.getElementById('authLogoutBtn');
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست.','error');return;}
+ if(button){button.disabled=true;button.textContent='در حال خروج…';}
+ try{
+  const {error}=await hydroyarSupabase.auth.signOut();
+  if(error)throw error;
+  authCurrentUser=null;
+  authRecoveryActive=false;
+  updateAuthButton(null);
+  setAuthMode('login');
+  authStatus('با موفقیت از حساب خارج شدی.','success');
+ }catch(error){
+  authStatus('خروج از حساب انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کن.','error');
+ }finally{
+  if(button){button.disabled=false;button.textContent='خروج از حساب';}
+ }
+}
+async function submitAuth(event){
+ event.preventDefault();
+ const form=document.getElementById('authForm');
+ if(!form.reportValidity())return;
+ const btn=document.getElementById('authSubmit');
+ const identity=String(document.getElementById('authIdentity').value||'').trim();
+ const password=String(document.getElementById('authPassword').value||'');
+ const name=String(document.getElementById('authName').value||'').trim();
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست؛ تنظیمات سایت را بررسی کن.','error');return;}
+ btn.disabled=true;
+ btn.setAttribute('aria-busy','true');
+ btn.textContent=authMode==='recovery'?'در حال تغییر رمز…':'لطفاً صبر کن…';
+ authStatus(authMode==='recovery'?'در حال ثبت رمز عبور جدید…':'در حال ارتباط با سرویس احراز هویت…');
+ try{
+  if(authMode==='recovery'){
+   const {data,error}=await hydroyarSupabase.auth.updateUser({password});
+   if(error)throw error;
+   authRecoveryActive=false;
+   authCurrentUser=data?.user||authCurrentUser;
+   if(authCurrentUser)renderAuthSession(authCurrentUser);
+   authStatus('رمز عبور تغییر کرد. حساب شما اکنون در دسترس است.','success');
+   return;
+  }
+  let result;
+  if(authMode==='register'){
+   result=await hydroyarSupabase.auth.signUp({
+    email:identity,
+    password,
+    options:{data:{full_name:name},emailRedirectTo:getAuthRedirectUrl()}
+   });
+   if(result.error)throw result.error;
+   if(result.data?.session&&result.data?.user){
+    authCurrentUser=result.data.user;
+    renderAuthSession(authCurrentUser);
+    authStatus('ثبت‌نام و ورود با موفقیت انجام شد.','success');
+   }else{
+    authStatus('درخواست ثبت‌نام ثبت شد. ایمیلت را باز کن و در صورت دریافت پیام، لینک تأیید حساب را بزن.','success');
+   }
+  }else{
+   result=await hydroyarSupabase.auth.signInWithPassword({email:identity,password});
+   if(result.error)throw result.error;
+   authCurrentUser=result.data?.user||null;
+   if(authCurrentUser)renderAuthSession(authCurrentUser);
+   authStatus('ورود موفق بود؛ خوش آمدی.','success');
+  }
+ }catch(error){
+  const message=String(error?.message||'');
+  let friendly='عملیات احراز هویت انجام نشد. دوباره تلاش کن.';
+  if(/invalid login credentials/i.test(message))friendly='ایمیل یا رمز عبور اشتباه است.';
+  else if(/already registered|user already exists/i.test(message))friendly='این ایمیل قبلاً ثبت شده؛ از بخش ورود استفاده کن.';
+  else if(/password should be at least|weak password|password.*too short/i.test(message))friendly='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ کاراکتر انتخاب کن.';
+  else if(/email not confirmed/i.test(message))friendly='ایمیلت هنوز تأیید نشده؛ لینک تأیید را از ایمیلت باز کن.';
+  else if(/redirect_to_not_allowed|redirect.*not allowed/i.test(message))friendly='آدرس بازگشت در Supabase مجاز نیست؛ دامنهٔ aminmvt.ir را در Authentication → URL Configuration اضافه کن.';
+  else if(/rate limit|too many requests/i.test(message))friendly='تعداد درخواست‌ها زیاد شده؛ کمی بعد دوباره تلاش کن.';
+  else if(/fetch|network|failed to fetch/i.test(message))friendly='به سرویس احراز هویت وصل نشدیم؛ اینترنت و تنظیمات سرویس را بررسی کن.';
+  authStatus(friendly,'error');
+ }finally{
+  btn.disabled=false;
+  btn.removeAttribute('aria-busy');
+  if(authMode==='recovery')btn.textContent='ثبت رمز جدید';
+  else if(authMode==='register')btn.textContent='ثبت‌نام';
+  else btn.textContent='ورود';
+ }
+}
+function initializeAuthSession(){
+ updateAuthButton(null);
+ if(!hydroyarSupabase)return;
+ hydroyarSupabase.auth.onAuthStateChange((event,session)=>{
+  authCurrentUser=session?.user||null;
+  updateAuthButton(authCurrentUser);
+  if(event==='PASSWORD_RECOVERY'){showAuthRecoveryForm();return;}
+  if(authRecoveryActive)return;
+  const overlay=document.getElementById('authOverlay');
+  if(overlay?.classList.contains('open')){
+   if(authCurrentUser)renderAuthSession(authCurrentUser);
+   else if(authMode==='account')setAuthMode('login');
+  }
+ });
+ hydroyarSupabase.auth.getSession().then(({data,error})=>{
+  if(error){console.warn('HydroYar session initialization failed.');return;}
+  authCurrentUser=data?.session?.user||null;
+  updateAuthButton(authCurrentUser);
+  const overlay=document.getElementById('authOverlay');
+  if(overlay?.classList.contains('open')&&!authRecoveryActive){
+   if(authCurrentUser)renderAuthSession(authCurrentUser);
+   else setAuthMode('login');
+  }
+ }).catch(()=>console.warn('HydroYar session initialization failed.'));
+}
+initializeAuthSession();
 function toggleChat(){document.getElementById('chatbox').classList.toggle('open')}
 const chatHistory=[];
 function buildHydroYarChatPayload(){
