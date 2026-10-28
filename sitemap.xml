@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://aminmvt.ir/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://aminmvt.ir/</loc><lastmod>2026-10-28</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://aminmvt.ir/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://aminmvt.ir/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://aminmvt.ir/service-web-design.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://aminmvt.ir/service-ecommerce.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://aminmvt.ir/service-ai.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://aminmvt.ir/service-automation.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://aminmvt.ir/service-custom-software.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://aminmvt.ir/service-seo.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-web-design.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-ecommerce.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-ai.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-automation.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-custom-software.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://aminmvt.ir/service-seo.html</loc><lastmod>2026-10-28</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>
