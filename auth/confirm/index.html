@@ -16,7 +16,7 @@
  if(code){show('error',/expired|invalid|otp/i.test(code)?'لینک تأیید منقضی یا نامعتبر است':'تأیید ایمیل انجام نشد','لینک ممکن است قبلاً استفاده شده یا اعتبارش تمام شده باشد. به هیدرویار برگرد و درخواست لینک تازه بده.');return;}
  if(!window.supabase){show('error','اتصال تأیید بارگذاری نشد','کتابخانهٔ احراز هویت بارگذاری نشد. اینترنت را بررسی و صفحه را تازه کن.');return;}
  const client=window.supabase.createClient('https://ywmojbhkllptfynqzptx.supabase.co','sb_publishable_M8ez0tU2n3XW-CCF0tsBQw_7BnAtY1R',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
- const succeed=()=>{show('success','ایمیل با موفقیت تأیید شد','حساب کاربری‌ات تأیید شده است. برای ادامه به هیدرویار برگرد.');document.getElementById('continue').href='../?auth=confirmed';document.getElementById('openLogin').textContent='رفتن به هیدرویار';};
+ const succeed=()=>{show('success','ایمیل با موفقیت تأیید شد','حساب کاربری‌ات تأیید شده است. برای ادامه به هیدرویار برگرد.');document.getElementById('continue').href='/?auth=confirmed';document.getElementById('openLogin').textContent='رفتن به هیدرویار';};
  const tokenHash=q.get('token_hash'),type=q.get('type');
  try{
   // Supabase JS automatically handles its standard ?code= callback during initialization.
