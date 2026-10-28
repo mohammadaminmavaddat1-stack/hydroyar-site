@@ -1011,14 +1011,6 @@ async function chat(){
   if(!answer)throw lastError||new Error('Empty assistant response');
   chatHistory.push({role:'assistant',content:answer});
   pending.textContent=answer;
-  if(data.team&&Number(data.team.agentCount)>0){
-   const teamNote=document.createElement('small');
-   const answered=Math.max(0,Math.min(9,Number(data.team.specialistResponses)||0));
-   teamNote.textContent=answered===9?'\u0628\u0631\u0631\u0633\u06cc \u062a\u062e\u0635\u0635\u06cc: 9 \u0646\u0642\u0634 \u0645\u062a\u062e\u0635\u0635 + \u0647\u0645\u0627\u0647\u0646\u06af\u200c\u06a9\u0646\u0646\u062f\u0647':'\u0628\u0631\u0631\u0633\u06cc \u062a\u062e\u0635\u0635\u06cc: '+answered+' \u0627\u0632 9 \u0646\u0642\u0634 \u0645\u062a\u062e\u0635\u0635';
-   if(data.team.fallbackUsed)teamNote.textContent+=' · پاسخ جایگزین فعال شد';
-   teamNote.style.display='block';teamNote.style.marginTop='10px';teamNote.style.paddingTop='7px';teamNote.style.borderTop='1px solid rgba(128,145,170,.25)';teamNote.style.fontSize='12px';teamNote.style.opacity='.8';
-   pending.appendChild(teamNote);
-  }
  }catch(err){
   console.warn('HydroYar chat request failed:',String(err?.message||err));
   pending.textContent='متأسفم، اتصال به دستیار هوشمند موقتاً با مشکل روبه‌رو شد. لطفاً دوباره تلاش کن یا از راه ارتباطی واتساپ/تلگرام پیام بده.';
