@@ -354,11 +354,13 @@ function showHydroYarTurnstileFeedback(entry,reason,verified=false){
  else if(reason==='script-load-failed'){message='کپچا از Cloudflare بارگذاری نشد. دسترسی به اینترنت، VPN و افزونه‌های مسدودکننده را بررسی کن.';color='#b45309';}
  else if(reason==='captcha-not-ready'){message='کپچا در حال بارگذاری است؛ چند لحظه صبر کن.';}
  else if(reason==='token-expired'){message='تأیید امنیتی منقضی شد؛ دوباره کپچا را تکمیل کن.';color='#b45309';}
+ else if(reason==='challenge-timeout'){message='زمان تأیید امنیتی تمام شد؛ کپچا را دوباره کامل کن. اگر تکرار شد صفحه را تازه‌سازی کن.';color='#b45309';}
  else if(String(reason||'').startsWith('turnstile-error-')){
   const code=String(reason).replace('turnstile-error-','');
   if(code==='110200')message='دامنهٔ سایت در تنظیمات Cloudflare Turnstile مجاز نشده است (کد 110200).';
   else if(['110100','110110','400020','400070'].includes(code))message='کلید یا تنظیمات کپچا در Cloudflare نیاز به بررسی دارد (کد '+code+').';
   else if(code==='200500')message='سرویس کپچا بارگذاری نشد؛ دسترسی به challenges.cloudflare.com را بررسی کن (کد 200500).';
+  else if(code.startsWith('300')||code.startsWith('600'))message='Cloudflare نتوانست این مرورگر را تأیید کند (کد '+code+'). دوباره تلاش کن؛ اگر تکرار شد VPN یا پروکسی و افزونه‌های مسدودکننده را موقتاً خاموش کن، یا مرورگر/شبکه دیگری را امتحان کن.';
   else message='کپچا خطا داد؛ کد خطا: '+code+'.';
   color='#b45309';
  }else if(reason==='render-failed'){message='کپچا روی این صفحه نمایش داده نشد. صفحه را تازه‌سازی کن و دوباره تلاش کن.';color='#b45309';}
@@ -437,8 +439,8 @@ function setNotificationFailure(statusId,reason){
  if(reason==='missing-token')detail='ابتدا کپچای قابل مشاهده در همین فرم را کامل کن؛ سپس دوباره روی ثبت درخواست بزن.';
  else if(reason==='captcha-not-ready'||reason==='captcha-not-initialized')detail='کپچا هنوز آماده نیست. چند لحظه صبر کن؛ اگر نمایش داده نشد صفحه را تازه‌سازی کن.';
  else if(reason==='script-load-failed')detail='سرویس کپچا از Cloudflare بارگذاری نشد. شبکه، VPN یا افزونه‌های مسدودکننده را بررسی کن.';
- else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='تأیید امنیتی کامل نشد. پیام زیر خود کپچا را بررسی کن؛ اگر کد خطا دارد همان کد علت را مشخص می‌کند.';
- else if(String(reason).startsWith('server-403'))detail='سرور درخواست را رد کرد؛ دامنه مجاز در تنظیمات Turnstile و کلیدهای سرور باید بررسی شوند.';
+ else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='Cloudflare این مرورگر را تأیید نکرد. پیام کنار کپچا را ببین؛ دوباره تلاش کن و اگر خطا تکرار شد VPN/پروکسی یا افزونه‌های مسدودکننده را موقتاً خاموش یا مرورگر دیگری را امتحان کن.';
+ else if(String(reason).startsWith('server-403'))detail='سرور توکن کپچا را نپذیرفت. دوباره کپچا را کامل کن؛ اگر تکرار شد صفحه را تازه‌سازی کن و با پشتیبانی تماس بگیر.';
  else if(reason==='network-error')detail='ارتباط با سرور هیدرویار برقرار نشد. کمی بعد دوباره تلاش کن.';
  status.textContent=detail;
 }
