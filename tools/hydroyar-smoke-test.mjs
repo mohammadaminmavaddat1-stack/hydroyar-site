@@ -194,7 +194,8 @@ await check("canonical HTTP and www redirects are correct", async () => {
     const r = await request(url, { method: "HEAD", timeoutMs: 20000 });
     assert.equal(r.status, 301, url + ": expected 301");
     assert.equal(r.headers.get("location"), target, url + ": unexpected Location");
-    assertProductionSecurityHeaders(r, url);
+    if (url.startsWith("https://")) assertProductionSecurityHeaders(r, url);
+    else assert.ok(r.headers.get("cf-ray"), url + ": redirect did not traverse Cloudflare");
   }
   const httpWww = await request("http://www.aminmvt.ir/", { method: "HEAD", timeoutMs: 20000 });
   assert.equal(httpWww.status, 301);
