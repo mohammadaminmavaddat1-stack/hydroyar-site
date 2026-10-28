@@ -358,14 +358,13 @@ async function getHydroYarTurnstileToken(formSelector){
   try{
    widgetId=window.turnstile.render(node,{
     sitekey:HYDROYAR_PROJECT_NOTIFY_SITE_KEY,
-    execution:'execute',
-    appearance:'execute',
+    execution:'render',
+    appearance:'always',
     callback:token=>finish(token,''),
     'error-callback':code=>finish('','turnstile-error-'+String(code||'challenge-error')),
     'expired-callback':()=>finish('','token-expired'),
     'timeout-callback':()=>finish('','challenge-timeout')
    });
-   window.turnstile.execute(widgetId);
   }catch(error){finish('',String(error&&error.message||'render-failed'));}
  });
 }
