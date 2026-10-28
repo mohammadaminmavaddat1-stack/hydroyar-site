@@ -1153,12 +1153,12 @@ async function chat(){
 /* HydroYar motion system runtime */
 (function(){
   const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealTargets=document.querySelectorAll('section .section-head, section .feature, section .category-card, section .step, section .work, section .price, section .shop-card, section .template-card, section .faq .q, section .cta');
+  const revealTargets=document.querySelectorAll('section .section-head, section .feature, section .category-card, section .step, section .work, section .price, section .shop-card, section .template-card, section .faq .q, section .cta, section .launch-copy, section .launch-stage');
   if(!reduce && 'IntersectionObserver' in window){
     const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
       if(entry.isIntersecting){entry.target.classList.add('motion-visible');observer.unobserve(entry.target);}
     }),{threshold:.12,rootMargin:'0px 0px -35px 0px'});
-    revealTargets.forEach((el,i)=>{el.classList.add('motion-reveal');el.dataset.motionDelay=String(i%4);observer.observe(el);});
+    revealTargets.forEach((el,i)=>{el.classList.add('motion-reveal');const launchPart=el.classList.contains('launch-copy')||el.classList.contains('launch-stage');el.dataset.motionDelay=String(launchPart?0:i%4);observer.observe(el);});
   }
   const waves=document.querySelector('.calm-waves');
   if(waves && !reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
