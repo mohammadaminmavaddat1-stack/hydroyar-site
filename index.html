@@ -194,6 +194,13 @@ a:not(.btn), footer a, .top a { transition: color .2s ease, opacity .2s ease; }
 a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 
 </style>
+<style>
+.hydroyar-captcha-wrap{margin:14px 0 16px;padding:14px;border:1px solid #dbeafe;border-radius:14px;background:#f8fbff;max-width:100%;}
+.hydroyar-turnstile-host{display:flex;align-items:center;justify-content:flex-start;max-width:100%;min-height:65px;overflow-x:auto;}
+.hydroyar-turnstile-feedback{margin:6px 0 0;color:#475569;font-size:12px;line-height:1.8;}
+body.dark .hydroyar-captcha-wrap{background:#111827;border-color:#334155;}
+body.dark .hydroyar-turnstile-feedback{color:#cbd5e1;}
+</style>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 </head>
 <body>
@@ -224,7 +231,7 @@ a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 <div class="feature"><div class="ico">📈</div><h3>سئو و رشد</h3><p>ساختار فنی مناسب، صفحات هدف و آماده‌سازی سایت برای رشد در گوگل.</p><a class="service-detail-link" href="./service-seo.html">جزئیات این خدمت ←</a></div>
 </div></div></section>
 
-<section id="categories" class="band"><div class="wrap"><div class="section-head"><span class="eyebrow">دسته‌بندی خدمات</span><h2>برای هر نوع کسب‌وکار، یک مسیر مشخص</h2><p>دسته مناسب را انتخاب کن تا هیدرویار نیاز پروژه را دقیق‌تر بررسی کند.</p></div><div class="category-grid"><div class="category-card" data-cat="فروشگاه اینترنتی" onclick="pickCategory(this)"><div class="ico">🛒</div><h3>فروشگاه و آنلاین‌شاپ</h3><p>فروش محصول، سفارش و پرداخت</p></div><div class="category-card" data-cat="املاک" onclick="pickCategory(this)"><div class="ico">🏠</div><h3>املاک</h3><p>معرفی فایل و دریافت سرنخ</p></div><div class="category-card" data-cat="پزشکی و کلینیک" onclick="pickCategory(this)"><div class="ico">🩺</div><h3>پزشکی و کلینیک</h3><p>معرفی خدمات و نوبت‌دهی</p></div><div class="category-card" data-cat="رستوران و کافه" onclick="pickCategory(this)"><div class="ico">🍽️</div><h3>رستوران و کافه</h3><p>منو، سفارش و معرفی برند</p></div><div class="category-card" data-cat="خدمات و شرکت‌ها" onclick="pickCategory(this)"><div class="ico">💼</div><h3>خدمات و شرکت‌ها</h3><p>معرفی خدمات و جذب مشتری</p></div></div><div class="leadbox" id="leadbox"><h3>شروع جذب مشتری برای کسب‌وکار شما</h3><p style="color:var(--muted);margin-top:-5px">اگر دسته مناسب را پیدا نکردی، «سایر» را انتخاب کن. اطلاعاتت فقط برای پیگیری درخواست استفاده می‌شود.</p><form class="form" onsubmit="submitLead(event)"><div class="checkout-row"><label>نام کسب‌وکار<input id="leadBusiness" required placeholder="مثلاً فروشگاه ..."></label><label>نوع کسب‌وکار<select id="leadCategory"><option>فروشگاه اینترنتی</option><option>املاک</option><option>پزشکی و کلینیک</option><option>رستوران و کافه</option><option>خدمات و شرکت‌ها</option><option>سایر</option></select></label></div><div class="checkout-row"><label>نام شما<input id="leadName" required autocomplete="name" placeholder="نام و نام خانوادگی"></label><label>شماره تماس<input id="leadPhone" required type="tel" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><div class="checkout-row"><label>شهر<input id="leadCity" placeholder="مثلاً تهران"></label><label>اینستاگرام / سایت<input id="leadSocial" placeholder="اختیاری"></label></div><label>نیاز شما<textarea id="leadNeed" required placeholder="چه سایتی یا سیستمی می‌خواهید؟"></textarea></label><div class="lead-actions"><button class="btn" type="submit">ثبت درخواست بررسی</button><a class="btn light" href="https://wa.me/989166766843" target="_blank" rel="noopener" aria-label="مشاوره در واتساپ">🟢 مشاوره در واتساپ</a><a class="btn light" href="https://t.me/Aminmvt" target="_blank">مشاوره مستقیم در تلگرام</a></div><div class="lead-status" id="leadStatus"></div></form></div></div></section>
+<section id="categories" class="band"><div class="wrap"><div class="section-head"><span class="eyebrow">دسته‌بندی خدمات</span><h2>برای هر نوع کسب‌وکار، یک مسیر مشخص</h2><p>دسته مناسب را انتخاب کن تا هیدرویار نیاز پروژه را دقیق‌تر بررسی کند.</p></div><div class="category-grid"><div class="category-card" data-cat="فروشگاه اینترنتی" onclick="pickCategory(this)"><div class="ico">🛒</div><h3>فروشگاه و آنلاین‌شاپ</h3><p>فروش محصول، سفارش و پرداخت</p></div><div class="category-card" data-cat="املاک" onclick="pickCategory(this)"><div class="ico">🏠</div><h3>املاک</h3><p>معرفی فایل و دریافت سرنخ</p></div><div class="category-card" data-cat="پزشکی و کلینیک" onclick="pickCategory(this)"><div class="ico">🩺</div><h3>پزشکی و کلینیک</h3><p>معرفی خدمات و نوبت‌دهی</p></div><div class="category-card" data-cat="رستوران و کافه" onclick="pickCategory(this)"><div class="ico">🍽️</div><h3>رستوران و کافه</h3><p>منو، سفارش و معرفی برند</p></div><div class="category-card" data-cat="خدمات و شرکت‌ها" onclick="pickCategory(this)"><div class="ico">💼</div><h3>خدمات و شرکت‌ها</h3><p>معرفی خدمات و جذب مشتری</p></div></div><div class="leadbox" id="leadbox"><h3>شروع جذب مشتری برای کسب‌وکار شما</h3><p style="color:var(--muted);margin-top:-5px">اگر دسته مناسب را پیدا نکردی، «سایر» را انتخاب کن. اطلاعاتت فقط برای پیگیری درخواست استفاده می‌شود.</p><form class="form" onsubmit="submitLead(event)"><div class="checkout-row"><label>نام کسب‌وکار<input id="leadBusiness" required placeholder="مثلاً فروشگاه ..."></label><label>نوع کسب‌وکار<select id="leadCategory"><option>فروشگاه اینترنتی</option><option>املاک</option><option>پزشکی و کلینیک</option><option>رستوران و کافه</option><option>خدمات و شرکت‌ها</option><option>سایر</option></select></label></div><div class="checkout-row"><label>نام شما<input id="leadName" required autocomplete="name" placeholder="نام و نام خانوادگی"></label><label>شماره تماس<input id="leadPhone" required type="tel" inputmode="numeric" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><div class="checkout-row"><label>شهر<input id="leadCity" placeholder="مثلاً تهران"></label><label>اینستاگرام / سایت<input id="leadSocial" placeholder="اختیاری"></label></div><label>نیاز شما<textarea id="leadNeed" required placeholder="چه سایتی یا سیستمی می‌خواهید؟"></textarea></label><div class="hydroyar-captcha-wrap"><div id="leadTurnstile" class="hydroyar-turnstile-host" aria-label="تأیید امنیتی Cloudflare"></div><p class="hydroyar-turnstile-feedback" role="status">برای ثبت درخواست، تأیید امنیتی را کامل کن.</p></div><div class="lead-actions"><button class="btn" type="submit">ثبت درخواست بررسی</button><a class="btn light" href="https://wa.me/989166766843" target="_blank" rel="noopener" aria-label="مشاوره در واتساپ">🟢 مشاوره در واتساپ</a><a class="btn light" href="https://t.me/Aminmvt" target="_blank">مشاوره مستقیم در تلگرام</a></div><div class="lead-status" id="leadStatus"></div></form></div></div></section>
 
 <section class="band" id="process"><div class="wrap"><div class="section-head"><span class="eyebrow">مسیر همکاری</span><h2>شفاف، مرحله‌به‌مرحله و بدون پیچیدگی</h2></div><div class="process">
 <div class="step"><span class="num">۰۱ / نیازسنجی</span><h3>ایده شما</h3><p>نیاز و هدف کسب‌وکارتان را بررسی می‌کنیم.</p></div>
@@ -278,7 +285,7 @@ a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 <div class="shop-card"><div class="ico">🌐</div><h3>طراحی سایت</h3><p>سایت حرفه‌ای و واکنش‌گرا برای کسب‌وکار شما.</p><div class="shop-price">از ۵ میلیون تومان</div><br><button class="btn" style="width:100%" onclick="startPurchase('site','طراحی سایت','از ۵ میلیون تومان')">ثبت سفارش</button></div>
 <div class="shop-card"><div class="ico">🤖</div><h3>دستیار هوشمند</h3><p>دستیار هوشمند متناسب با فرآیند کسب‌وکار.</p><div class="shop-price">از ۱۲ میلیون تومان</div><br><button class="btn" style="width:100%" onclick="startPurchase('ai','دستیار هوشمند','از ۱۲ میلیون تومان')">ثبت سفارش</button></div>
 <div class="shop-card"><div class="ico">⚙️</div><h3>پروژه اختصاصی</h3><p>برای ابزارها و سیستم‌هایی که نیاز به طراحی ویژه دارند.</p><div class="shop-price">قیمت توافقی</div><br><a class="btn" style="width:100%" href="#order">درخواست بررسی</a></div>
-</div><div class="checkout" id="checkout"><h3>آماده‌سازی درخواست سفارش</h3><p style="color:var(--muted);line-height:1.9">مبلغ‌های نمایش‌داده‌شده قیمت شروع بسته‌های پایه‌اند؛ امکانات اضافی و پروژه‌های اختصاصی پس از بررسی و توافق جداگانه قیمت‌گذاری می‌شوند. بعد از ثبت درخواست، اگر درگاه در حالت واقعی فعال باشد دکمه پرداخت امن نمایش داده می‌شود. ثبت درخواست به‌تنهایی به معنی پرداخت نیست.</p><div class="summary" id="orderSummary"></div><form class="form" onsubmit="submitPurchase(event)"><div class="checkout-row"><label>نام و نام خانوادگی<input id="buyName" required autocomplete="name" placeholder="مثلاً محمد امین"></label><label>شماره تماس<input id="buyPhone" required type="tel" inputmode="numeric" autocomplete="tel" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><button class="btn" type="submit">ارسال سفارش در تلگرام</button></form><div class="lead-status" id="purchaseStatus" aria-live="polite"></div></div></div></section>
+</div><div class="checkout" id="checkout"><h3>آماده‌سازی درخواست سفارش</h3><p style="color:var(--muted);line-height:1.9">مبلغ‌های نمایش‌داده‌شده قیمت شروع بسته‌های پایه‌اند؛ امکانات اضافی و پروژه‌های اختصاصی پس از بررسی و توافق جداگانه قیمت‌گذاری می‌شوند. بعد از ثبت درخواست، اگر درگاه در حالت واقعی فعال باشد دکمه پرداخت امن نمایش داده می‌شود. ثبت درخواست به‌تنهایی به معنی پرداخت نیست.</p><div class="summary" id="orderSummary"></div><form class="form" onsubmit="submitPurchase(event)"><div class="checkout-row"><label>نام و نام خانوادگی<input id="buyName" required autocomplete="name" placeholder="مثلاً محمد امین"></label><label>شماره تماس<input id="buyPhone" required type="tel" inputmode="numeric" autocomplete="tel" pattern="09[0-9]{9}" maxlength="11" placeholder="09xxxxxxxxx"></label></div><div class="hydroyar-captcha-wrap"><div id="purchaseTurnstile" class="hydroyar-turnstile-host" aria-label="تأیید امنیتی Cloudflare"></div><p class="hydroyar-turnstile-feedback" role="status">برای ثبت سفارش، تأیید امنیتی را کامل کن.</p></div><button class="btn" type="submit">ارسال سفارش در تلگرام</button></form><div class="lead-status" id="purchaseStatus" aria-live="polite"></div></div></div></section>
 
 <section id="about" class="band"><div class="wrap"><div class="section-head"><span class="eyebrow">درباره هیدرویار</span><h2>یک همراه برای ساخت و رشد محصول دیجیتال</h2><p>هیدرویار روی طراحی، توسعه و بهبود راهکارهای دیجیتال تمرکز دارد؛ از سایت و فروشگاه تا ابزارهای اختصاصی، اتوماسیون و هوش مصنوعی.</p></div></div></section>
 
@@ -313,6 +320,7 @@ const HYDROYAR_PAYMENT_API='https://hydroyar-chat.mohammadaminmavaddat1.workers.
 /* Public Turnstile site key. The secret key remains only in the Cloudflare Worker. */
 const HYDROYAR_PROJECT_NOTIFY_SITE_KEY='0x4AAAAAAFhhGitfF1ERilUr';
 let hydroYarTurnstileLoader=null;
+const hydroYarTurnstileEntries=new Map();
 function loadHydroYarTurnstile(){
  if(window.turnstile)return Promise.resolve(true);
  if(hydroYarTurnstileLoader)return hydroYarTurnstileLoader;
@@ -326,55 +334,99 @@ function loadHydroYarTurnstile(){
  });
  return hydroYarTurnstileLoader;
 }
-async function getHydroYarTurnstileToken(formSelector){
- if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY)return {token:'',error:'missing-site-key'};
- if(!await loadHydroYarTurnstile())return {token:'',error:'script-load-failed'};
+function showHydroYarTurnstileFeedback(entry,reason,verified=false){
+ if(!entry||!entry.feedback)return;
+ let message='برای ثبت درخواست، تأیید امنیتی را کامل کن.';
+ let color='#475569';
+ if(verified){message='تأیید امنیتی انجام شد؛ حالا می‌توانی درخواست را ثبت کنی.';color='#15803d';}
+ else if(reason==='script-load-failed'){message='کپچا از Cloudflare بارگذاری نشد. دسترسی به اینترنت، VPN و افزونه‌های مسدودکننده را بررسی کن.';color='#b45309';}
+ else if(reason==='captcha-not-ready'){message='کپچا در حال بارگذاری است؛ چند لحظه صبر کن.';}
+ else if(reason==='token-expired'){message='تأیید امنیتی منقضی شد؛ دوباره کپچا را تکمیل کن.';color='#b45309';}
+ else if(String(reason||'').startsWith('turnstile-error-')){
+  const code=String(reason).replace('turnstile-error-','');
+  if(code==='110200')message='دامنهٔ سایت در تنظیمات Cloudflare Turnstile مجاز نشده است (کد 110200).';
+  else if(['110100','110110','400020','400070'].includes(code))message='کلید یا تنظیمات کپچا در Cloudflare نیاز به بررسی دارد (کد '+code+').';
+  else if(code==='200500')message='سرویس کپچا بارگذاری نشد؛ دسترسی به challenges.cloudflare.com را بررسی کن (کد 200500).';
+  else message='کپچا خطا داد؛ کد خطا: '+code+'.';
+  color='#b45309';
+ }else if(reason==='render-failed'){message='کپچا روی این صفحه نمایش داده نشد. صفحه را تازه‌سازی کن و دوباره تلاش کن.';color='#b45309';}
+ entry.feedback.textContent=message;
+ entry.feedback.style.color=color;
+}
+function initializeHydroYarTurnstile(formSelector){
+ if(hydroYarTurnstileEntries.has(formSelector))return;
  const form=document.querySelector(formSelector);
- if(!form)return {token:'',error:'form-not-found'};
- const oldHost=form.querySelector('.hydroyar-turnstile-host');
- if(oldHost)oldHost.remove();
- const node=document.createElement('div');
- node.className='hydroyar-turnstile-host';
- node.setAttribute('aria-label','Cloudflare security verification');
- node.style.cssText='display:flex;justify-content:flex-start;align-items:center;max-width:100%;overflow-x:auto;margin:12px 0;min-height:65px';
- const anchor=form.querySelector('.lead-actions')||form.querySelector('button[type="submit"]');
- if(anchor)form.insertBefore(node,anchor);else form.appendChild(node);
- node.scrollIntoView({behavior:'smooth',block:'nearest'});
- return new Promise(resolve=>{
-  let widgetId=null,finished=false,timer=null;
-  const finish=(token,error)=>{
-   if(finished)return;finished=true;
-   if(timer)clearTimeout(timer);
-   if(token){
-    try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
-    node.remove();
-   }else{
-    try{if(widgetId!==null)window.turnstile.remove(widgetId)}catch{}
-    node.setAttribute('data-turnstile-error',String(error||'verification-failed'));
-   }
-   resolve({token:token||'',error:String(error||'')});
-  };
-  timer=setTimeout(()=>finish('','challenge-timeout'),120000);
+ if(!form)return;
+ const host=form.querySelector('.hydroyar-turnstile-host');
+ const feedback=form.querySelector('.hydroyar-turnstile-feedback');
+ if(!host||!feedback)return;
+ const entry={form,host,feedback,widgetId:null,token:'',tokenAt:0,error:'',ready:false};
+ hydroYarTurnstileEntries.set(formSelector,entry);
+ if(!HYDROYAR_PROJECT_NOTIFY_SITE_KEY){entry.error='missing-site-key';showHydroYarTurnstileFeedback(entry,entry.error);return;}
+ loadHydroYarTurnstile().then(ready=>{
+  if(!ready){entry.error='script-load-failed';showHydroYarTurnstileFeedback(entry,entry.error);return;}
   try{
-   widgetId=window.turnstile.render(node,{
+   entry.widgetId=window.turnstile.render(host,{
     sitekey:HYDROYAR_PROJECT_NOTIFY_SITE_KEY,
     execution:'render',
     appearance:'always',
-    callback:token=>finish(token,''),
-    'error-callback':code=>finish('','turnstile-error-'+String(code||'challenge-error')),
-    'expired-callback':()=>finish('','token-expired'),
-    'timeout-callback':()=>finish('','challenge-timeout')
+    theme:'auto',
+    callback:token=>{
+     entry.token=String(token||'');entry.tokenAt=Date.now();entry.error='';
+     showHydroYarTurnstileFeedback(entry,'',Boolean(entry.token));
+    },
+    'error-callback':code=>{
+     entry.token='';entry.tokenAt=0;entry.error='turnstile-error-'+String(code||'challenge-error');
+     showHydroYarTurnstileFeedback(entry,entry.error);
+     return true;
+    },
+    'expired-callback':()=>{
+     entry.token='';entry.tokenAt=0;entry.error='token-expired';
+     showHydroYarTurnstileFeedback(entry,entry.error);
+    },
+    'timeout-callback':()=>{
+     entry.token='';entry.tokenAt=0;entry.error='challenge-timeout';
+     showHydroYarTurnstileFeedback(entry,entry.error);
+    }
    });
-  }catch(error){finish('',String(error&&error.message||'render-failed'));}
+   entry.ready=true;
+  }catch(error){entry.error='render-failed';showHydroYarTurnstileFeedback(entry,entry.error);}
+ }).catch(()=>{
+  entry.error='script-load-failed';showHydroYarTurnstileFeedback(entry,entry.error);
  });
+}
+function getHydroYarTurnstileToken(formSelector){
+ const entry=hydroYarTurnstileEntries.get(formSelector);
+ if(!entry)return {token:'',error:'captcha-not-initialized'};
+ if(entry.error)return {token:'',error:entry.error};
+ if(!entry.ready)return {token:'',error:'captcha-not-ready'};
+ if(entry.token&&Date.now()-entry.tokenAt<240000){
+  const token=entry.token;entry.token='';entry.tokenAt=0;
+  return {token,error:''};
+ }
+ if(entry.token&&Date.now()-entry.tokenAt>=240000){
+  entry.token='';entry.tokenAt=0;entry.error='token-expired';
+  showHydroYarTurnstileFeedback(entry,entry.error);
+  return {token:'',error:entry.error};
+ }
+ return {token:'',error:'missing-token'};
+}
+function resetHydroYarTurnstile(formSelector){
+ const entry=hydroYarTurnstileEntries.get(formSelector);
+ if(!entry)return;
+ entry.token='';entry.tokenAt=0;entry.error='';
+ try{if(window.turnstile&&entry.widgetId!==null)window.turnstile.reset(entry.widgetId);}catch{}
+ showHydroYarTurnstileFeedback(entry,'');
 }
 function setNotificationFailure(statusId,reason){
  const status=document.getElementById(statusId);if(!status)return;
  status.className='lead-status show';
- let detail='ارسال خودکار درخواست تأیید نشد؛ هیچ اعلان موفقی ثبت نشده. لطفاً دوباره تلاش کن.';
- if(reason==='script-load-failed')detail='اتصال به سرویس امنیتی Cloudflare برقرار نشد. اتصال اینترنت یا افزونه‌های مسدودکننده را بررسی کن و دوباره تلاش کن.';
- else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='تأیید امنیتی کامل نشد. بخش تأیید را تکمیل کن و دوباره درخواست را بفرست.';
- else if(String(reason).startsWith('server-403'))detail='Cloudflare درخواست را تأیید نکرد. دامنهٔ ویجت و تنظیمات Turnstile باید بررسی شوند.';
+ let detail='ارسال درخواست تأیید نشد؛ لطفاً دوباره تلاش کن.';
+ if(reason==='missing-token')detail='ابتدا کپچای قابل مشاهده در همین فرم را کامل کن؛ سپس دوباره روی ثبت درخواست بزن.';
+ else if(reason==='captcha-not-ready'||reason==='captcha-not-initialized')detail='کپچا هنوز آماده نیست. چند لحظه صبر کن؛ اگر نمایش داده نشد صفحه را تازه‌سازی کن.';
+ else if(reason==='script-load-failed')detail='سرویس کپچا از Cloudflare بارگذاری نشد. شبکه، VPN یا افزونه‌های مسدودکننده را بررسی کن.';
+ else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='تأیید امنیتی کامل نشد. پیام زیر خود کپچا را بررسی کن؛ اگر کد خطا دارد همان کد علت را مشخص می‌کند.';
+ else if(String(reason).startsWith('server-403'))detail='سرور درخواست را رد کرد؛ دامنه مجاز در تنظیمات Turnstile و کلیدهای سرور باید بررسی شوند.';
  else if(reason==='network-error')detail='ارتباط با سرور هیدرویار برقرار نشد. کمی بعد دوباره تلاش کن.';
  status.textContent=detail;
 }
@@ -389,10 +441,12 @@ async function notifyHydroYarProject(type,fields,formSelector){
    body:JSON.stringify({...fields,type,turnstileToken:verification.token,website:''})
   });
  }catch(error){
+  resetHydroYarTurnstile(formSelector);
   console.warn('HydroYar project notification network failure.');
   return {ok:false,reason:'network-error'};
  }
  const result=await response.json().catch(()=>({}));
+ resetHydroYarTurnstile(formSelector);
  if(!response.ok||result.ok!==true){
   console.warn('HydroYar project notification rejected:',response.status,String(result.error||'unknown error'));
   return {ok:false,reason:'server-'+response.status};
@@ -404,10 +458,11 @@ function setNotificationSuccess(statusId,ticketCode){
  status.className='lead-status show';
  status.textContent='درخواست در سامانه پشتیبانی ثبت شد و به پشتیبانی اطلاع داده شد.'+(ticketCode?'\nکد پیگیری: '+ticketCode:'')+' این مرحله به معنی تأیید قرارداد یا پرداخت نیست.';
 }
+document.addEventListener('DOMContentLoaded',()=>{initializeHydroYarTurnstile('#leadbox form');});
 function normalizePhone(v){return String(v||'').replace(/[\s\-()]/g,'').replace(/^\+98/,'0').replace(/^0098/,'0')}
 document.querySelectorAll('input[type="tel"]').forEach(i=>i.addEventListener('blur',()=>{i.value=normalizePhone(i.value)}));
 let currentProduct='';
-function startPurchase(k,p,price){currentProduct=k;document.getElementById('checkout').classList.add('show');document.getElementById('orderSummary').innerHTML='<b>'+p+'</b><br><span style="color:#667085">'+price+'</span>';document.getElementById('checkout').scrollIntoView({behavior:'smooth',block:'center'})}
+function startPurchase(k,p,price){currentProduct=k;document.getElementById('checkout').classList.add('show');initializeHydroYarTurnstile('#checkout form');document.getElementById('orderSummary').innerHTML='<b>'+p+'</b><br><span style="color:#667085">'+price+'</span>';document.getElementById('checkout').scrollIntoView({behavior:'smooth',block:'center'})}
 function openTelegramDraft(text,statusId){
  const url='https://t.me/Aminmvt?text='+encodeURIComponent(text);
  const status=statusId?document.getElementById(statusId):null;
