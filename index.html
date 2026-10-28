@@ -312,7 +312,7 @@ body.dark .auth-status[data-kind="success"]{background:#052e16;color:#bbf7d0;}
 
 <footer><div class="wrap"><div class="foot"><div><h3>هیدرویار</h3><p>طراحی سایت، برنامه‌نویسی، هوش مصنوعی و راهکارهای دیجیتال اختصاصی.</p></div><div><h3>خدمات</h3><p><a href="#services">طراحی سایت</a></p><p><a href="#services">فروشگاه اینترنتی</a></p><p><a href="#services">هوش مصنوعی</a></p></div><div><h3>دسته‌بندی‌ها</h3><p><a href="#categories">فروشگاه و آنلاین‌شاپ</a></p><p><a href="#categories">املاک</a></p><p><a href="#categories">پزشکی و کلینیک</a></p><p><a href="#categories">رستوران و کافه</a></p><p><a href="#categories">خدمات و شرکت‌ها</a></p></div><div><h3>دسترسی سریع</h3><p><a href="#portfolio">نمونه‌کارها</a></p><p><a href="#prices">تعرفه‌ها</a></p><p><a href="#faq">سؤالات متداول</a></p><p><a href="#about">درباره هیدرویار</a></p></div><div><h3>ارتباط</h3><p><a href="https://wa.me/989166766843" target="_blank" rel="noopener">مشاوره در واتساپ</a></p><p><a href="https://t.me/Aminmvt" target="_blank" rel="noopener">مشاوره در تلگرام</a></p><p>پاسخ‌گویی آنلاین</p></div></div><div class="copy">© ۱۴۰۵ هیدرویار — تمامی حقوق محفوظ است. <span aria-label="پیوندهای حقوقی">| <a href="./privacy.html">حریم خصوصی</a> | <a href="./terms.html">شرایط استفاده</a></span></div></div></footer>
 
-<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><button type="button" class="auth-extra-btn" id="authForgotPassword" onclick="sendAuthPasswordReset()">فراموشی رمز عبور؟</button><div class="auth-session-panel" id="authSessionPanel" hidden><p id="authSessionUser"></p><button type="button" id="authLogoutBtn" onclick="signOutHydroyar()">خروج از حساب</button></div><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
+<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><button type="button" class="auth-extra-btn" id="authForgotPassword" onclick="sendAuthPasswordReset()">فراموشی رمز عبور؟</button><button type="button" class="auth-extra-btn" id="authResendConfirmation" onclick="sendAuthConfirmationEmail()" hidden>ارسال مجدد ایمیل تأیید</button><div class="auth-session-panel" id="authSessionPanel" hidden><p id="authSessionUser"></p><button type="button" id="authLogoutBtn" onclick="signOutHydroyar()">خروج از حساب</button></div><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
 <div class="chat"><button class="btn chatbtn" onclick="toggleChat()">🤖</button><div class="chatbox" id="chatbox"><div class="chathead">دستیار هیدرویار</div><div class="messages" id="messages"><div class="msg">سلام 👋 درباره خدمات، قیمت یا سفارش سؤال کن.</div></div><div class="chatinput"><input id="chatinput" placeholder="سؤالت را بنویس..." onkeydown="if(event.key==='Enter')chat()"><button onclick="chat()">ارسال</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -665,6 +665,9 @@ function authText(id,text){
 function getAuthRedirectUrl(){
  return window.location.origin+(window.location.pathname||'/');
 }
+function getAuthConfirmationRedirectUrl(){
+ return 'https://aminmvt.ir/auth/callback.html';
+}
 function updateAuthButton(user){
  const btn=document.getElementById('authHeroBtn');
  if(!btn)return;
@@ -685,6 +688,7 @@ function setAuthMode(mode){
  const passwordWrap=document.getElementById('authPasswordWrap');
  const password=document.getElementById('authPassword');
  const forgot=document.getElementById('authForgotPassword');
+ const resend=document.getElementById('authResendConfirmation');
  const session=document.getElementById('authSessionPanel');
  if(tabs)tabs.hidden=false;
  if(form)form.hidden=false;
@@ -695,6 +699,7 @@ function setAuthMode(mode){
  if(passwordWrap){passwordWrap.hidden=false;passwordWrap.firstChild.textContent='رمز عبور';}
  if(password){password.required=true;password.autocomplete=reg?'new-password':'current-password';password.placeholder='حداقل ۸ کاراکتر';}
  if(forgot)forgot.hidden=reg;
+ if(resend)resend.hidden=true;
  if(session)session.hidden=true;
  authText('authTitle',reg?'ایجاد حساب کاربری':'ورود به حساب کاربری');
  const sub=document.querySelector('.auth-sub');
@@ -716,10 +721,12 @@ function renderAuthSession(user){
  const tabs=document.querySelector('.auth-tabs');
  const form=document.getElementById('authForm');
  const forgot=document.getElementById('authForgotPassword');
+ const resend=document.getElementById('authResendConfirmation');
  const panel=document.getElementById('authSessionPanel');
  if(tabs)tabs.hidden=true;
  if(form)form.hidden=true;
  if(forgot)forgot.hidden=true;
+ if(resend)resend.hidden=true;
  if(panel)panel.hidden=false;
  const fullName=String(user.user_metadata?.full_name||'').trim();
  const identity=String(user.email||user.phone||'');
@@ -745,6 +752,7 @@ function showAuthRecoveryForm(){
  const passwordWrap=document.getElementById('authPasswordWrap');
  const password=document.getElementById('authPassword');
  const forgot=document.getElementById('authForgotPassword');
+ const resend=document.getElementById('authResendConfirmation');
  const panel=document.getElementById('authSessionPanel');
  if(tabs)tabs.hidden=true;
  if(form)form.hidden=false;
@@ -755,6 +763,7 @@ function showAuthRecoveryForm(){
  if(passwordWrap){passwordWrap.hidden=false;passwordWrap.firstChild.textContent='رمز عبور جدید';}
  if(password){password.required=true;password.autocomplete='new-password';password.placeholder='رمز جدید؛ حداقل ۸ کاراکتر';password.value='';}
  if(forgot)forgot.hidden=true;
+ if(resend)resend.hidden=true;
  if(panel)panel.hidden=true;
  authText('authTitle','تغییر رمز عبور');
  const sub=document.querySelector('.auth-sub');
@@ -776,6 +785,33 @@ function closeAuth(){
  if(overlay)overlay.classList.remove('open');
  document.body.style.overflow='';
 }
+async function sendAuthConfirmationEmail(){
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست.','error');return;}
+ const input=document.getElementById('authIdentity');
+ const button=document.getElementById('authResendConfirmation');
+ const email=String(input?.value||'').trim();
+ if(!email||!input.checkValidity()){input?.reportValidity();input?.focus();return;}
+ if(button){button.disabled=true;button.textContent='در حال ارسال ایمیل تأیید…';}
+ try{
+  const {error}=await hydroyarSupabase.auth.resend({
+   type:'signup',
+   email,
+   options:{emailRedirectTo:getAuthConfirmationRedirectUrl()}
+  });
+  if(error)throw error;
+  authStatus('اگر این ایمیل تأییدنشده باشد، لینک تازه به همان نشانی ارسال می‌شود. صندوق ورودی و هرزنامه را بررسی کن.','success');
+ }catch(error){
+  const message=String(error?.message||'');
+  const friendly=/redirect_to_not_allowed|redirect.*not allowed/i.test(message)
+   ?'مسیر تأیید در فهرست آدرس‌های مجاز Supabase نیست؛ https://aminmvt.ir/auth/callback.html را در Authentication → URL Configuration مجاز کن.'
+   :/rate limit|too many requests/i.test(message)
+    ?'درخواست‌های زیادی فرستاده شده؛ کمی بعد دوباره تلاش کن.'
+    :'ارسال دوبارهٔ ایمیل تأیید انجام نشد. اتصال اینترنت و تنظیمات ایمیل سرویس را بررسی کن.';
+  authStatus(friendly,'error');
+ }finally{
+  if(button){button.disabled=false;button.textContent='ارسال مجدد ایمیل تأیید';}
+ }
+}
 async function sendAuthPasswordReset(){
  if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست؛ تنظیمات سایت را بررسی کن.','error');return;}
  const input=document.getElementById('authIdentity');
@@ -790,7 +826,7 @@ async function sendAuthPasswordReset(){
  }catch(error){
   const message=String(error?.message||'');
   const friendly=/redirect_to_not_allowed|redirect.*not allowed/i.test(message)
-   ?'آدرس بازگشت در تنظیمات Supabase مجاز نیست؛ باید دامنهٔ aminmvt.ir در Authentication → URL Configuration مجاز شود.'
+   ?'آدرس بازگشت در Supabase مجاز نیست؛ باید دامنهٔ aminmvt.ir در Authentication → URL Configuration مجاز شود.'
    :/rate limit|too many requests/i.test(message)
     ?'درخواست‌های زیادی ارسال شده؛ کمی بعد دوباره تلاش کن.'
     :'ارسال لینک بازیابی انجام نشد. اتصال اینترنت و تنظیمات ایمیل Supabase را بررسی کن.';
@@ -845,7 +881,7 @@ async function submitAuth(event){
    result=await hydroyarSupabase.auth.signUp({
     email:identity,
     password,
-    options:{data:{full_name:name},emailRedirectTo:getAuthRedirectUrl()}
+    options:{data:{full_name:name},emailRedirectTo:getAuthConfirmationRedirectUrl()}
    });
    if(result.error)throw result.error;
    if(result.data?.session&&result.data?.user){
@@ -853,7 +889,8 @@ async function submitAuth(event){
     renderAuthSession(authCurrentUser);
     authStatus('ثبت‌نام و ورود با موفقیت انجام شد.','success');
    }else{
-    authStatus('درخواست ثبت‌نام ثبت شد. ایمیلت را باز کن و در صورت دریافت پیام، لینک تأیید حساب را بزن.','success');
+    const resend=document.getElementById('authResendConfirmation');if(resend)resend.hidden=false;
+    authStatus('درخواست ثبت‌نام ثبت شد. ایمیلت را باز کن و لینک تأیید حساب را بزن؛ اگر ایمیل قبلی باز نمی‌شود، می‌توانی لینک تازه بگیری.','success');
    }
   }else{
    result=await hydroyarSupabase.auth.signInWithPassword({email:identity,password});
@@ -868,8 +905,8 @@ async function submitAuth(event){
   if(/invalid login credentials/i.test(message))friendly='ایمیل یا رمز عبور اشتباه است.';
   else if(/already registered|user already exists/i.test(message))friendly='این ایمیل قبلاً ثبت شده؛ از بخش ورود استفاده کن.';
   else if(/password should be at least|weak password|password.*too short/i.test(message))friendly='رمز عبور ضعیف است؛ یک رمز قوی‌تر با حداقل ۸ کاراکتر انتخاب کن.';
-  else if(/email not confirmed/i.test(message))friendly='ایمیلت هنوز تأیید نشده؛ لینک تأیید را از ایمیلت باز کن.';
-  else if(/redirect_to_not_allowed|redirect.*not allowed/i.test(message))friendly='آدرس بازگشت در Supabase مجاز نیست؛ دامنهٔ aminmvt.ir را در Authentication → URL Configuration اضافه کن.';
+  else if(/email not confirmed/i.test(message)){friendly='ایمیلت هنوز تأیید نشده؛ آدرس را بررسی کن و روی «ارسال مجدد ایمیل تأیید» بزن.';const resend=document.getElementById('authResendConfirmation');if(resend)resend.hidden=false;}
+  else if(/redirect_to_not_allowed|redirect.*not allowed/i.test(message))friendly='آدرس بازگشت تأیید ایمیل در Supabase مجاز نیست؛ مسیر https://aminmvt.ir/auth/callback.html را در Authentication → URL Configuration اضافه کن.';
   else if(/rate limit|too many requests/i.test(message))friendly='تعداد درخواست‌ها زیاد شده؛ کمی بعد دوباره تلاش کن.';
   else if(/fetch|network|failed to fetch/i.test(message))friendly='به سرویس احراز هویت وصل نشدیم؛ اینترنت و تنظیمات سرویس را بررسی کن.';
   authStatus(friendly,'error');
@@ -907,6 +944,10 @@ function initializeAuthSession(){
  }).catch(()=>console.warn('HydroYar session initialization failed.'));
 }
 initializeAuthSession();
+if(new URLSearchParams(location.search).get('auth')==='login'){
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',openAuth,{once:true});
+ else openAuth();
+}
 function toggleChat(){document.getElementById('chatbox').classList.toggle('open')}
 const chatHistory=[];
 function buildHydroYarChatPayload(){
