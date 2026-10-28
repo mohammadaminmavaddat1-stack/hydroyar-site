@@ -202,6 +202,52 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible, select:foc
 a:not(.btn), footer a, .top a { transition: color .2s ease, opacity .2s ease; }
 a:not(.btn):hover, footer a:hover, .top a:hover { color: #55dfff; }
 
+
+/* Responsive hardening: small phones, touch, and iOS safe areas */
+html{width:100%;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
+body{min-width:0;max-width:100%;overscroll-behavior-x:none}
+img,svg,video,canvas,iframe{max-width:100%}
+button,input,textarea,select{min-width:0;max-width:100%}
+input,textarea,select{font-size:16px}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.wrap{width:100%;min-width:0}
+.nav{padding-top:env(safe-area-inset-top,0px)}
+.navin{min-width:0;gap:clamp(8px,2vw,20px)}
+.logo{min-width:0;flex-shrink:1;font-size:clamp(19px,5vw,25px)}
+.logo-mark{flex-shrink:0}
+.navin>.theme-toggle,.navin>.mobile-menu-btn{flex:0 0 44px}
+.hero-grid>*{min-width:0}
+.hero-art{min-width:0;max-width:100%}
+.chat{left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.chatbox{width:min(330px,calc(100vw - 24px));max-width:calc(100vw - 24px);left:0;right:auto}
+.chatinput input{min-width:0;width:0}
+.hydroyar-turnstile-host{overflow-x:auto;overscroll-behavior-x:contain}
+.auth-overlay,.work-modal-overlay{padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.auth-modal,.work-modal{width:100%;max-width:620px;max-height:calc(100dvh - 24px);max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain}
+@media(max-width:390px){
+ .wrap{padding-left:16px;padding-right:16px}
+ .navin{gap:7px}
+ .logo{gap:5px;font-size:19px}
+ .logo-mark{width:24px;height:34px}
+ .theme-toggle,.mobile-menu-btn{width:40px;height:40px;flex-basis:40px!important}
+ .hero h1{font-size:clamp(31px,9vw,36px);letter-spacing:-.7px;overflow-wrap:anywhere}
+ .hero p{font-size:16px}
+ .section-head h2{font-size:clamp(25px,7vw,30px);overflow-wrap:anywhere}
+ .category-card,.feature,.step,.workbody,.price,.shop-card,.template-card,.faq .q{padding:18px}
+ .leadbox,.checkout,.template-controls{padding:16px}
+ .cta{padding:28px 16px}
+ .chatbox{width:calc(100vw - 24px)}
+ .auth-modal{padding:22px 16px}
+}
+@media(max-width:350px){
+ .navin{gap:5px}
+ .logo{font-size:17px}
+ .logo-mark{width:21px;height:30px}
+ .theme-toggle,.mobile-menu-btn{width:38px;height:38px;flex-basis:38px!important}
+ .actions>.btn,.launch-actions>.launch-btn{flex:1 1 100%;width:100%}
+ .auth-methods{grid-template-columns:1fr}
+}
+@media(hover:none){.btn:hover,.navbtn:hover,.theme-toggle:hover,.mobile-menu-btn:hover{transform:none}}
 </style>
 <style>
 .hydroyar-captcha-wrap{margin:14px 0 16px;padding:14px;border:1px solid #dbeafe;border-radius:14px;background:#f8fbff;max-width:100%;}
@@ -284,6 +330,52 @@ body.dark .launch-cta-section{background:linear-gradient(180deg,rgba(8,13,23,.14
 @media(max-width:720px){.launch-cta-section{padding:54px 0}.launch-cta{grid-template-columns:minmax(0,1fr);gap:0;padding:23px 18px 27px;border-radius:26px;min-height:0}.launch-stage{grid-row:1;min-height:0;margin:-3px -9px 9px}.launch-illustration{width:100%;max-width:560px}.launch-stage-caption{bottom:0;font-size:8px;gap:7px}.launch-copy{grid-row:2;padding:10px 0 0}.launch-kicker{font-size:10px}.launch-copy h2{font-size:clamp(31px,8vw,43px);line-height:1.4;margin:17px 0 10px}.launch-lead{font-size:14px;line-height:2.05}.launch-steps{margin-top:20px}.launch-actions{margin-top:23px;gap:9px}.launch-btn{flex:1 1 auto;min-width:0;min-height:49px;padding:11px 10px;font-size:12px}.launch-note{font-size:10px;margin-top:15px}}
 @media(max-width:390px){.launch-cta{padding:18px 14px 23px}.launch-stage{margin-left:-8px;margin-right:-8px}.launch-steps{gap:5px;font-size:10px}.launch-steps i{width:21px;height:21px}.launch-steps>b{width:6px}.launch-btn{font-size:11px;gap:7px}.launch-stage-caption{font-size:7px;letter-spacing:.4px}}
 @media(prefers-reduced-motion:reduce){.launch-kicker-dot,.launch-stage-aura,.launch-platform-float,.launch-panel-float,.launch-float-card,.launch-orbit-dot,.launch-wire-paths path,.launch-panel-bars rect,.launch-core-pulse,.launch-spark{animation:none!important;transition:none!important}.launch-btn:hover{transform:none}}
+
+/* Responsive hardening: small phones, touch, and iOS safe areas */
+html{width:100%;max-width:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
+body{min-width:0;max-width:100%;overscroll-behavior-x:none}
+img,svg,video,canvas,iframe{max-width:100%}
+button,input,textarea,select{min-width:0;max-width:100%}
+input,textarea,select{font-size:16px}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.wrap{width:100%;min-width:0}
+.nav{padding-top:env(safe-area-inset-top,0px)}
+.navin{min-width:0;gap:clamp(8px,2vw,20px)}
+.logo{min-width:0;flex-shrink:1;font-size:clamp(19px,5vw,25px)}
+.logo-mark{flex-shrink:0}
+.navin>.theme-toggle,.navin>.mobile-menu-btn{flex:0 0 44px}
+.hero-grid>*{min-width:0}
+.hero-art{min-width:0;max-width:100%}
+.chat{left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.chatbox{width:min(330px,calc(100vw - 24px));max-width:calc(100vw - 24px);left:0;right:auto}
+.chatinput input{min-width:0;width:0}
+.hydroyar-turnstile-host{overflow-x:auto;overscroll-behavior-x:contain}
+.auth-overlay,.work-modal-overlay{padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.auth-modal,.work-modal{width:100%;max-width:620px;max-height:calc(100dvh - 24px);max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain}
+@media(max-width:390px){
+ .wrap{padding-left:16px;padding-right:16px}
+ .navin{gap:7px}
+ .logo{gap:5px;font-size:19px}
+ .logo-mark{width:24px;height:34px}
+ .theme-toggle,.mobile-menu-btn{width:40px;height:40px;flex-basis:40px!important}
+ .hero h1{font-size:clamp(31px,9vw,36px);letter-spacing:-.7px;overflow-wrap:anywhere}
+ .hero p{font-size:16px}
+ .section-head h2{font-size:clamp(25px,7vw,30px);overflow-wrap:anywhere}
+ .category-card,.feature,.step,.workbody,.price,.shop-card,.template-card,.faq .q{padding:18px}
+ .leadbox,.checkout,.template-controls{padding:16px}
+ .cta{padding:28px 16px}
+ .chatbox{width:calc(100vw - 24px)}
+ .auth-modal{padding:22px 16px}
+}
+@media(max-width:350px){
+ .navin{gap:5px}
+ .logo{font-size:17px}
+ .logo-mark{width:21px;height:30px}
+ .theme-toggle,.mobile-menu-btn{width:38px;height:38px;flex-basis:38px!important}
+ .actions>.btn,.launch-actions>.launch-btn{flex:1 1 100%;width:100%}
+ .auth-methods{grid-template-columns:1fr}
+}
+@media(hover:none){.btn:hover,.navbtn:hover,.theme-toggle:hover,.mobile-menu-btn:hover{transform:none}}
 </style>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <script type="application/ld+json">
