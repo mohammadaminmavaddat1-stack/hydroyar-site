@@ -64,6 +64,7 @@
 <div class="card"><div class="label">ثبت سفارش و پرداخت</div><div class="value">نیازمند تکمیل</div><div class="note">پرداخت آنلاین هنوز فعال نیست؛ فرم فعلی سفارش را به پیام ارتباطی تبدیل می‌کند.</div></div>
 </section>
 <section class="grid" aria-label="وضعیت عامل‌های اجرایی">
+<div class="card"><div class="label">آدمک هوش مصنوعی هیدرویار</div><div class="value" id="aiAgentStatus">در حال اتصال</div><div class="note" id="aiAgentDetail">سرپرست هوشمند، حافظه گفت‌وگو و انتخاب متخصص متناسب با سؤال.</div></div>
 <div class="card"><div class="label">آدمک برنامه‌نویسی</div><div class="value" id="developerAgentStatus">در انتظار اجرا</div><div class="note" id="developerAgentDetail">گزارش اجرای واقعی ابزار برنامه‌نویس پس از شروع کار نمایش داده می‌شود.</div></div>
 <div class="card"><div class="label">آدمک پشتیبانی</div><div class="value" id="supportAgentStatus">در حال بررسی</div><div class="note" id="supportAgentDetail">وضعیت ذخیره پرونده‌ها، تلگرام و تحلیل اولیه درخواست‌ها.</div></div>
 <div class="card"><div class="label">آدمک سئو و سرچ کنسول</div><div class="value" id="seoAgentStatus">در انتظار گزارش</div><div class="note" id="seoAgentDetail">بررسی فنی روزانه و آخرین داده ثبت‌شده از Search Console.</div></div>
@@ -183,6 +184,35 @@ function queueTeamEvent(type,eventId){
   window.hydroyarPendingTeamEvents.push(payload);
  }
 }
+async function checkAiStatus(){
+ try{
+  const response=await fetch(API+'/ai/status',{cache:'no-store',headers:{Accept:'application/json'}});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const payload=await response.json(),activity=payload.latestActivity;
+  const modelLabel=String(payload.model||'').includes('glm-4.7-flash')?'GLM-4.7 Flash':'مدل هوشمند هیدرویار';
+  const specialistLabel=String(payload.specialistModel||'').includes('gpt-oss-120b')?'GPT-OSS 120B':'متخصص‌های هوشمند';
+  byId('aiAgentStatus').textContent=payload.conversationMemory?'فعال • GLM-4.7 Flash':'فعال • حافظه موقت';
+  byId('aiAgentDetail').textContent='سرپرست: '+modelLabel+' • متخصص‌ها: '+specialistLabel+(payload.conversationMemory?' • نگهداری گفت‌وگو تا ۱۴ روز':'')+(payload.liveResearchAvailable?' • پژوهش زنده آماده':'');
+  window.hydroyarAiStatus=payload;
+  if(activity){
+   const specialistNames={support:'پشتیبانی',requirements:'نیازمندی',pricing:'هزینه',webdev:'وب',software:'نرم‌افزار',security:'امنیت',design:'طراحی',qa:'کیفیت',ops:'زیرساخت'};
+   const names=(activity.specialists||[]).map(id=>specialistNames[id]||id);
+   const aiMode=activity.directMode?'پاسخ مستقیم سرپرست':(activity.fallbackUsed?'مسیر پاسخ پشتیبان':(activity.specialistCount||0)+' متخصص + سرپرست');
+   byId('aiAgentDetail').textContent='مدل سرپرست: '+modelLabel+' • آخرین فعالیت: '+formatDate(activity.updatedAt)+' • '+aiMode+(names.length?' • '+names.join('، '):'')+(activity.webSearchUsed?' • پژوهش زنده استفاده شد':'');
+   if(window.hydroyarLastAiActivity!==activity.updatedAt){
+    window.hydroyarLastAiActivity=activity.updatedAt;
+    queueTeamEvent(activity.directMode?'ai_direct_answer':activity.fallbackUsed?'ai_fallback':'ai_answered','ai-'+activity.updatedAt);
+   }
+  }
+  if(payload.latestTeamSupport?.updatedAt&&window.hydroyarLastAiTeamSupport!==payload.latestTeamSupport.updatedAt){
+   window.hydroyarLastAiTeamSupport=payload.latestTeamSupport.updatedAt;
+   queueTeamEvent('ai_team_support','ai-team-'+payload.latestTeamSupport.updatedAt);
+  }
+ }catch(error){
+  byId('aiAgentStatus').textContent='عدم دریافت وضعیت';
+  byId('aiAgentDetail').textContent='وضعیت هوش مصنوعی موقتاً از سرور دریافت نشد.';
+ }
+}
 async function checkSeoStatus(){
  const badge=byId('seoLiveStatus'),summary=byId('seoLiveSummary'),last=byId('seoLastRun'),list=byId('seoLiveChecks');
  if(!badge||!summary||!list)return;
@@ -270,7 +300,7 @@ async function checkOperationalAgents(){
    const payload=await devResponse.json(),report=payload.report,status=payload.status;
    const labels={ready:'آماده‌به‌کار',planning:'در حال برنامه‌ریزی',planned:'طرح آماده • منتظر تأیید',working:'در حال اجرا',completed:'آخرین اجرا موفق',failed:'نیازمند بررسی', 'rolled-back':'بازگشت امن انجام شد'};
    byId('developerAgentStatus').textContent=labels[status]||'وضعیت نامشخص';
-   byId('developerAgentDetail').textContent=report?(report.summary||'')+' • '+(report.tests?.length?'آزمون‌ها: '+report.tests.join('، '):''):'ابزار برنامه‌نویسی محلی آماده است؛ اجرای تغییرات با بکاپ و آزمون انجام می‌شود.';
+   byId('developerAgentDetail').textContent=report?(report.summary||'')+' • '+(report.tests?.length?'آزمون‌ها: '+report.tests.join('، '):'')+(report.supervisorAdvice?' • پیشنهاد سرپرست: '+String(report.supervisorAdvice).slice(0,420):''):'ابزار برنامه‌نویسی محلی آماده است؛ اجرای تغییرات با بکاپ و آزمون انجام می‌شود.';
    if(report&&window.hydroyarLastDeveloperEvent!==report.updatedAt){
     window.hydroyarLastDeveloperEvent=report.updatedAt;
     const type=status==='working'?'developer_working':status==='completed'?'developer_completed':status==='failed'||status==='rolled-back'?'developer_issue':null;
@@ -305,12 +335,12 @@ async function checkApi(){
   d.textContent='اتصال به API تأیید نشد: '+String(error.message||error);
  }finally{
   t.textContent=formatDate(new Date().toISOString());b.disabled=false;
-  await Promise.all([checkQaStatus(),checkSeoStatus(),checkOperationalAgents()]);
+  await Promise.all([checkQaStatus(),checkSeoStatus(),checkOperationalAgents(),checkAiStatus()]);
  }
 }
 byId('refresh').addEventListener('click',checkApi);
 checkApi();
-setInterval(()=>{checkQaStatus();checkSeoStatus();checkOperationalAgents();},60000);
+setInterval(()=>{checkQaStatus();checkSeoStatus();checkOperationalAgents();checkAiStatus();},60000);
 </script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
@@ -482,7 +512,7 @@ try {
  // Click a 3D teammate to open a customer-friendly explanation of its responsibilities.
  const teamDetails=[
   ['سرپرست تیم','هماهنگ‌کننده‌ی کل تیم','کارها را اولویت‌بندی می‌کند، مسئولیت‌ها را تقسیم می‌کند و مطمئن می‌شود هر بخش پیش از انتشار بررسی شده باشد.','برنامه‌ریزی کارها، پیگیری پیشرفت، هماهنگی اعضا و جمع‌بندی نتیجه‌ها.'],
-  ['هوش مصنوعی','راهنمای هوشمند مشتری','به پرسش‌های اولیه‌ی مشتری درباره خدمات و قالب‌ها پاسخ می‌دهد و کمک می‌کند نیاز او روشن شود. پاسخ واقعی وابسته به فعال‌بودن اتصال هوش مصنوعی است.','پاسخ‌گویی به سؤال‌ها، راهنمای انتخاب خدمات و آماده‌کردن اطلاعات اولیه برای ثبت درخواست.'],
+  ['هوش مصنوعی','هوش مصنوعی مستقل هیدرویار با سرپرست و تیم متخصص','سرپرست GLM-4.7 Flash پاسخ نهایی را کنترل می‌کند؛ برای سؤال‌های تخصصی، متخصص GPT-OSS 120B تحلیل فنی می‌سازد. سؤال‌های ساده مستقیم پاسخ می‌گیرند. گفت‌وگو تا ۱۴ روز امن نگه داشته می‌شود و در صورت خطای QA، سئو یا برنامه‌نویسی، سرپرست می‌تواند گزارش تشخیصی و گام‌های کم‌خطر پیشنهاد دهد.','پاسخ‌گویی عمومی، برنامه‌نویسی و آموزش، حافظه گفت‌وگو، پژوهش زنده، مشورت متخصص GPT-OSS 120B، جمع‌بندی سرپرست و پشتیبانی تشخیصی از عامل‌های تیم.'],
   ['برنامه‌نویسی','عامل اجرای محلی و محدودشده','از ابزار واقعی برنامه‌نویس روی رایانه استفاده می‌کند: فقط فایل‌های مجاز و انتخاب‌شده را می‌خواند، نسخه پشتیبان می‌گیرد، تغییرات را اعمال می‌کند و آزمون‌های مجاز را اجرا می‌کند. انتشار Worker فقط پس از موفقیت آزمون‌ها و با گزینهٔ استقرار انجام می‌شود.','تحلیل درخواست، ساخت طرح کد، بکاپ، اصلاح فایل‌های تأییدشده، اجرای Node/Wrangler و گزارش نتیجه زنده در مرکز پیگیری.'],
   ['آزمایش خطاها','کنترل کیفیت زنده','صفحه اصلی، مرکز پیگیری، ۹ قالب، نقشه سایت، سلامت API، ارتباط CORS، پاسخ زنده چت و ذخیره گزارش را به‌صورت خودکار و دوره‌ای آزمایش می‌کند.','اجرای آزمون‌های زمان‌بندی‌شده، ثبت نتیجه، نمایش فهرست خطاها و اعلان امن خطاهای تازه به مالک هیدرویار.'],
   ['پشتیبانی مشتری','مدیریت پرونده و پیگیری','فرم سایت را با اعتبارسنجی ضدربات دریافت می‌کند، پرونده را در KV ذخیره می‌کند، اعلان تلگرام می‌فرستد و تحلیل اولیه ۹ متخصص را برای تصمیم مدیر ثبت می‌کند. پاسخ به مشتری یا تأیید نهایی بدون تصمیم مدیر ارسال نمی‌شود.','ثبت و پیگیری درخواست، اعلان خصوصی تلگرام، تحلیل هوشمند، نمایش پرونده‌های باز و مشخص‌کردن موارد نیازمند رسیدگی.'],
@@ -510,6 +540,10 @@ try {
  const eventRules=Object.freeze({
   bug_detected:{workerIndex:3,message:'خطای تازه شناسایی شد؛ نیاز به بررسی دارد'},
   bug_fixed:{workerIndex:3,message:'۲۰ آزمون موفق بود؛ پایش خودکار ادامه دارد'},
+  ai_answered:{workerIndex:1,message:'متخصص مرتبط تحلیل کرد و سرپرست پاسخ نهایی را بررسی کرد'},
+  ai_direct_answer:{workerIndex:1,message:'برای این سؤال ساده، سرپرست پاسخ مستقیم و سریع آماده کرد'},
+  ai_fallback:{workerIndex:1,message:'تیم متخصص موقتاً در دسترس نبود؛ پاسخ‌گوی پشتیبان وارد عمل شد'},
+  ai_team_support:{workerIndex:1,message:'سرپرست هوشمند برای حل مشکل یکی از عامل‌های تیم وارد شد'},
   customer_found:{workerIndex:4,message:'درخواست مشتری در پرونده ثبت شد'},
   project_completed:{workerIndex:8,message:'پروژه با موفقیت تکمیل شد'},
   developer_working:{workerIndex:2,message:'در حال اعمال تغییر و اجرای آزمون‌های مجاز هستم'},
@@ -566,6 +600,9 @@ try {
      else if(event.type==='project_completed')holos[2].setContent('PROJECT','completed successfully','#4ade80');
      else if(event.type==='bug_detected')holos[1].setContent('QA / ISSUE',(window.hydroyarQAStatus?.failed||1)+' issues to review','#fbbf24');
      else if(event.type==='bug_fixed')holos[1].setContent('QA / PASS',(window.hydroyarQAStatus?.passed||0)+'/'+(window.hydroyarQAStatus?.total||0)+' checks','#4ade80');
+     else if(event.type==='ai_answered')holos[0].setContent('HYDROYAR AI','manager + '+(window.hydroyarAiStatus?.latestActivity?.specialistCount||1)+' experts','#4ade80');
+     else if(event.type==='ai_fallback')holos[0].setContent('AI / BACKUP','safe response mode','#fbbf24');
+     else if(event.type==='ai_team_support')holos[0].setContent('AI / SUPERVISOR','helping team agent','#22d3ee');
      else if(event.type==='developer_working')holos[4].setContent('CODE / RUNNER','applying approved changes','#60a5fa');
      else if(event.type==='developer_completed')holos[4].setContent('CODE / PASS','tests completed','#4ade80');
      else if(event.type==='developer_issue')holos[4].setContent('CODE / ISSUE','review required','#fbbf24');
