@@ -362,7 +362,7 @@ try {
  const eventQueue=[];
  const eventRules=Object.freeze({
   bug_detected:{workerIndex:3,message:'خطای تازه شناسایی شد؛ نیاز به بررسی دارد'},
-  bug_fixed:{workerIndex:2,message:'اصلاح انجام شد؛ منتظر تأیید تست هستیم'},
+  bug_fixed:{workerIndex:3,message:'۲۰ آزمون موفق بود؛ پایش خودکار ادامه دارد'},
   customer_found:{workerIndex:4,message:'درخواست مشتری جدید تأیید شد'},
   project_completed:{workerIndex:8,message:'پروژه با موفقیت تکمیل شد'}
  });
@@ -411,8 +411,8 @@ try {
      paintSpeech(bubble,event.message,names[event.workerIndex]);
      if(event.type==='customer_found')holos[2].setContent('SUPPORT','new verified customer','#a78bfa');
      else if(event.type==='project_completed')holos[2].setContent('PROJECT','completed successfully','#4ade80');
-     else if(event.type==='bug_detected')holos[1].setContent('QA / ISSUE','review required','#fbbf24');
-     else if(event.type==='bug_fixed')holos[1].setContent('QA / FIXED','retest required','#4ade80');
+     else if(event.type==='bug_detected')holos[1].setContent('QA / ISSUE',(window.hydroyarQAStatus?.failed||1)+' issues to review','#fbbf24');
+     else if(event.type==='bug_fixed')holos[1].setContent('QA / PASS',(window.hydroyarQAStatus?.passed||0)+'/'+(window.hydroyarQAStatus?.total||0)+' checks','#4ade80');
      if(window.hydroyarNotify)window.hydroyarNotify();
    }
    activeBubbles.forEach((b,i)=>{if(t>=b.until){b.sprite.visible=false;return;}const w=workers[b.workerIndex];if(w){b.sprite.position.set(w.group.position.x,3.28,w.group.position.z-.05);b.sprite.position.y+=Math.sin(t*3+i)*.002;}});
