@@ -373,7 +373,7 @@ async function checkSupervisorStatus(){
    const detail=document.createElement('p');detail.textContent=item.reason||'بررسی بیشتر لازم است.';
    body.append(title,detail);row.append(icon,body);assignments.append(row);
   }
-  const stateLabelsFa={active:'فعال',ready:'آماده ارجاع',healthy:'سالم',warning:'هشدار',attention:'نیازمند رسیدگی',approval:'نیازمند تأیید مالک',waiting:'در انتظار داده',stale:'گزارش قدیمی',unavailable:'در دسترس نیست',failed:'ناموفق','rolled-back':'بازگشت امن'};
+  const stateLabelsFa={active:'فعال',ready:'آماده ارجاع',planned:'طرح آماده • منتظر تأیید',healthy:'سالم',warning:'هشدار',attention:'نیازمند رسیدگی',approval:'نیازمند تأیید مالک',waiting:'در انتظار داده',stale:'گزارش قدیمی',unavailable:'در دسترس نیست',failed:'ناموفق','rolled-back':'بازگشت امن'};
   const modeLabels={live:'زنده', 'live-status':'گزارش زنده','live-diagnostics':'آزمون واقعی','live-queue':'صف واقعی','on-demand':'هنگام ارجاع','review-only':'بازبینی محدود','owner-approval':'با تأیید مالک','live-control':'کنترل مرکزی','live-telegram':'اتصال تلگرام'};
   const grid=byId('supervisorAgentGrid');grid.replaceChildren();
   for(const agent of snap.agents||[]){
