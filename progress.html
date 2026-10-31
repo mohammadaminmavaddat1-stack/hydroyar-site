@@ -320,9 +320,10 @@ async function checkOperationalAgents(){
   ]);
   if(devResponse.ok){
    const payload=await devResponse.json(),report=payload.report,status=payload.status;
-   const labels={ready:'آماده‌به‌کار',planning:'در حال برنامه‌ریزی',planned:'طرح آماده • منتظر تأیید',working:'در حال اجرا',completed:'آخرین اجرا موفق',failed:'نیازمند بررسی', 'rolled-back':'بازگشت امن انجام شد'};
+   const labels={ready:'آنلاین • آماده دریافت کار',offline:'اجراکننده آفلاین',planning:'در حال برنامه‌ریزی',planned:'طرح آماده • بدون تغییر کد',working:'در حال برنامه‌نویسی و آزمون',completed:'آخرین اجرا موفق',failed:'نیازمند بررسی', 'rolled-back':'بازگشت امن انجام شد',unavailable:'عامل محلی در دسترس نیست'};
    byId('developerAgentStatus').textContent=labels[status]||'وضعیت نامشخص';
-   byId('developerAgentDetail').textContent=report?(report.summary||'')+' • '+(report.tests?.length?'آزمون‌ها: '+report.tests.join('، '):'')+(report.supervisorAdvice?' • پیشنهاد سرپرست: '+String(report.supervisorAdvice).slice(0,420):''):'ابزار برنامه‌نویسی محلی آماده است؛ اجرای تغییرات با بکاپ و آزمون انجام می‌شود.';
+   const runtimeText=payload.runtimeOnline?(payload.runtime?.state==='working'?'اجرای زنده: '+(payload.runtime?.task||'وظیفه در حال انجام'):'اجراکننده محلی آنلاین است و صف کارها را پیوسته بررسی می‌کند.'):'اجراکننده محلی آفلاین است؛ حرکت سه‌بعدی به معنی اجرای برنامه‌نویسی نیست.';
+   byId('developerAgentDetail').textContent=runtimeText+(report?' • '+(report.summary||'')+' • '+(report.tests?.length?'آزمون‌ها: '+report.tests.join('، '):'')+(report.supervisorAdvice?' • پیشنهاد سرپرست: '+String(report.supervisorAdvice).slice(0,420):''):'');
    if(report&&window.hydroyarLastDeveloperEvent!==report.updatedAt){
     window.hydroyarLastDeveloperEvent=report.updatedAt;
     const type=status==='working'?'developer_working':status==='completed'?'developer_completed':status==='failed'||status==='rolled-back'?'developer_issue':null;
@@ -374,7 +375,7 @@ async function checkSupervisorStatus(){
    body.append(title,detail);row.append(icon,body);assignments.append(row);
   }
   const stateLabelsFa={active:'فعال',ready:'آماده ارجاع',planned:'طرح آماده • منتظر تأیید',planning:'در حال برنامه‌ریزی',working:'در حال اجرا',completed:'آخرین اجرا موفق',healthy:'سالم',passed:'موفق',warning:'هشدار',attention:'نیازمند رسیدگی',approval:'نیازمند تأیید مالک',awaiting_owner:'منتظر تأیید مالک',staged:'آماده انتشار',testing:'در حال آزمون',deploying:'در حال انتشار',deployed:'منتشر شد',blocked:'انتشار مسدود شد',waiting:'در انتظار داده',stale:'گزارش قدیمی',unavailable:'در دسترس نیست',failed:'ناموفق','rolled-back':'بازگشت امن'};
-  const modeLabels={live:'زنده', 'live-status':'گزارش زنده','live-diagnostics':'آزمون واقعی','live-queue':'صف واقعی','on-demand':'هنگام ارجاع','review-only':'بازبینی محدود','owner-approval':'با تأیید مالک','controlled-release':'انتشار کنترل‌شده','live-security':'ممیزی امنیت زنده','live-control':'کنترل مرکزی','live-telegram':'اتصال تلگرام'};
+  const modeLabels={live:'زنده', 'live-status':'گزارش زنده','live-diagnostics':'آزمون واقعی','live-queue':'صف واقعی','on-demand':'هنگام ارجاع','review-only':'بازبینی محدود','owner-approval':'با تأیید مالک','controlled-release':'انتشار کنترل‌شده','live-security':'ممیزی امنیت زنده','live-control':'کنترل مرکزی','live-telegram':'اتصال تلگرام','live-runtime':'اجرای محلی پیوسته'};
   const grid=byId('supervisorAgentGrid');grid.replaceChildren();
   for(const agent of snap.agents||[]){
    const card=document.createElement('div');card.className='card';card.style.padding='12px';
@@ -608,7 +609,7 @@ try {
  const teamDetails=[
   ['سرپرست تیم','هماهنگ‌کننده‌ی کل تیم','کارها را اولویت‌بندی می‌کند، مسئولیت‌ها را تقسیم می‌کند و مطمئن می‌شود هر بخش پیش از انتشار بررسی شده باشد.','برنامه‌ریزی کارها، پیگیری پیشرفت، هماهنگی اعضا و جمع‌بندی نتیجه‌ها.'],
   ['هوش مصنوعی','هوش مصنوعی مستقل هیدرویار با سرپرست و تیم متخصص','سرپرست GLM-4.7 Flash پاسخ نهایی را کنترل می‌کند؛ برای سؤال‌های تخصصی، متخصص GPT-OSS 120B تحلیل فنی می‌سازد. سؤال‌های ساده مستقیم پاسخ می‌گیرند. گفت‌وگو تا ۱۴ روز امن نگه داشته می‌شود و در صورت خطای QA، سئو یا برنامه‌نویسی، سرپرست می‌تواند گزارش تشخیصی و گام‌های کم‌خطر پیشنهاد دهد.','پاسخ‌گویی عمومی، برنامه‌نویسی و آموزش، حافظه گفت‌وگو، پژوهش زنده، مشورت متخصص GPT-OSS 120B، جمع‌بندی سرپرست و پشتیبانی تشخیصی از عامل‌های تیم.'],
-  ['برنامه‌نویسی','عامل اجرای محلی و محدودشده','از ابزار واقعی برنامه‌نویس روی رایانه استفاده می‌کند: فقط فایل‌های مجاز و انتخاب‌شده را می‌خواند، نسخه پشتیبان می‌گیرد، تغییرات را اعمال می‌کند و آزمون‌های مجاز را اجرا می‌کند. انتشار Worker فقط پس از موفقیت آزمون‌ها و با گزینهٔ استقرار انجام می‌شود.','تحلیل درخواست، ساخت طرح کد، بکاپ، اصلاح فایل‌های تأییدشده، اجرای Node/Wrangler و گزارش نتیجه زنده در مرکز پیگیری.'],
+  ['برنامه‌نویسی','عامل برنامه‌نویس خودکار محلی','از فرمان خصوصی تلگرام /code وظیفه می‌گیرد، فایل‌های مجاز را به مدل برنامه‌ریز می‌دهد، طرح تغییرات را می‌سازد و در رایانهٔ متصل با بکاپ، اعمال کد، آزمون کامل و گزارش نتیجه اجرا می‌کند. عامل پس از ورود به ویندوز به‌صورت پیوسته صف را بررسی می‌کند؛ خاموشی رایانه یا قطع اینترنت اجرای کار را متوقف می‌کند. انتشار نسخهٔ اصلی همچنان نیازمند اجازهٔ صریح مالک است.','دریافت وظیفه، تحلیل نیاز، طراحی راه‌حل، انتخاب فایل، تولید و اصلاح کد، بکاپ خودکار، اجرای npm test و Worker dry-run و ثبت گزارش به سرپرست.'],
   ['آزمایش خطاها','کنترل کیفیت زنده','صفحه اصلی، مرکز پیگیری، ۹ قالب، نقشه سایت، سلامت API، ارتباط CORS، پاسخ زنده چت و ذخیره گزارش را به‌صورت خودکار و دوره‌ای آزمایش می‌کند.','اجرای آزمون‌های زمان‌بندی‌شده، ثبت نتیجه، نمایش فهرست خطاها و اعلان امن خطاهای تازه به مالک هیدرویار.'],
   ['پشتیبانی مشتری','مدیریت پرونده و پیگیری','فرم سایت را با اعتبارسنجی ضدربات دریافت می‌کند، پرونده را در KV ذخیره می‌کند، اعلان تلگرام می‌فرستد و تحلیل اولیه ۹ متخصص را برای تصمیم مدیر ثبت می‌کند. پاسخ به مشتری یا تأیید نهایی بدون تصمیم مدیر ارسال نمی‌شود.','ثبت و پیگیری درخواست، اعلان خصوصی تلگرام، تحلیل هوشمند، نمایش پرونده‌های باز و مشخص‌کردن موارد نیازمند رسیدگی.'],
   ['طراحی سایت','ظاهر و تجربه‌ی کاربری','چیدمان، رنگ‌ها و مسیر استفاده از سایت را طراحی می‌کند تا صفحات جذاب، خوانا و ساده باشند.','طراحی رابط کاربری، انتخاب رنگ و تایپوگرافی، طراحی واکنش‌گرا و بهبود تجربه‌ی مشتری.'],
