@@ -1,0 +1,527 @@
+/* HydroYar brand palette — navy / slate */
+:root{
+  color-scheme:dark;
+  --hy-night:#06141B;
+  --hy-deep:#11212D;
+  --hy-raised:#253745;
+  --hy-steel:#4A5C6A;
+  --hy-muted:#9BA8AB;
+  --hy-light:#CCD0CF;
+  --ink:var(--hy-light);
+  --muted:var(--hy-muted);
+  --blue:var(--hy-light);
+  --blue2:var(--hy-muted);
+  --cyan:var(--hy-muted);
+  --bg:var(--hy-night);
+  --line:rgba(155,168,171,.22);
+  --card:var(--hy-deep);
+  --shadow:0 22px 60px rgba(0,0,0,.3);
+  --edge-a:#9BA8AB;
+  --edge-b:#CCD0CF;
+  --edge-bg:#11212D;
+}
+body.hydroyar-brand-page.dark{
+  color-scheme:dark!important;
+  --ink:var(--hy-light);
+  --muted:var(--hy-muted);
+  --blue:var(--hy-light);
+  --blue2:var(--hy-muted);
+  --cyan:var(--hy-muted);
+  --bg:var(--hy-night);
+  --line:rgba(155,168,171,.22);
+  --card:var(--hy-deep);
+  --shadow:0 22px 60px rgba(0,0,0,.3);
+  background:var(--hy-night)!important;
+  color:var(--hy-light)!important;
+}
+body.hydroyar-brand-page{background:linear-gradient(180deg,#06141B 0%,#0A1A23 52%,#06141B 100%)!important}
+body.hydroyar-brand-page a{color:#CCD0CF}
+body.hydroyar-brand-page a:hover{color:#fff}
+body.hydroyar-brand-page h1,
+body.hydroyar-brand-page h2,
+body.hydroyar-brand-page h3,
+body.hydroyar-brand-page h4,
+body.hydroyar-brand-page strong,
+body.hydroyar-brand-page b{color:#CCD0CF}
+body.hydroyar-brand-page p,
+body.hydroyar-brand-page li,
+body.hydroyar-brand-page small{color:#9BA8AB}
+body.hydroyar-brand-page .top{
+  background:#06141B!important;color:#9BA8AB!important;
+  border-bottom:1px solid rgba(155,168,171,.14)
+}
+body.hydroyar-brand-page .top a{color:#CCD0CF!important}
+body.hydroyar-brand-page .nav{
+  background:rgba(6,20,27,.9)!important;
+  border-bottom:1px solid rgba(155,168,171,.2)!important;
+  box-shadow:0 8px 30px rgba(0,0,0,.12)
+}
+body.hydroyar-brand-page .logo{color:#CCD0CF!important}
+body.hydroyar-brand-page .logo i{color:#9BA8AB!important}
+body.hydroyar-brand-page .links{color:#9BA8AB!important}
+body.hydroyar-brand-page .links a:hover{color:#CCD0CF!important}
+body.hydroyar-brand-page .navbtn,
+body.hydroyar-brand-page .btn.light{
+  background:#253745!important;color:#CCD0CF!important;
+  border:1px solid #4A5C6A!important;box-shadow:none!important
+}
+body.hydroyar-brand-page .btn,
+body.hydroyar-brand-page a.btn,
+body.hydroyar-brand-page button.btn{
+  background:linear-gradient(135deg,#CCD0CF,#9BA8AB)!important;
+  color:#06141B!important;border:1px solid #CCD0CF!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.24)!important
+}
+body.hydroyar-brand-page .btn:hover,
+body.hydroyar-brand-page .navbtn:hover{filter:brightness(1.06)}
+body.hydroyar-brand-page .hero{
+  background:linear-gradient(145deg,#11212D 0%,#0B1B25 58%,#06141B 100%)!important;
+  color:#CCD0CF!important
+}
+body.hydroyar-brand-page .hero:before{
+  background:radial-gradient(circle,rgba(155,168,171,.14),transparent 70%)!important
+}
+body.hydroyar-brand-page .hero h1 span{color:#CCD0CF!important}
+body.hydroyar-brand-page .hero p{color:#9BA8AB!important}
+body.hydroyar-brand-page .eyebrow,
+body.hydroyar-brand-page .pill,
+body.hydroyar-brand-page .tag{
+  background:#253745!important;color:#CCD0CF!important;
+  border:1px solid rgba(155,168,171,.24)
+}
+body.hydroyar-brand-page .dot{background:#9BA8AB!important}
+body.hydroyar-brand-page .trust,
+body.hydroyar-brand-page .trust b{color:#9BA8AB!important}
+body.hydroyar-brand-page .glass{
+  background:rgba(17,33,45,.9)!important;
+  border-color:rgba(155,168,171,.25)!important;
+  box-shadow:0 22px 55px rgba(0,0,0,.3)!important
+}
+body.hydroyar-brand-page .mini{background:#4A5C6A!important}
+body.hydroyar-brand-page .chart{
+  background:linear-gradient(145deg,#253745,#11212D)!important
+}
+body.hydroyar-brand-page .chart:after{color:rgba(204,208,207,.16)!important}
+body.hydroyar-brand-page .bars i{background:linear-gradient(#CCD0CF,#4A5C6A)!important}
+body.hydroyar-brand-page .category-card,
+body.hydroyar-brand-page .feature,
+body.hydroyar-brand-page .step,
+body.hydroyar-brand-page .work,
+body.hydroyar-brand-page .price,
+body.hydroyar-brand-page .shop-card,
+body.hydroyar-brand-page .template-card,
+body.hydroyar-brand-page .faq .q,
+body.hydroyar-brand-page .leadbox,
+body.hydroyar-brand-page .checkout,
+body.hydroyar-brand-page .template-controls,
+body.hydroyar-brand-page .card{
+  background:linear-gradient(145deg,#11212D,#0C1B24)!important;
+  color:#CCD0CF!important;
+  border-color:rgba(155,168,171,.24)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.16)
+}
+body.hydroyar-brand-page .category-card:hover,
+body.hydroyar-brand-page .category-card.active,
+body.hydroyar-brand-page .feature:hover,
+body.hydroyar-brand-page .step:hover,
+body.hydroyar-brand-page .work:hover,
+body.hydroyar-brand-page .template-card:hover{
+  border-color:#9BA8AB!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.28),0 0 0 1px rgba(155,168,171,.1)!important
+}
+body.hydroyar-brand-page .ico{
+  background:#253745!important;color:#CCD0CF!important;
+  border:1px solid rgba(155,168,171,.2)
+}
+body.hydroyar-brand-page .band,
+body.hydroyar-brand-page .shop,
+body.hydroyar-brand-page .calm-waves{
+  background:linear-gradient(180deg,#06141B,#11212D 52%,#06141B)!important
+}
+body.hydroyar-brand-page .workpic,
+body.hydroyar-brand-page .workpic.dark,
+body.hydroyar-brand-page .template-preview{
+  background:linear-gradient(145deg,#253745,#11212D)!important
+}
+body.hydroyar-brand-page .mock,
+body.hydroyar-brand-page .workpic.dark .mock{
+  background:rgba(6,20,27,.78)!important;border-color:rgba(204,208,207,.16)!important
+}
+body.hydroyar-brand-page .mockline,
+body.hydroyar-brand-page .workpic.dark .mockline{background:#4A5C6A!important}
+body.hydroyar-brand-page .template-tags span{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page .template-result{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page .num,
+body.hydroyar-brand-page .shop-price,
+body.hydroyar-brand-page .price .money{color:#CCD0CF!important}
+body.hydroyar-brand-page .price.hot{
+  border-color:#9BA8AB!important;box-shadow:0 20px 55px rgba(0,0,0,.28)!important
+}
+body.hydroyar-brand-page .popular{
+  background:#CCD0CF!important;color:#06141B!important
+}
+body.hydroyar-brand-page .price ul{color:#9BA8AB!important}
+body.hydroyar-brand-page .note,
+body.hydroyar-brand-page .summary,
+body.hydroyar-brand-page .lead-status{
+  background:#253745!important;color:#CCD0CF!important;
+  border:1px solid rgba(155,168,171,.2)
+}
+body.hydroyar-brand-page .form input,
+body.hydroyar-brand-page .form textarea,
+body.hydroyar-brand-page .form select,
+body.hydroyar-brand-page input,
+body.hydroyar-brand-page textarea,
+body.hydroyar-brand-page select{
+  background:#06141B!important;color:#CCD0CF!important;
+  border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page input::placeholder,
+body.hydroyar-brand-page textarea::placeholder{color:#9BA8AB!important}
+body.hydroyar-brand-page .cta{
+  background:linear-gradient(135deg,#253745,#11212D 58%,#06141B)!important;
+  color:#CCD0CF!important;border:1px solid rgba(155,168,171,.24)
+}
+body.hydroyar-brand-page .cta p{color:#9BA8AB!important}
+body.hydroyar-brand-page .cta .btn{
+  background:#CCD0CF!important;color:#06141B!important
+}
+body.hydroyar-brand-page footer{
+  background:#06141B!important;color:#9BA8AB!important;
+  border-top:1px solid rgba(155,168,171,.2)
+}
+body.hydroyar-brand-page footer h3{color:#CCD0CF!important}
+body.hydroyar-brand-page footer p,
+body.hydroyar-brand-page footer a{color:#9BA8AB!important}
+body.hydroyar-brand-page .copy{border-color:#4A5C6A!important;color:#9BA8AB!important}
+body.hydroyar-brand-page .chatbox{
+  background:#11212D!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page .chathead{background:#06141B!important;color:#CCD0CF!important}
+body.hydroyar-brand-page .chat-new{
+  background:#253745!important;border-color:#4A5C6A!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page .msg{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page .msg.user{
+  background:#4A5C6A!important;color:#fff!important
+}
+body.hydroyar-brand-page .msg.ai-meta,
+body.hydroyar-brand-page .chatnote{background:#06141B!important;color:#9BA8AB!important}
+body.hydroyar-brand-page .chatinput{border-color:#4A5C6A!important}
+body.hydroyar-brand-page .chatinput input{background:#11212D!important;color:#CCD0CF!important}
+body.hydroyar-brand-page .hydroyar-template-back{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page a:focus-visible,
+body.hydroyar-brand-page button:focus-visible,
+body.hydroyar-brand-page input:focus-visible,
+body.hydroyar-brand-page textarea:focus-visible,
+body.hydroyar-brand-page select:focus-visible{
+  outline:2px solid #CCD0CF!important;outline-offset:3px
+}
+
+/* Simple brand pages: services, pricing, legal and account flows */
+body.hydroyar-brand-page.simple-brand-page{min-height:100vh}
+body.hydroyar-brand-page.simple-brand-page .wrap{color:#CCD0CF}
+body.hydroyar-brand-page.simple-brand-page header{
+  border-bottom-color:rgba(155,168,171,.24)!important
+}
+body.hydroyar-brand-page.simple-brand-page .logo{color:#CCD0CF!important}
+body.hydroyar-brand-page.simple-brand-page .hero{border-radius:18px}
+body.hydroyar-brand-page.simple-brand-page .card{
+  background:#11212D!important;border:1px solid rgba(155,168,171,.24)!important
+}
+body.hydroyar-brand-page.simple-brand-page .secondary{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page.simple-brand-page .note{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page.simple-brand-page footer{
+  margin-top:35px;padding:22px 0;border-top:1px solid rgba(155,168,171,.22)
+}
+body.hydroyar-brand-page.simple-brand-page .crumbs,
+body.hydroyar-brand-page.simple-brand-page .crumbs a{color:#9BA8AB!important}
+body.hydroyar-brand-page.simple-brand-page .faq-list details,
+body.hydroyar-brand-page.simple-brand-page .related a{
+  background:#11212D!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+
+/* Privacy, terms, payment result and email confirmation */
+body.hydroyar-brand-page.legal-brand-page{
+  max-width:900px!important;margin:40px auto!important;padding:0 22px!important;
+  background:var(--hy-night)!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page.legal-brand-page a{color:#CCD0CF!important;text-decoration:underline}
+body.hydroyar-brand-page.legal-brand-page .note{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page.payment-brand-page{
+  display:grid;place-items:center;min-height:100vh;padding:24px!important;
+  background:radial-gradient(ellipse at 50% 0%,#253745 0,transparent 48%),#06141B!important
+}
+body.hydroyar-brand-page.payment-brand-page main,
+body.hydroyar-brand-page.auth-brand-page main{
+  background:linear-gradient(145deg,#11212D,#0B1B24)!important;
+  color:#CCD0CF!important;border:1px solid #4A5C6A!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.35)!important
+}
+body.hydroyar-brand-page.payment-brand-page .summary,
+body.hydroyar-brand-page.auth-brand-page .status{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page.payment-brand-page .brand,
+body.hydroyar-brand-page.auth-brand-page .brand{color:#CCD0CF!important}
+body.hydroyar-brand-page.payment-brand-page .icon{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page.payment-brand-page .primary,
+body.hydroyar-brand-page.auth-brand-page .primary{
+  background:#CCD0CF!important;color:#06141B!important
+}
+body.hydroyar-brand-page.payment-brand-page .secondary,
+body.hydroyar-brand-page.auth-brand-page .secondary{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page.auth-brand-page{
+  min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#253745 0,transparent 48%),#06141B!important;
+  color:#CCD0CF!important
+}
+body.hydroyar-brand-page.auth-brand-page .status.success{background:#1d3a35!important;color:#CCD0CF!important}
+body.hydroyar-brand-page.auth-brand-page .status.error{background:#42292d!important;color:#CCD0CF!important}
+
+/* Support dashboard */
+body.hydroyar-dashboard{
+  color-scheme:dark!important;
+  --bg:#06141B;--panel:#11212D;--panel2:#253745;
+  --line:#4A5C6A;--text:#CCD0CF;--muted:#9BA8AB;
+  --blue:#CCD0CF;--cyan:#9BA8AB;
+  background:radial-gradient(ellipse at 80% -15%,#253745 0,transparent 48%),#06141B!important;
+  color:#CCD0CF!important
+}
+body.hydroyar-dashboard .card{
+  background:linear-gradient(145deg,#11212D,#0C1B24)!important;
+  border-color:rgba(155,168,171,.24)!important
+}
+body.hydroyar-dashboard .team-scene,
+body.hydroyar-dashboard .team-memory{
+  background:radial-gradient(ellipse at 50% 0%,#253745 0,transparent 65%),linear-gradient(145deg,#11212D,#06141B)!important;
+  border-color:#4A5C6A!important
+}
+body.hydroyar-dashboard .team-board,
+body.hydroyar-dashboard .team-floor{
+  background:linear-gradient(145deg,#253745,#11212D)!important;
+  border-color:#4A5C6A!important
+}
+body.hydroyar-dashboard .team-info-pop{
+  background:rgba(6,20,27,.97)!important;border-color:#4A5C6A!important;color:#CCD0CF!important
+}
+body.hydroyar-dashboard .team-info-pop h3{color:#CCD0CF!important}
+body.hydroyar-dashboard .team-info-pop p{color:#9BA8AB!important}
+body.hydroyar-dashboard .team-info-close,
+body.hydroyar-dashboard .btn:not(.primary),
+body.hydroyar-dashboard button:not(.primary){
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-dashboard .btn.primary,
+body.hydroyar-dashboard button.primary{
+  background:#CCD0CF!important;color:#06141B!important
+}
+body.hydroyar-dashboard .icon{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-dashboard .meter{background:#4A5C6A!important}
+body.hydroyar-dashboard .meter span{background:linear-gradient(90deg,#9BA8AB,#CCD0CF)!important}
+body.hydroyar-dashboard .section-title,
+body.hydroyar-dashboard .brand{color:#CCD0CF!important}
+body.hydroyar-dashboard .brand span,
+body.hydroyar-dashboard .eyebrow{color:#9BA8AB!important}
+body.hydroyar-dashboard .task:hover{background:linear-gradient(100deg,transparent,#25374588)!important}
+body.hydroyar-dashboard input,
+body.hydroyar-dashboard textarea,
+body.hydroyar-dashboard select{
+  background:#06141B!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+@media(prefers-reduced-motion:reduce){
+  body.hydroyar-brand-page *,body.hydroyar-dashboard *{scroll-behavior:auto}
+}
+
+
+/* Optional light mode: the site defaults to the dark palette and remembers the visitor's choice. */
+body.hydroyar-brand-page:not(.dark){
+  color-scheme:light!important;
+  --ink:#06141B;--muted:#253745;--blue:#11212D;--blue2:#253745;
+  --cyan:#4A5C6A;--bg:#CCD0CF;--line:rgba(74,92,106,.28);
+  --card:#CCD0CF;--shadow:0 18px 48px rgba(6,20,27,.12);
+  background:linear-gradient(180deg,#CCD0CF 0%,#9BA8AB 52%,#CCD0CF 100%)!important;
+  color:#06141B!important;
+}
+body.hydroyar-brand-page:not(.dark) a{color:#11212D!important}
+body.hydroyar-brand-page:not(.dark) a:hover{color:#06141B!important}
+body.hydroyar-brand-page:not(.dark) h1,
+body.hydroyar-brand-page:not(.dark) h2,
+body.hydroyar-brand-page:not(.dark) h3,
+body.hydroyar-brand-page:not(.dark) h4,
+body.hydroyar-brand-page:not(.dark) strong,
+body.hydroyar-brand-page:not(.dark) b{color:#06141B!important}
+body.hydroyar-brand-page:not(.dark) p,
+body.hydroyar-brand-page:not(.dark) li,
+body.hydroyar-brand-page:not(.dark) small{color:#253745!important}
+body.hydroyar-brand-page:not(.dark) .top{
+  background:#06141B!important;color:#9BA8AB!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .top a{color:#CCD0CF!important}
+body.hydroyar-brand-page:not(.dark) .nav{
+  background:rgba(204,208,207,.94)!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .logo,
+body.hydroyar-brand-page:not(.dark) .links{color:#06141B!important}
+body.hydroyar-brand-page:not(.dark) .links a{color:#253745!important}
+body.hydroyar-brand-page:not(.dark) .navbtn,
+body.hydroyar-brand-page:not(.dark) .btn.light{
+  background:#9BA8AB!important;color:#06141B!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .btn,
+body.hydroyar-brand-page:not(.dark) a.btn,
+body.hydroyar-brand-page:not(.dark) button.btn{
+  background:linear-gradient(135deg,#06141B,#253745)!important;
+  color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .hero{
+  background:linear-gradient(145deg,#CCD0CF,#9BA8AB 68%,#CCD0CF)!important;color:#06141B!important
+}
+body.hydroyar-brand-page:not(.dark) .hero:before{
+  background:radial-gradient(circle,rgba(74,92,106,.16),transparent 70%)!important
+}
+body.hydroyar-brand-page:not(.dark) .hero h1 span{color:#11212D!important}
+body.hydroyar-brand-page:not(.dark) .hero p{color:#253745!important}
+body.hydroyar-brand-page:not(.dark) .eyebrow,
+body.hydroyar-brand-page:not(.dark) .pill,
+body.hydroyar-brand-page:not(.dark) .tag{
+  background:#9BA8AB!important;color:#06141B!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .trust,
+body.hydroyar-brand-page:not(.dark) .trust b{color:#253745!important}
+body.hydroyar-brand-page:not(.dark) .glass{
+  background:rgba(204,208,207,.94)!important;border-color:#4A5C6A!important;
+  box-shadow:0 18px 42px rgba(6,20,27,.18)!important
+}
+body.hydroyar-brand-page:not(.dark) .mini{background:#4A5C6A!important}
+body.hydroyar-brand-page:not(.dark) .chart{background:linear-gradient(145deg,#9BA8AB,#CCD0CF)!important}
+body.hydroyar-brand-page:not(.dark) .bars i{background:linear-gradient(#253745,#4A5C6A)!important}
+body.hydroyar-brand-page:not(.dark) .category-card,
+body.hydroyar-brand-page:not(.dark) .feature,
+body.hydroyar-brand-page:not(.dark) .step,
+body.hydroyar-brand-page:not(.dark) .work,
+body.hydroyar-brand-page:not(.dark) .price,
+body.hydroyar-brand-page:not(.dark) .shop-card,
+body.hydroyar-brand-page:not(.dark) .template-card,
+body.hydroyar-brand-page:not(.dark) .faq .q,
+body.hydroyar-brand-page:not(.dark) .leadbox,
+body.hydroyar-brand-page:not(.dark) .checkout,
+body.hydroyar-brand-page:not(.dark) .template-controls,
+body.hydroyar-brand-page:not(.dark) .card{
+  background:linear-gradient(145deg,#CCD0CF,#9BA8AB)!important;
+  color:#06141B!important;border-color:rgba(74,92,106,.4)!important;
+  box-shadow:0 12px 28px rgba(6,20,27,.12)!important
+}
+body.hydroyar-brand-page:not(.dark) .ico{
+  background:#253745!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .band,
+body.hydroyar-brand-page:not(.dark) .shop,
+body.hydroyar-brand-page:not(.dark) .calm-waves{
+  background:linear-gradient(180deg,#CCD0CF,#9BA8AB 52%,#CCD0CF)!important
+}
+body.hydroyar-brand-page:not(.dark) .calm-waves .wave1,
+body.hydroyar-brand-page:not(.dark) .calm-waves .wave2,
+body.hydroyar-brand-page:not(.dark) .calm-waves .wave3{
+  background:radial-gradient(ellipse at 50% 100%,rgba(74,92,106,.13),transparent 68%)!important
+}
+body.hydroyar-brand-page:not(.dark) .starfield-canvas{opacity:.2;filter:grayscale(1)}
+body.hydroyar-brand-page:not(.dark) .workpic,
+body.hydroyar-brand-page:not(.dark) .workpic.dark,
+body.hydroyar-brand-page:not(.dark) .template-preview{
+  background:linear-gradient(145deg,#9BA8AB,#4A5C6A)!important
+}
+body.hydroyar-brand-page:not(.dark) .mock,
+body.hydroyar-brand-page:not(.dark) .workpic.dark .mock{
+  background:rgba(204,208,207,.88)!important;border-color:rgba(6,20,27,.2)!important
+}
+body.hydroyar-brand-page:not(.dark) .mockline,
+body.hydroyar-brand-page:not(.dark) .workpic.dark .mockline{background:#4A5C6A!important}
+body.hydroyar-brand-page:not(.dark) .template-tags span,
+body.hydroyar-brand-page:not(.dark) .template-result{
+  background:#9BA8AB!important;color:#06141B!important
+}
+body.hydroyar-brand-page:not(.dark) .num,
+body.hydroyar-brand-page:not(.dark) .shop-price,
+body.hydroyar-brand-page:not(.dark) .price .money{color:#06141B!important}
+body.hydroyar-brand-page:not(.dark) .popular{
+  background:#06141B!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page:not(.dark) .note,
+body.hydroyar-brand-page:not(.dark) .summary,
+body.hydroyar-brand-page:not(.dark) .lead-status{
+  background:#9BA8AB!important;color:#06141B!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .form input,
+body.hydroyar-brand-page:not(.dark) .form textarea,
+body.hydroyar-brand-page:not(.dark) .form select,
+body.hydroyar-brand-page:not(.dark) input,
+body.hydroyar-brand-page:not(.dark) textarea,
+body.hydroyar-brand-page:not(.dark) select{
+  background:#CCD0CF!important;color:#06141B!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) input::placeholder,
+body.hydroyar-brand-page:not(.dark) textarea::placeholder{color:#4A5C6A!important}
+body.hydroyar-brand-page:not(.dark) .cta{
+  background:linear-gradient(135deg,#06141B,#253745)!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page:not(.dark) .cta h2,
+body.hydroyar-brand-page:not(.dark) .cta p{color:#CCD0CF!important}
+body.hydroyar-brand-page:not(.dark) footer{
+  background:#06141B!important;color:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) footer h3{color:#CCD0CF!important}
+body.hydroyar-brand-page:not(.dark) footer p,
+body.hydroyar-brand-page:not(.dark) footer a{color:#9BA8AB!important}
+body.hydroyar-brand-page:not(.dark) .chatbox{
+  background:#CCD0CF!important;border-color:#4A5C6A!important
+}
+body.hydroyar-brand-page:not(.dark) .chathead{background:#06141B!important;color:#CCD0CF!important}
+body.hydroyar-brand-page:not(.dark) .chat-new{
+  background:#9BA8AB!important;border-color:#4A5C6A!important;color:#06141B!important
+}
+body.hydroyar-brand-page:not(.dark) .msg{
+  background:#9BA8AB!important;color:#06141B!important
+}
+body.hydroyar-brand-page:not(.dark) .msg.user{
+  background:#253745!important;color:#CCD0CF!important
+}
+body.hydroyar-brand-page:not(.dark) .msg.ai-meta,
+body.hydroyar-brand-page:not(.dark) .chatnote{background:#CCD0CF!important;color:#253745!important}
+body.hydroyar-brand-page:not(.dark) .chatinput{border-color:#4A5C6A!important}
+body.hydroyar-brand-page:not(.dark) .chatinput input{background:#CCD0CF!important;color:#06141B!important}
+
+/* Not-found and alternate email-confirmation routes */
+body.hydroyar-brand-page.not-found-brand-page{
+  background:radial-gradient(circle at 50% 18%,#253745 0,#11212D 48%,#06141B 100%)!important;
+  color:#CCD0CF!important
+}
+body.hydroyar-brand-page.not-found-brand-page main{
+  background:linear-gradient(145deg,#11212D,#0B1B24)!important;
+  border-color:#4A5C6A!important;color:#CCD0CF!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.38)!important
+}
+body.hydroyar-brand-page.not-found-brand-page .code{color:#CCD0CF!important}
+body.hydroyar-brand-page.not-found-brand-page p{color:#9BA8AB!important}
+body.hydroyar-brand-page.not-found-brand-page main a{
+  background:#CCD0CF!important;color:#06141B!important
+}
