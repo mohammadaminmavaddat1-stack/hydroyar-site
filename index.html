@@ -406,6 +406,19 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 }
 </script>
 <link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
+<style id="hydroyar-island-3d-styles">
+#hydroyarIsland3D{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.9;transition:opacity .5s ease}
+.calm-waves.has-island-3d .water-svg{z-index:1;opacity:.24;transition:opacity .5s ease}
+/* Let the fixed 3D island show through the large page surfaces without lowering text contrast. */
+body.hydroyar-brand-page .hero{background:linear-gradient(145deg,rgba(17,33,45,.32) 0%,rgba(11,27,37,.38) 58%,rgba(6,20,27,.48) 100%)!important}
+body.hydroyar-brand-page:not(.dark) .hero{background:linear-gradient(145deg,rgba(204,208,207,.34) 0%,rgba(155,168,171,.40) 58%,rgba(204,208,207,.42) 100%)!important}
+body.hydroyar-brand-page.hydroyar-island-ready .hero-art{opacity:0!important;pointer-events:none!important}
+body.hydroyar-brand-page .band,body.hydroyar-brand-page .shop{background:linear-gradient(180deg,rgba(6,20,27,.88),rgba(17,33,45,.80) 52%,rgba(6,20,27,.89))!important}
+body.hydroyar-brand-page:not(.dark) .band,body.hydroyar-brand-page:not(.dark) .shop{background:linear-gradient(180deg,rgba(204,208,207,.85),rgba(155,168,171,.78) 52%,rgba(204,208,207,.86))!important}
+.calm-waves.has-island-3d .starfield-canvas{opacity:.38}
+@media(max-width:700px){.calm-waves.has-island-3d .water-svg{opacity:.15}body.hydroyar-brand-page.hydroyar-island-ready .hero-art{display:none!important}}
+@media(prefers-reduced-motion:reduce){#hydroyarIsland3D{transition:none}}
+</style>
 <style id="hydroyar-bulb-toggle-styles">
 #themeToggle.bulb-toggle{
  width:54px;height:54px;min-width:54px;padding:0;
@@ -451,6 +464,7 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 <body class="hydroyar-brand-page">
 <div class="calm-waves" aria-hidden="true">
 <canvas class="starfield-canvas" id="hydroyarStarField"></canvas>
+<canvas class="island-3d-canvas" id="hydroyarIsland3D" aria-hidden="true"></canvas>
 <svg class="water-svg" viewBox="0 0 1440 900" preserveAspectRatio="none">
 <defs>
 <linearGradient id="waterA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".28"/><stop offset=".55" stop-color="#22d3ee" stop-opacity=".16"/><stop offset="1" stop-color="#818cf8" stop-opacity=".20"/></linearGradient>
@@ -1514,4 +1528,6 @@ async function chat(){
  },true);
 })();
 </script>
+<script src="/assets/vendor/three-r160.min.js?v=20261102"></script>
+<script src="/assets/hydroyar-island-3d.js?v=20261102"></script>
 </body></html>
