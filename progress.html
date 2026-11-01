@@ -97,8 +97,7 @@
 <div class="card"><div class="label">نسخه سایت</div><div class="value">GitHub Pages</div><div class="note">صفحه عمومی هیدرویار</div></div>
 <div class="card"><div class="label">ثبت سفارش و پرداخت</div><div class="value">نیازمند تکمیل</div><div class="note">پرداخت آنلاین هنوز فعال نیست؛ فرم فعلی سفارش را به پیام ارتباطی تبدیل می‌کند.</div></div>
 </section>
-<section class="grid" aria-label="وضعیت عامل‌های اجرایی">
-<div class="card"><div class="label">آدمک هوش مصنوعی هیدرویار</div><div class="value" id="aiAgentStatus">در حال اتصال</div><div class="note" id="aiAgentDetail">سرپرست هوشمند، حافظه گفت‌وگو و انتخاب متخصص متناسب با سؤال.</div></div>
+<section class="grid" aria-label="وضعیت عامل‌های اجرایی"><div class="card"><div class="label">آدمک هوش مصنوعی هیدرویار</div><div class="value" id="aiAgentStatus">در حال اتصال</div><div class="note" id="aiAgentDetail">سرپرست هوشمند، حافظه گفت‌وگو و انتخاب متخصص متناسب با سؤال.</div></div>
 <div class="card"><div class="label">آدمک برنامه‌نویسی</div><div class="value" id="developerAgentStatus">در انتظار اجرا</div><div class="note" id="developerAgentDetail">گزارش اجرای واقعی ابزار برنامه‌نویس پس از شروع کار نمایش داده می‌شود.</div></div>
 <div class="card"><div class="label">آدمک پشتیبانی</div><div class="value" id="supportAgentStatus">در حال بررسی</div><div class="note" id="supportAgentDetail">وضعیت ذخیره پرونده‌ها، تلگرام و تحلیل اولیه درخواست‌ها.</div></div>
 <div class="card"><div class="label">آدمک سئو و سرچ کنسول</div><div class="value" id="seoAgentStatus">در انتظار گزارش</div><div class="note" id="seoAgentDetail">بررسی فنی روزانه و آخرین داده ثبت‌شده از Search Console.</div></div>
@@ -125,7 +124,15 @@
 <div class="card"><div class="label">کل آزمون‌ها</div><div class="value" id="qaTotalCount">—</div></div>
 </div>
 <div class="meter"><span id="qaMeter" style="width:0%"></span></div>
-<div class="note">آخرین اجرا: <span id="qaLastRun">هنوز گزارشی ثبت نشده</span> • اجرای خودکار هر ۶ ساعت</div>
+<div class="card" style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+<strong>اتصال و اجرای زنده</strong><span class="status pending" id="qaRuntimeStatus">در حال اتصال…</span>
+</div>
+<div class="note" id="qaRuntimeDetails" aria-live="polite">در حال خواندن وضعیت زنده Worker…</div>
+<div class="meter" style="margin-top:10px"><span id="qaRuntimeMeter" style="width:0%"></span></div>
+<div class="note" style="margin-top:8px">آخرین پاسخ زنده سرور: <span id="qaCheckedAt">—</span> • به‌روزرسانی خودکار هر ۱۵ ثانیه</div>
+</div>
+<div class="note">آخرین اجرای کامل: <span id="qaLastRun">هنوز گزارشی ثبت نشده</span> • اجرای خودکار زمان‌بندی‌شده هر ۶ ساعت</div>
 <div id="qaLiveChecks" aria-live="polite" style="margin-top:14px"><div class="note">پس از نخستین اجرا، نتیجه بررسی صفحات، قالب‌ها و سرویس‌ها اینجا نمایش داده می‌شود.</div></div>
 </section>
 <h2 class="section-title">گزارش زنده سئو و Google Search Console</h2>
@@ -161,29 +168,54 @@
 const API='https://hydroyar-chat.mohammadaminmavaddat1.workers.dev';
 const byId=id=>document.getElementById(id);
 const formatDate=value=>{const date=new Date(value);return Number.isNaN(date.getTime())?'نامشخص':date.toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'});};
+function formatElapsed(milliseconds){
+ if(milliseconds==null||!Number.isFinite(Number(milliseconds)))return 'نامشخص';
+ const seconds=Math.max(0,Math.floor(Number(milliseconds)/1000));
+ if(seconds<60)return seconds+' ثانیه پیش';
+ const minutes=Math.floor(seconds/60);
+ if(minutes<60)return minutes+' دقیقه پیش';
+ const hours=Math.floor(minutes/60);
+ if(hours<24)return hours+' ساعت پیش';
+ return Math.floor(hours/24)+' روز پیش';
+}
 async function checkQaStatus(){
+ if(window.hydroyarQaStatusFetchBusy)return;
+ window.hydroyarQaStatusFetchBusy=true;
  const badge=byId('qaLiveStatus'),summary=byId('qaLiveSummary'),last=byId('qaLastRun'),passed=byId('qaPassedCount'),failed=byId('qaFailedCount'),total=byId('qaTotalCount'),meter=byId('qaMeter'),list=byId('qaLiveChecks');
- if(!badge||!list)return;
+ const runtimeBadge=byId('qaRuntimeStatus'),runtimeDetails=byId('qaRuntimeDetails'),runtimeMeter=byId('qaRuntimeMeter'),checkedAt=byId('qaCheckedAt');
+ if(!badge||!list){window.hydroyarQaStatusFetchBusy=false;return;}
  try{
   const response=await fetch(API+'/qa/status',{method:'GET',cache:'no-store',headers:{Accept:'application/json'}});
   if(!response.ok)throw new Error('HTTP '+response.status);
-  const payload=await response.json();
-  const report=payload.report;
+  const payload=await response.json(),report=payload.report,live=payload.live||{};
+  if(runtimeBadge){   runtimeBadge.className='status '+(live.connected?'':'failed');
+   runtimeBadge.textContent=!live.connected?'اتصال قطع است':live.isRunning?'آزمون در حال اجرا':'سرور آنلاین • آماده';
+  }
+  if(runtimeDetails){
+   runtimeDetails.textContent=live.isRunning
+    ? 'در حال اجرا: '+(live.currentCheck||'بررسی‌های خودکار')+' • '+Number(live.completedChecks||0)+' از '+Number(live.totalChecks||0)+' آزمون تمام شده • heartbeat '+formatElapsed(live.heartbeatAgeMs)
+    : live.connected
+      ? 'Worker اکنون پاسخ می‌دهد؛ آزمونی در حال اجرا نیست. آخرین heartbeat: '+(live.heartbeatAt?formatDate(live.heartbeatAt):'ثبت نشده')+' • آخرین نتیجه '+(live.reportAgeMs==null?'موجود نیست':formatElapsed(live.reportAgeMs))+(live.reportStale?' • نیازمند اجرای تازه':'')
+      : 'وضعیت زنده Worker دریافت نشد.';
+  }
+  if(checkedAt)checkedAt.textContent=formatDate(live.checkedAt||payload.checkedAt);
+  if(runtimeMeter)runtimeMeter.style.width=(live.isRunning?Number(live.progressPercent||0):(report?100:0))+'%';
   if(!report){
-   badge.className='status pending';badge.textContent='در انتظار نخستین اجرا';
-   summary.textContent='سرویس آماده است؛ گزارش پس از نخستین اجرای زمان‌بندی‌شده اینجا ظاهر می‌شود.';
+   badge.className='status '+(live.isRunning?'pending':'pending');
+   badge.textContent=live.isRunning?'آزمون اول در حال اجرا':'سرور متصل • منتظر نخستین آزمون';
+   summary.textContent=live.isRunning?'اولین آزمون زنده شروع شده است؛ نتیجه‌ها هم‌زمان با تکمیل هر بررسی ثبت می‌شوند.':'Worker در دسترس است، اما هنوز گزارشی از اجرای آزمون ثبت نشده.';
    last.textContent='هنوز گزارشی ثبت نشده';passed.textContent='—';failed.textContent='—';total.textContent='—';meter.style.width='0%';
    list.replaceChildren();
    return;
   }
-  const isPassed=report.status==='passed'&&!payload.stale;
-  badge.className='status '+(isPassed?'':'failed');
-  badge.textContent=payload.stale?'گزارش قدیمی':(isPassed?'همه آزمون‌ها موفق':'نیازمند بررسی');
-  summary.textContent=report.summary||'گزارش آزمون دریافت شد.';
+  const isPassed=report.status==='passed';
+  badge.className='status '+(live.isRunning||payload.stale?'pending':isPassed?'':'failed');
+  badge.textContent=live.isRunning?'آزمون جدید در حال اجرا':payload.stale?'نتیجه آزمون قدیمی • سرور آنلاین':isPassed?'آخرین آزمون موفق':'آخرین آزمون نیازمند بررسی';
+  summary.textContent=(report.summary||'گزارش آزمون دریافت شد.')+(live.isRunning?' • نتیجه اجرای تازه پس از تکمیل جایگزین می‌شود.':'');
   passed.textContent=String(report.passed??0);
   failed.textContent=String(report.failed??0);
   total.textContent=String(report.total??0);
-  last.textContent=formatDate(report.completedAt)+' • '+(report.trigger==='scheduled'?'اجرای خودکار':'اجرای دستی');
+  last.textContent=formatDate(report.completedAt)+' • '+formatElapsed(live.reportAgeMs)+' • '+(report.trigger==='scheduled'?'اجرای خودکار':'اجرای دستی');
   const percentage=report.total?Math.round((report.passed/report.total)*100):0;
   meter.style.width=percentage+'%';
   list.replaceChildren();
@@ -198,16 +230,20 @@ async function checkQaStatus(){
    const state=document.createElement('span');state.className='status right '+(item.status==='passed'?'':'failed');state.textContent=item.status==='passed'?'موفق':'خطا';
    row.append(icon,text,state);list.append(row);
   }
-  window.hydroyarQAStatus={failed:report.failed,passed:report.passed,total:report.total,runId:report.runId};
-  if(window.hydroyarLastAnnouncedQA!==report.runId){
+  window.hydroyarQAStatus={failed:report.failed,passed:report.passed,total:report.total,runId:report.runId,live};
+  if(!live.isRunning&&window.hydroyarLastAnnouncedQA!==report.runId){
    window.hydroyarLastAnnouncedQA=report.runId;
    const event={type:report.failed?'bug_detected':'bug_fixed',eventId:'qa-'+report.runId};
    if(typeof window.hydroyarTeamEvent==='function')window.hydroyarTeamEvent(event.type,event.eventId);
    else window.hydroyarPendingQAEvent=event;
   }
  }catch(error){
-  badge.className='status failed';badge.textContent='عدم دریافت گزارش';
-  summary.textContent='مرکز پیگیری نتوانست گزارش زنده را از سرور بخواند: '+String(error.message||error);
+  badge.className='status failed';badge.textContent='عدم دریافت وضعیت زنده';
+  summary.textContent='مرکز پیگیری نتوانست وضعیت QA را از سرور بخواند: '+String(error.message||error);
+  if(runtimeBadge){runtimeBadge.className='status failed';runtimeBadge.textContent='Worker در دسترس نیست';}
+  if(runtimeDetails)runtimeDetails.textContent='ارتباط زنده با endpoint آزمون برقرار نشد.';
+ }finally{
+  window.hydroyarQaStatusFetchBusy=false;
  }
 }
 function queueTeamEvent(type,eventId){
@@ -297,8 +333,7 @@ async function checkSeoStatus(){
    byId('gscPageRows').replaceChildren();
   }else{
    const sitemap=gsc.sitemap?.[0]||{};
-   const nf=value=>value==null?'—':Number(value).toLocaleString('fa-IR');
-   byId('gscSourceNote').textContent='منبع: '+(gsc.source||'Google Search Console')+' • حساب: '+(gsc.account||'')+' • دریافت snapshot: '+formatDate(gsc.capturedAt);
+   const nf=value=>value==null?'—':Number(value).toLocaleString('fa-IR');   byId('gscSourceNote').textContent='منبع: '+(gsc.source||'Google Search Console')+' • حساب: '+(gsc.account||'')+' • دریافت snapshot: '+formatDate(gsc.capturedAt);
    byId('gscSubmitted').textContent=nf(sitemap.submitted);
    byId('gscErrors').textContent=nf(sitemap.errors)+' خطا • '+nf(sitemap.warnings)+' هشدار';
    byId('gscPages').textContent=nf(gsc.pages?.length||0);
@@ -397,8 +432,7 @@ async function checkSupervisorStatus(){
    const detail=document.createElement('p');detail.style.margin='6px 0 0';detail.style.fontSize='12px';detail.style.color='var(--muted)';detail.textContent=agent.detail||'';
    card.append(title,state,mode,detail);grid.append(card);
   }
-  byId('supervisorUpdatedAt').textContent=formatDate(snap.updatedAt);
-  const securityAgent=(snap.agents||[]).find(agent=>agent.id==='security');
+  byId('supervisorUpdatedAt').textContent=formatDate(snap.updatedAt);  const securityAgent=(snap.agents||[]).find(agent=>agent.id==='security');
   if(securityAgent){
    const securitySignature=[securityAgent.state,securityAgent.updatedAt||''].join('|');
    if(window.hydroyarLastSecuritySignature!==securitySignature&&securityAgent.updatedAt){
@@ -448,7 +482,8 @@ async function checkApi(){
 }
 byId('refresh').addEventListener('click',checkApi);
 checkApi();
-setInterval(()=>{checkQaStatus();checkSeoStatus();checkOperationalAgents();checkAiStatus();checkSupervisorStatus();},60000);
+setInterval(checkQaStatus,15000);
+setInterval(()=>{checkSeoStatus();checkOperationalAgents();checkAiStatus();checkSupervisorStatus();},60000);
 </script>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
@@ -497,8 +532,7 @@ try {
  const boardCanvas=document.createElement('canvas');boardCanvas.width=1200;boardCanvas.height=260;const bg=boardCanvas.getContext('2d');
  bg.fillStyle='#07131f';bg.fillRect(0,0,1200,260);bg.strokeStyle='#22d3ee';bg.lineWidth=7;bg.strokeRect(8,8,1184,244);
  bg.fillStyle='#e0fbff';bg.font='bold 42px sans-serif';bg.fillText('وضعیت تیم هیدرویار',34,62);
- const boardItems=[['⌨ برنامه‌نویسی','تغییر + آزمون','#60a5fa'],['✉ پشتیبانی','پرونده + تلگرام','#14b8a6'],['⌕ سئو و GSC','ممیزی + آمار','#22d3ee'],['✓ کیفیت','آزمایش خطاها','#fbbf24']];
- boardItems.forEach((it,j)=>{const xx=35+j*292;bg.fillStyle=it[2];bg.font='bold 31px sans-serif';bg.fillText(it[0],xx,125);bg.fillStyle='#d5e6f3';bg.font='24px sans-serif';bg.fillText(it[1],xx,175);bg.fillStyle=it[2];bg.fillRect(xx,205,210,7);});
+ const boardItems=[['⌨ برنامه‌نویسی','تغییر + آزمون','#60a5fa'],['✉ پشتیبانی','پرونده + تلگرام','#14b8a6'],['⌕ سئو و GSC','ممیزی + آمار','#22d3ee'],['✓ کیفیت','آزمایش خطاها','#fbbf24']]; boardItems.forEach((it,j)=>{const xx=35+j*292;bg.fillStyle=it[2];bg.font='bold 31px sans-serif';bg.fillText(it[0],xx,125);bg.fillStyle='#d5e6f3';bg.font='24px sans-serif';bg.fillText(it[1],xx,175);bg.fillStyle=it[2];bg.fillRect(xx,205,210,7);});
  const boardTex=new THREE.CanvasTexture(boardCanvas);boardTex.colorSpace=THREE.SRGBColorSpace;
  const teamBoard=new THREE.Mesh(new THREE.PlaneGeometry(6.6,1.43),new THREE.MeshBasicMaterial({map:boardTex,side:THREE.DoubleSide}));teamBoard.position.set(0,3.25,-7.46);scene.add(teamBoard);
  // Floating neon status panels above the support floor
@@ -597,8 +631,7 @@ try {
      legs.push({hip,knee,side});
    }
    const tag=labelSprite(names[i]);tag.position.set(0,2.98,.05);group.add(tag);
-   if(i===0){const crown= new THREE.Mesh(new THREE.ConeGeometry(.13,.22,5),mat('#ffb33d',.35,.2));crown.position.set(0,2.85,0);group.add(crown);}
-   // Nine distinct everyday social personalities, each with a different gesture and tempo.
+   if(i===0){const crown= new THREE.Mesh(new THREE.ConeGeometry(.13,.22,5),mat('#ffb33d',.35,.2));crown.position.set(0,2.85,0);group.add(crown);}   // Nine distinct everyday social personalities, each with a different gesture and tempo.
    const personalities=[
     {name:'شوخ‌طبع',color:'#fbbf24',style:0}, {name:'خجالتی',color:'#93c5fd',style:1},
     {name:'غرغرو',color:'#fb7185',style:2}, {name:'پرحرف',color:'#c4b5fd',style:3},
@@ -697,8 +730,7 @@ try {
    g.fillStyle='#22d3ee';g.font='bold 25px sans-serif';g.textAlign='right';g.direction='rtl';g.fillText('🔔  '+name,680,48);
    g.fillStyle='#f1f8ff';g.font='bold 27px sans-serif';g.fillText(text,680,105);bubble.texture.needsUpdate=true;
  }
- // two rows of overhead luminous ceiling panels
- for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
+ // two rows of overhead luminous ceiling panels for(let x=-6;x<=6;x+=3){const panel=new THREE.Mesh(new THREE.BoxGeometry(1.6,.06,.8),new THREE.MeshBasicMaterial({color:'#69dff5'}));panel.position.set(x,5.65,-1);scene.add(panel);}
  const resize=()=>{const w=Math.max(320,host.clientWidth),h=Math.max(300,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
  host.classList.add('real-3d');resize();new ResizeObserver(resize).observe(host);
  const clock=new THREE.Clock();
