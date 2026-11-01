@@ -444,6 +444,8 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 @media(max-width:390px){#themeToggle.bulb-toggle{width:40px;height:40px;min-width:40px;flex-basis:40px!important}#themeToggle .bulb-svg{width:25px;height:42px}}
 @media(max-width:350px){#themeToggle.bulb-toggle{width:38px;height:38px;min-width:38px;flex-basis:38px!important}#themeToggle .bulb-svg{width:24px;height:40px}}
 @media(prefers-reduced-motion:reduce){#themeToggle .bulb-glow{animation:none!important}#themeToggle .bulb-cord,#themeToggle .bulb-bead,#themeToggle .bulb-glass,#themeToggle .bulb-filament,#themeToggle .bulb-base{transition:none!important}}
+/* Keep the lamp frame still; its pull-cord interaction remains active. */
+#themeToggle.bulb-toggle::before{content:none!important;display:none!important;opacity:0!important;animation:none!important;background:none!important}
 </style>
 </head>
 <body class="hydroyar-brand-page">
