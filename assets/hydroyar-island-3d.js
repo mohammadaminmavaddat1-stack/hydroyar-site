@@ -179,6 +179,7 @@
   function addTree(x, z) {
     const tree = new T.Group();
     tree.position.set(x, terrainHeight(x, z), z);
+    tree.scale.setScalar(0.72); // Keep the tree clearly shorter than the lighthouse.
     island.add(tree);
     const trunk = new T.Mesh(new T.CylinderGeometry(0.075, 0.115, 0.94, 12), trunkMat);
     trunk.position.y = 0.44;
