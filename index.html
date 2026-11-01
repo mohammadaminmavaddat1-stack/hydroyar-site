@@ -414,13 +414,22 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
  background:rgba(17,24,39,.92);color:#cbd5e1;overflow:visible;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
-#themeToggle .bulb-svg{position:relative;z-index:1;display:block;width:31px;height:52px;overflow:visible;pointer-events:none}
+#themeToggle .bulb-svg{position:absolute;z-index:1;top:1px;left:50%;display:block;width:31px;height:68px;overflow:visible;pointer-events:none;transform:translateX(-50%)}
 #themeToggle .bulb-glow{fill:#fbbf24;opacity:0;transition:opacity .35s ease}
 #themeToggle .bulb-glass{fill:#cbd5e1;fill-opacity:.12;stroke:#94a3b8;stroke-width:2;transition:fill .35s ease,fill-opacity .35s ease,stroke .35s ease,filter .35s ease}
 #themeToggle .bulb-filament{fill:none;stroke:#94a3b8;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.38;transition:stroke .35s ease,opacity .35s ease}
 #themeToggle .bulb-base{fill:#64748b;stroke:#cbd5e1;stroke-width:1.1;transition:fill .35s ease,stroke .35s ease}
 #themeToggle .bulb-cord{fill:none;stroke:#cbd5e1;stroke-width:1.8;stroke-linecap:round}
 #themeToggle .bulb-bead{fill:#cbd5e1;stroke:#0f172a;stroke-width:1}
+#themeToggle .bulb-pull-group{transform:translateY(0);transform-origin:24px 66px;transition:transform .32s cubic-bezier(.2,.78,.25,1);pointer-events:none}
+#themeToggle.is-pulling .bulb-pull-group{transition:none}
+#themeToggle .bulb-pull-hit{fill:transparent;stroke:transparent;pointer-events:all;cursor:grab;touch-action:none}
+#themeToggle.is-pulling .bulb-pull-hit{cursor:grabbing}
+#themeToggle.pull-fired .bulb-glass{filter:drop-shadow(0 0 8px rgba(125,211,252,.55))}
+body:not(.dark) #themeToggle.pull-fired .bulb-glass{filter:drop-shadow(0 0 9px rgba(245,158,11,.6))}
+@media(max-width:390px){#themeToggle .bulb-svg{width:25px;height:68px}}
+@media(max-width:350px){#themeToggle .bulb-svg{width:24px;height:68px}}
+
 #themeToggle .bulb-cord,#themeToggle .bulb-bead{transform-box:fill-box;transform-origin:center top;transition:transform .22s ease}
 #themeToggle:active .bulb-cord,#themeToggle:active .bulb-bead{transform:translateY(3px)}
 body:not(.dark) #themeToggle.bulb-toggle{background:#fffdf3;border-color:#f2ce72;color:#92400e;box-shadow:0 0 0 1px rgba(245,158,11,.08),0 5px 18px rgba(245,158,11,.13)}
@@ -453,13 +462,16 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 </div>
 <div class="top"><div class="wrap"><span>راهکارهای دیجیتال برای کسب‌وکارهای رو‌به‌رشد</span><a href="https://t.me/Aminmvt" target="_blank">مشاوره رایگان ←</a></div></div>
 <nav class="nav"><div class="wrap navin"><a class="logo" href="#" aria-label="هیدرویار"><span>هیدرو<i>یار</i></span></a><button class="mobile-menu-btn" id="mobileMenuBtn" type="button" onclick="toggleMobileMenu()" aria-label="باز کردن منو" aria-expanded="false">☰</button><div class="links" id="siteLinks"><a href="#services">خدمات</a><a href="#categories">دسته‌بندی‌ها</a><a href="#templates">قالب‌های آماده</a><a href="#about">درباره ما</a><a href="#portfolio">نمونه‌کارها</a><a href="#process">مراحل همکاری</a><a href="#prices">تعرفه‌ها</a><a href="#shop">فروشگاه</a><a href="#faq">سؤالات متداول</a></div><button class="theme-toggle bulb-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="تغییر به حالت روز" aria-pressed="true" title="تغییر حالت شب و روز">
-<svg class="bulb-svg" viewBox="0 0 48 84" aria-hidden="true" focusable="false">
+<svg class="bulb-svg" viewBox="0 0 48 112" aria-hidden="true" focusable="false">
  <circle class="bulb-glow" cx="24" cy="31" r="21"></circle>
  <path class="bulb-glass" d="M24 8C12.7 8 4.5 16.8 4.5 28.8c0 7.1 3.2 12.4 8.1 17.7 2.1 2.3 3.4 4.6 3.4 7.5v1.4h16v-1.4c0-2.9 1.3-5.2 3.4-7.5 4.9-5.3 8.1-10.6 8.1-17.7C43.5 16.8 35.3 8 24 8Z"></path>
  <path class="bulb-filament" d="M18 36l6-8 6 8M24 28v10"></path>
  <path class="bulb-base" d="M16 55h16v4H16zM18 59h12v4H18zM20 63h8v3h-8z"></path>
- <path class="bulb-cord" d="M24 66v11"></path>
- <circle class="bulb-bead" cx="24" cy="79" r="2.5"></circle>
+ <g class="bulb-pull-group" id="bulbPullGroup">
+ <path class="bulb-cord" d="M24 66v37"></path>
+ <circle class="bulb-bead" cx="24" cy="106" r="2.7"></circle>
+</g>
+<circle class="bulb-pull-hit" cx="24" cy="99" r="12"></circle>
 </svg>
 </button><a class="navbtn" href="#order">ثبت سفارش</a></div></nav>
 
@@ -1390,4 +1402,114 @@ async function chat(){
 })();
 </script>
 
+<script id="hydroyar-bulb-pull-interaction">
+(function(){
+ const button=document.getElementById('themeToggle');
+ if(!button||button.dataset.pullWired==='true')return;
+ const hit=button.querySelector('.bulb-pull-hit');
+ const group=button.querySelector('#bulbPullGroup');
+ if(!hit||!group)return;
+ button.dataset.pullWired='true';
+
+ let active=false;
+ let pointerId=null;
+ let startY=0;
+ let pullDistance=0;
+ let moved=false;
+ let suppressClick=false;
+ let audioContext=null;
+ let flashTimer=0;
+
+ function playPullClick(){
+  try{
+   const AudioCtor=window.AudioContext||window.webkitAudioContext;
+   if(!AudioCtor)return;
+   if(!audioContext)audioContext=new AudioCtor();
+   if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+   const now=audioContext.currentTime;
+   [[1180,0],[760,.014]].forEach(([frequency,delay])=>{
+    const oscillator=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+    const start=now+delay;
+    oscillator.type='sine';
+    oscillator.frequency.setValueAtTime(frequency,start);
+    oscillator.frequency.exponentialRampToValueAtTime(frequency*.62,start+.026);
+    gain.gain.setValueAtTime(.0001,start);
+    gain.gain.exponentialRampToValueAtTime(.014,start+.002);
+    gain.gain.exponentialRampToValueAtTime(.0001,start+.04);
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    oscillator.start(start);
+    oscillator.stop(start+.043);
+   });
+  }catch(error){}
+ }
+
+ function resetPull(){
+  active=false;
+  pointerId=null;
+  button.classList.remove('is-pulling');
+  group.style.transform='';
+  pullDistance=0;
+  moved=false;
+ }
+
+ button.addEventListener('pointerdown',function(event){
+  if(event.button!==undefined&&event.button!==0)return;
+  const target=event.target;
+  if(!(target===hit||target.closest?.('.bulb-pull-hit')))return;
+  active=true;
+  pointerId=event.pointerId;
+  startY=event.clientY;
+  pullDistance=0;
+  moved=false;
+  button.classList.add('is-pulling');
+  try{button.setPointerCapture(event.pointerId)}catch(error){}
+ });
+
+ button.addEventListener('pointermove',function(event){
+  if(!active||event.pointerId!==pointerId)return;
+  const raw=Math.max(0,event.clientY-startY);
+  pullDistance=Math.min(raw,36);
+  if(raw>4)moved=true;
+  group.style.transform='translateY('+pullDistance.toFixed(1)+'px)';
+  if(moved)event.preventDefault();
+ });
+
+ button.addEventListener('pointerup',function(event){
+  if(!active||event.pointerId!==pointerId)return;
+  const didMove=moved;
+  const shouldToggle=didMove&&pullDistance>=22;
+  if(didMove){
+   suppressClick=true;
+   window.setTimeout(()=>{suppressClick=false},500);
+  }
+  resetPull();
+  if(shouldToggle){
+   button.classList.add('pull-fired');
+   window.clearTimeout(flashTimer);
+   flashTimer=window.setTimeout(()=>button.classList.remove('pull-fired'),260);
+   playPullClick();
+   if(typeof window.toggleTheme==='function')window.toggleTheme();
+  }
+  try{button.releasePointerCapture(event.pointerId)}catch(error){}
+ });
+
+ button.addEventListener('pointercancel',function(event){
+  if(!active||event.pointerId!==pointerId)return;
+  resetPull();
+ });
+
+ button.addEventListener('lostpointercapture',function(){
+  if(active)resetPull();
+ });
+
+ button.addEventListener('click',function(event){
+  if(!suppressClick)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  suppressClick=false;
+ },true);
+})();
+</script>
 </body></html>
