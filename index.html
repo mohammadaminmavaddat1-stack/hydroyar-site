@@ -406,6 +406,36 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 }
 </script>
 <link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
+<style id="hydroyar-bulb-toggle-styles">
+#themeToggle.bulb-toggle{
+ width:54px;height:54px;min-width:54px;padding:0;
+ display:grid;place-items:center;border-radius:16px;
+ border:1px solid rgba(125,211,252,.35);
+ background:rgba(17,24,39,.92);color:#cbd5e1;overflow:visible;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+#themeToggle .bulb-svg{position:relative;z-index:1;display:block;width:31px;height:52px;overflow:visible;pointer-events:none}
+#themeToggle .bulb-glow{fill:#fbbf24;opacity:0;transition:opacity .35s ease}
+#themeToggle .bulb-glass{fill:#cbd5e1;fill-opacity:.12;stroke:#94a3b8;stroke-width:2;transition:fill .35s ease,fill-opacity .35s ease,stroke .35s ease,filter .35s ease}
+#themeToggle .bulb-filament{fill:none;stroke:#94a3b8;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.38;transition:stroke .35s ease,opacity .35s ease}
+#themeToggle .bulb-base{fill:#64748b;stroke:#cbd5e1;stroke-width:1.1;transition:fill .35s ease,stroke .35s ease}
+#themeToggle .bulb-cord{fill:none;stroke:#cbd5e1;stroke-width:1.8;stroke-linecap:round}
+#themeToggle .bulb-bead{fill:#cbd5e1;stroke:#0f172a;stroke-width:1}
+#themeToggle .bulb-cord,#themeToggle .bulb-bead{transform-box:fill-box;transform-origin:center top;transition:transform .22s ease}
+#themeToggle:active .bulb-cord,#themeToggle:active .bulb-bead{transform:translateY(3px)}
+body:not(.dark) #themeToggle.bulb-toggle{background:#fffdf3;border-color:#f2ce72;color:#92400e;box-shadow:0 0 0 1px rgba(245,158,11,.08),0 5px 18px rgba(245,158,11,.13)}
+body:not(.dark) #themeToggle .bulb-glow{opacity:.22;animation:hydroyarBulbGlow 2.5s ease-in-out infinite}
+body:not(.dark) #themeToggle .bulb-glass{fill:#fef3c7;fill-opacity:.92;stroke:#f59e0b;filter:drop-shadow(0 0 5px rgba(245,158,11,.32))}
+body:not(.dark) #themeToggle .bulb-filament{stroke:#b45309;opacity:1}
+body:not(.dark) #themeToggle .bulb-base{fill:#d6a84b;stroke:#b7791f}
+body:not(.dark) #themeToggle .bulb-cord{stroke:#b7791f}
+body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
+@keyframes hydroyarBulbGlow{0%,100%{opacity:.15}50%{opacity:.3}}
+#themeToggle.bulb-toggle:focus-visible{outline:3px solid rgba(56,189,248,.55);outline-offset:4px}
+@media(max-width:390px){#themeToggle.bulb-toggle{width:40px;height:40px;min-width:40px;flex-basis:40px!important}#themeToggle .bulb-svg{width:25px;height:42px}}
+@media(max-width:350px){#themeToggle.bulb-toggle{width:38px;height:38px;min-width:38px;flex-basis:38px!important}#themeToggle .bulb-svg{width:24px;height:40px}}
+@media(prefers-reduced-motion:reduce){#themeToggle .bulb-glow{animation:none!important}#themeToggle .bulb-cord,#themeToggle .bulb-bead,#themeToggle .bulb-glass,#themeToggle .bulb-filament,#themeToggle .bulb-base{transition:none!important}}
+</style>
 </head>
 <body class="hydroyar-brand-page">
 <div class="calm-waves" aria-hidden="true">
@@ -422,7 +452,16 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 </svg>
 </div>
 <div class="top"><div class="wrap"><span>راهکارهای دیجیتال برای کسب‌وکارهای رو‌به‌رشد</span><a href="https://t.me/Aminmvt" target="_blank">مشاوره رایگان ←</a></div></div>
-<nav class="nav"><div class="wrap navin"><a class="logo" href="#" aria-label="هیدرویار"><span>هیدرو<i>یار</i></span></a><button class="mobile-menu-btn" id="mobileMenuBtn" type="button" onclick="toggleMobileMenu()" aria-label="باز کردن منو" aria-expanded="false">☰</button><div class="links" id="siteLinks"><a href="#services">خدمات</a><a href="#categories">دسته‌بندی‌ها</a><a href="#templates">قالب‌های آماده</a><a href="#about">درباره ما</a><a href="#portfolio">نمونه‌کارها</a><a href="#process">مراحل همکاری</a><a href="#prices">تعرفه‌ها</a><a href="#shop">فروشگاه</a><a href="#faq">سؤالات متداول</a></div><button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="تغییر حالت روشن و تاریک">🌙</button><a class="navbtn" href="#order">ثبت سفارش</a></div></nav>
+<nav class="nav"><div class="wrap navin"><a class="logo" href="#" aria-label="هیدرویار"><span>هیدرو<i>یار</i></span></a><button class="mobile-menu-btn" id="mobileMenuBtn" type="button" onclick="toggleMobileMenu()" aria-label="باز کردن منو" aria-expanded="false">☰</button><div class="links" id="siteLinks"><a href="#services">خدمات</a><a href="#categories">دسته‌بندی‌ها</a><a href="#templates">قالب‌های آماده</a><a href="#about">درباره ما</a><a href="#portfolio">نمونه‌کارها</a><a href="#process">مراحل همکاری</a><a href="#prices">تعرفه‌ها</a><a href="#shop">فروشگاه</a><a href="#faq">سؤالات متداول</a></div><button class="theme-toggle bulb-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="تغییر به حالت روز" aria-pressed="true" title="تغییر حالت شب و روز">
+<svg class="bulb-svg" viewBox="0 0 48 84" aria-hidden="true" focusable="false">
+ <circle class="bulb-glow" cx="24" cy="31" r="21"></circle>
+ <path class="bulb-glass" d="M24 8C12.7 8 4.5 16.8 4.5 28.8c0 7.1 3.2 12.4 8.1 17.7 2.1 2.3 3.4 4.6 3.4 7.5v1.4h16v-1.4c0-2.9 1.3-5.2 3.4-7.5 4.9-5.3 8.1-10.6 8.1-17.7C43.5 16.8 35.3 8 24 8Z"></path>
+ <path class="bulb-filament" d="M18 36l6-8 6 8M24 28v10"></path>
+ <path class="bulb-base" d="M16 55h16v4H16zM18 59h12v4H18zM20 63h8v3h-8z"></path>
+ <path class="bulb-cord" d="M24 66v11"></path>
+ <circle class="bulb-bead" cx="24" cy="79" r="2.5"></circle>
+</svg>
+</button><a class="navbtn" href="#order">ثبت سفارش</a></div></nav>
 
 <header class="hero"><div class="wrap hero-grid"><div><span class="eyebrow"><span class="dot"></span> طراحی حرفه‌ای • هوش مصنوعی • اتوماسیون</span><h1>طراحی سایت<br><span>برای رشد کسب‌وکار</span></h1><p>هیدرویار خدمات طراحی سایت حرفه‌ای، طراحی سایت فروشگاهی و شرکتی، ابزارهای اختصاصی و راهکارهای هوشمند را متناسب با نیاز کسب‌وکار شما طراحی و توسعه می‌کند.</p><div class="actions"><a class="btn" href="#order">مشاوره و شروع پروژه</a><a class="btn light" href="#portfolio">مشاهده نمونه‌کارها</a><button class="btn light auth-hero-btn" id="authHeroBtn" type="button" onclick="openAuth()">ورود / ثبت‌نام</button></div><div class="trust"><div><b>۲۴/۷</b>پاسخ‌گویی</div><div><b>۱۰۰٪</b>اختصاصی</div><div><b>سریع</b>تحویل پروژه</div></div></div><div class="hero-art"><div class="glass dashboard"><div class="dashbar"><strong>پنل کسب‌وکار</strong><span class="mini"></span></div><div class="chart"><div class="bars"><i style="height:45%"></i><i style="height:62%"></i><i style="height:55%"></i><i style="height:78%"></i><i style="height:70%"></i><i style="height:94%"></i></div></div><div style="display:flex;gap:10px;margin-top:18px"><span class="mini" style="width:45%"></span><span class="mini" style="width:25%"></span></div></div><div class="glass float-card"><strong>رشد واقعی</strong><small>تجربه بهتر برای مشتریان</small><div class="check">● طراحی حرفه‌ای</div></div><div class="glass float-card2"><b>✓ آماده همکاری</b><small style="display:block;margin-top:10px;line-height:2">پروژه شما<br>آماده شروع است</small></div></div></div></header>
 
@@ -573,7 +612,7 @@ const HYDROYAR_SUPABASE_URL='https://ywmojbhkllptfynqzptx.supabase.co';
 const HYDROYAR_SUPABASE_PUBLISHABLE_KEY='sb_publishable_M8ez0tU2n3XW-CCF0tsBQw_7BnAtY1R';
 const hydroyarSupabase=(window.supabase&&HYDROYAR_SUPABASE_PUBLISHABLE_KEY!=='PASTE_SUPABASE_PUBLISHABLE_KEY_HERE')?window.supabase.createClient(HYDROYAR_SUPABASE_URL,HYDROYAR_SUPABASE_PUBLISHABLE_KEY):null;
 (function(){let dark=true;try{const saved=localStorage.getItem('hydroyar-theme');dark=saved!=='light'}catch(e){}if(dark)document.body.classList.add('dark')})();
-function syncThemeButton(){const b=document.getElementById('themeToggle');if(!b)return;const dark=document.body.classList.contains('dark');b.textContent=dark?'☀️':'🌙';b.setAttribute('aria-label',dark?'تغییر به حالت روشن':'تغییر به حالت تاریک')}
+function syncThemeButton(){const b=document.getElementById('themeToggle');if(!b)return;const dark=document.body.classList.contains('dark');b.dataset.theme=dark?'dark':'light';b.setAttribute('aria-pressed',String(dark));b.setAttribute('aria-label',dark?'تغییر به حالت روز':'تغییر به حالت شب');b.title=dark?'تغییر به حالت روز':'تغییر به حالت شب'}
 function toggleTheme(){document.body.classList.toggle('dark');try{localStorage.setItem('hydroyar-theme',document.body.classList.contains('dark')?'dark':'light')}catch(e){}syncThemeButton()}
 document.addEventListener('DOMContentLoaded',syncThemeButton);
 function toggleMobileMenu(){const m=document.getElementById('siteLinks'),b=document.getElementById('mobileMenuBtn');if(!m||!b)return;const open=m.classList.toggle('mobile-open');b.textContent=open?'×':'☰';b.setAttribute('aria-expanded',String(open));b.setAttribute('aria-label',open?'بستن منو':'باز کردن منو')}
