@@ -78,7 +78,7 @@ body{position:relative;overflow-x:hidden;background:#fafdff}
 @media(prefers-reduced-motion:reduce){.btn::before,.navbtn::before,.theme-toggle::before,.mobile-menu-btn::before,.category-card::before,.feature::before,.step::before,.work::before,.price::before,.shop-card::before,.template-card::before,.faq .q::before,.leadbox::before,.checkout::before,.template-controls::before{animation:none;transition:none}}
 .calm-waves{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,#fbfdff 0%,#f5faff 52%,#ffffff 100%)}
 .starfield-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:.58}
-.water-svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;clip-path:inset(0)}.water{transform-box:fill-box;transform-origin:center bottom;will-change:transform}.water-back{animation:waterDriftBack 16s ease-in-out infinite}.water-main{animation:waterDriftMain 7s ease-in-out infinite}.water-front{animation:waterDriftFront 4s ease-in-out infinite}
+.water-svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;clip-path:inset(0)}.water{transform-box:fill-box;transform-origin:center bottom;will-change:auto}.water-back{animation:waterDriftBack 16s ease-in-out infinite}.water-main{animation:waterDriftMain 7s ease-in-out infinite}.water-front{animation:waterDriftFront 4s ease-in-out infinite}
 .calm-waves .wave1{bottom:-29vh;background:radial-gradient(ellipse at 50% 100%,rgba(37,99,235,.10),transparent 67%);animation:calmWave 16s ease-in-out infinite}
 .calm-waves .wave2{bottom:-36vh;background:radial-gradient(ellipse at 38% 100%,rgba(6,182,212,.075),transparent 66%);animation:calmWave 21s ease-in-out infinite reverse}
 .calm-waves .wave3{bottom:-43vh;background:radial-gradient(ellipse at 67% 100%,rgba(79,70,229,.055),transparent 64%);animation:calmWave 27s ease-in-out infinite}
@@ -412,10 +412,18 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 /* Keep the fixed 3D scene visible behind transparent page surfaces. */
 body.hydroyar-brand-page{background:transparent!important}
 body.hydroyar-brand-page.dark{background:transparent!important}
-/* Keep decorative backgrounds still to avoid continuous CPU/GPU work. */
-body.hydroyar-brand-page .calm-waves .water{animation:none!important;transform:none!important;will-change:auto!important}
-body.hydroyar-brand-page .launch-stage-aura{animation:none!important}
-
+/* Defer off-screen section painting to improve first load without changing layout. */
+@supports(content-visibility:auto){
+  body.hydroyar-brand-page>section:not(.hero){
+    content-visibility:auto;
+    contain-intrinsic-size:auto 620px;
+  }
+}
+/* Smooth, compositor-friendly motion; no mouse-driven background tracking. */
+body.hydroyar-brand-page .water-back{animation:waterDriftBack 28s ease-in-out infinite}
+body.hydroyar-brand-page .water-main{animation:waterDriftMain 22s ease-in-out infinite}
+body.hydroyar-brand-page .water-front{animation:waterDriftFront 18s ease-in-out infinite}
+body.hydroyar-brand-page .launch-stage-aura{animation:hyAuraBreathe 12s ease-in-out infinite}
 .calm-waves.has-island-3d .water-svg{z-index:1;opacity:.24;transition:opacity .5s ease}
 /* Let the fixed 3D island show through the large page surfaces without lowering text contrast. */
 body.hydroyar-brand-page .hero{background:linear-gradient(145deg,rgba(17,33,45,.32) 0%,rgba(11,27,37,.38) 58%,rgba(6,20,27,.48) 100%)!important}
@@ -426,6 +434,11 @@ body.hydroyar-brand-page:not(.dark) .band,body.hydroyar-brand-page:not(.dark) .s
 .calm-waves.has-island-3d .starfield-canvas{opacity:.38}
 @media(max-width:700px){.calm-waves.has-island-3d .water-svg{opacity:.15}body.hydroyar-brand-page.hydroyar-island-ready .hero-art{display:none!important}}
 @media(prefers-reduced-motion:reduce){#hydroyarIsland3D{transition:none}}
+@media(prefers-reduced-motion:reduce){
+  body.hydroyar-brand-page .water,
+  body.hydroyar-brand-page .launch-stage-aura{animation:none!important}
+}
+
 </style>
 <style id="hydroyar-bulb-toggle-styles">
 #themeToggle.bulb-toggle{

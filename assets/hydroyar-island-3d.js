@@ -7,6 +7,19 @@
   if (!canvas || !host || !window.THREE) return;
 
   const T = window.THREE;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const hardwareCores = Number(navigator.hardwareConcurrency || 0);
+  const memoryGb = Number(navigator.deviceMemory || 0);
+  const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+  const lowPowerDevice = saveData || (hardwareCores > 0 && hardwareCores <= 4) || (memoryGb > 0 && memoryGb <= 4);
+  let targetFPS = lowPowerDevice ? 30 : 120;
+  let activeFPS = targetFPS;
+  let frame = 0;
+  let lastFrame = 0;
+  let accumulator = 0;
+  let slowFrames = 0;
+  let pageVisible = !document.hidden;
+  let animationStart = 0;
   let renderer;
   try {
     renderer = new T.WebGLRenderer({
@@ -379,23 +392,84 @@
     renderStatic();
   }
 
-  function render() {
-    // One static frame: no continuous GPU animation or pointer tracking.
-    seaUniforms.uTime.value = 0;
-    island.rotation.y = 0;
-    beamPivot.rotation.y = 0;
-    lampGlow.intensity = document.body.classList.contains('dark') ? 2.7 : 1.2;
+  function render(time = 0) {
+    seaUniforms.uTime.value = time;
+    island.rotation.y = Math.sin(time * 0.12) * 0.035;
+    beamPivot.rotation.y = time * 0.22;
+    lampGlow.intensity = (document.body.classList.contains('dark') ? 2.7 : 1.2)
+      + Math.sin(time * 1.5) * 0.035;
     camera.lookAt(smallScreen() ? 0 : -1.28, smallScreen() ? -0.38 : 0.16, 0);
     renderer.render(scene, camera);
   }
 
   function renderStatic() {
     if (!renderer) return;
-    render();
+    render(0);
   }
+
+  function animate(now) {
+    if (!pageVisible || reducedMotion.matches) {
+      frame = 0;
+      return;
+    }
+    frame = requestAnimationFrame(animate);
+    if (!lastFrame) {
+      lastFrame = now;
+      animationStart = now;
+      return;
+    }
+    const delta = now - lastFrame;
+    lastFrame = now;
+    const interval = 1000 / activeFPS;
+    accumulator += delta;
+    if (accumulator < interval) return;
+    accumulator %= interval;
+
+    // If rendering repeatedly misses its budget, lower the cap automatically.
+    if (delta > interval * 1.85) {
+      slowFrames++;
+      if (slowFrames >= 12 && activeFPS > 30) {
+        activeFPS = activeFPS === 120 ? 60 : 30;
+        accumulator = 0;
+        slowFrames = 0;
+      }
+    } else {
+      slowFrames = Math.max(0, slowFrames - 1);
+    }
+    render((now - animationStart) * 0.001);
+  }
+
+  function startAnimation() {
+    if (frame || !pageVisible || reducedMotion.matches) return;
+    lastFrame = 0;
+    accumulator = 0;
+    frame = requestAnimationFrame(animate);
+  }
+
+  function stopAnimation() {
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+    lastFrame = 0;
+    accumulator = 0;
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    pageVisible = !document.hidden;
+    if (pageVisible) startAnimation();
+    else stopAnimation();
+  });
+  reducedMotion.addEventListener?.('change', () => {
+    if (reducedMotion.matches) {
+      stopAnimation();
+      renderStatic();
+    } else {
+      startAnimation();
+    }
+  });
 
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('pagehide', () => {
+    stopAnimation();
     themeObserver.disconnect();
     renderer.dispose();
   }, { once: true });
@@ -404,4 +478,5 @@
   resize();
   document.body.classList.add('hydroyar-island-ready');
   host.classList.add('has-island-3d');
+  if (!reducedMotion.matches) startAnimation();
 })();
