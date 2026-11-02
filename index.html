@@ -409,6 +409,14 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 <link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
 <style id="hydroyar-island-3d-styles">
 #hydroyarIsland3D{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.9;transition:opacity .5s ease}
+/* Keep the negative-layer background in a predictable stacking context on desktop Chrome. */
+body.hydroyar-brand-page{isolation:isolate}
+.island-fallback{display:none;position:absolute;left:-2vw;top:6vh;width:min(66vw,1080px);height:88vh;z-index:0;pointer-events:none;opacity:.96;filter:drop-shadow(0 20px 26px rgba(5,24,38,.20))}
+.island-fallback svg{display:block;width:100%;height:100%;overflow:visible}
+.calm-waves.island-fallback-active .island-fallback{display:block}
+.calm-waves.island-fallback-active #hydroyarIsland3D{display:none!important}
+body.dark .island-fallback{filter:brightness(.88) saturate(1.08) drop-shadow(0 20px 26px rgba(5,24,38,.25))}
+@media(max-width:700px){.calm-waves.island-fallback-active .island-fallback{left:0;top:30vh;width:100vw;height:58vh}}
 /* Keep the fixed 3D scene visible behind transparent page surfaces. */
 body.hydroyar-brand-page{background:transparent!important}
 body.hydroyar-brand-page.dark{background:transparent!important}
@@ -486,11 +494,87 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 <div class="calm-waves" aria-hidden="true">
 <canvas class="starfield-canvas" id="hydroyarStarField"></canvas>
 <canvas class="island-3d-canvas" id="hydroyarIsland3D" aria-hidden="true"></canvas>
+<div class="island-fallback" aria-hidden="true">
+<svg viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" focusable="false">
+<defs>
+  <linearGradient id="hySea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17465B"/><stop offset=".52" stop-color="#087A91"/><stop offset="1" stop-color="#163D59"/></linearGradient>
+  <linearGradient id="hyIslandTop" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#82B889"/><stop offset=".55" stop-color="#477F69"/><stop offset="1" stop-color="#285D56"/></linearGradient>
+  <linearGradient id="hyIslandSide" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#436E68"/><stop offset=".55" stop-color="#294F59"/><stop offset="1" stop-color="#162F47"/></linearGradient>
+  <linearGradient id="hyTower" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#BFCBC7"/><stop offset=".48" stop-color="#F1E9D5"/><stop offset="1" stop-color="#899F9D"/></linearGradient>
+  <linearGradient id="hyRoof" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#D77C64"/><stop offset="1" stop-color="#833E3B"/></linearGradient>
+  <linearGradient id="hyBeam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#FFE7A0" stop-opacity=".46"/><stop offset="1" stop-color="#FFE7A0" stop-opacity="0"/></linearGradient>
+  <radialGradient id="hyAura"><stop stop-color="#7FD7D9" stop-opacity=".30"/><stop offset="1" stop-color="#7FD7D9" stop-opacity="0"/></radialGradient>
+  <filter id="hyShadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="hySoft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<ellipse cx="510" cy="474" rx="455" ry="135" fill="url(#hyAura)"/>
+<ellipse cx="500" cy="548" rx="390" ry="45" fill="#071D33" opacity=".24" filter="url(#hyShadow)"/>
+<g fill="none" stroke="#59C6D1" stroke-linecap="round" opacity=".30">
+  <path d="M70 498c100-34 166-33 250-7" stroke-width="5"/>
+  <path d="M650 520c93-28 176-23 254 7" stroke-width="4"/>
+  <path d="M120 570c95-22 160-20 226 0" stroke-width="3"/>
+  <path d="M710 580c74-19 143-16 205 2" stroke-width="3"/>
+</g>
+<path d="M116 405c42-64 157-103 296-111 160-9 330 29 422 87 60 38 79 79 45 112-61 58-226 93-410 91-175-2-319-39-362-91-22-27-19-59 9-88Z" fill="url(#hyIslandSide)" stroke="#91C5A1" stroke-opacity=".25" stroke-width="3"/>
+<path d="M145 426c97 45 231 68 382 66 150-2 278-27 353-68-18 30-52 54-104 72-83 29-194 43-319 40-132-3-242-23-315-57-24-12-41-29-48-53Z" fill="#173B4A" opacity=".62"/>
+<path d="M110 389c46-81 203-127 389-126 182 1 339 48 396 119 24 30 12 56-31 79-79 43-217 70-365 71-167 1-318-30-382-82-24-20-27-40-7-61Z" fill="url(#hyIslandTop)" stroke="#B7D4A4" stroke-width="4"/>
+<path d="M147 389c67-61 203-92 349-91 143 1 279 34 348 86-84-27-198-40-323-35-147 6-275 26-374 58Z" fill="#A2C995" opacity=".22"/>
+<path d="M185 423c100 30 216 44 337 41 125-3 233-21 314-51" fill="none" stroke="#D2D9A9" stroke-opacity=".30" stroke-width="5" stroke-linecap="round"/>
+<g fill="#5A7964" opacity=".8">
+  <path d="m190 407 27-35 25 34Z"/><path d="m250 438 34-47 32 46Z"/><path d="m824 409 28-38 27 38Z"/><path d="m769 444 35-45 30 46Z"/>
+</g>
+<g transform="translate(338 0)">
+  <ellipse cx="0" cy="397" rx="72" ry="21" fill="#183D42" opacity=".36"/>
+  <path d="M-5 398c-1-37 2-68 8-104" fill="none" stroke="#6A4A36" stroke-width="17" stroke-linecap="round"/>
+  <path d="M2 334c-23-20-38-25-56-27M1 350c21-22 39-30 59-31" fill="none" stroke="#6A4A36" stroke-width="8" stroke-linecap="round"/>
+  <g fill="#2C7159" stroke="#9BC69A" stroke-opacity=".35" stroke-width="2">
+    <ellipse cx="-26" cy="294" rx="43" ry="34"/><ellipse cx="20" cy="278" rx="50" ry="39"/>
+    <ellipse cx="-2" cy="245" rx="47" ry="42"/><ellipse cx="35" cy="239" rx="32" ry="30"/>
+    <ellipse cx="-43" cy="255" rx="29" ry="29"/>
+  </g>
+  <g fill="#76AA78" opacity=".62"><circle cx="-35" cy="278" r="9"/><circle cx="17" cy="253" r="10"/><circle cx="42" cy="280" r="8"/><circle cx="-4" cy="224" r="8"/></g>
+  <path d="M-31 389c22-9 45-10 66-3" stroke="#9DC18C" stroke-width="4" stroke-linecap="round"/>
+</g>
+<g transform="translate(700 0)">
+  <ellipse cx="0" cy="430" rx="75" ry="20" fill="#142F40" opacity=".38"/>
+  <path d="M-57 423c5-29 34-49 69-49 36 0 65 19 73 49-29 14-106 16-142 0Z" fill="#536F69"/>
+  <path d="M-33 406  -25 240Q0 226 25 240L34 406Z" fill="url(#hyTower)" stroke="#738F8B" stroke-width="2"/>
+  <path d="M-28 343h56l3 13h-62Z" fill="#A94F45"/><path d="M-31 276h62l2 10h-66Z" fill="#A94F45"/>
+  <path d="M-29 251h58v-26h-58Z" fill="#263D48"/>
+  <rect x="-34" y="219" width="68" height="12" rx="3" fill="#D8D6C7"/>
+  <path d="M-40 219 0 180 40 219Z" fill="url(#hyRoof)" stroke="#633C3B" stroke-width="3"/>
+  <path d="M-8 180v-12h16v12" fill="none" stroke="#A85E4C" stroke-width="7"/>
+  <rect x="-22" y="188" width="44" height="29" rx="5" fill="#E6DCC3" opacity=".94"/>
+  <rect x="-16" y="194" width="32" height="18" rx="3" fill="#233F4D"/>
+  <path d="M-38 218h76" stroke="#E1C18A" stroke-width="7" stroke-linecap="round"/>
+  <path d="M-49 232h98" stroke="#D1B47E" stroke-width="5" stroke-linecap="round"/>
+  <path d="M0 195 250 110 235 268Z" fill="url(#hyBeam)" opacity=".54"/>
+  <circle cx="0" cy="201" r="23" fill="#FFE6A0" opacity=".17" filter="url(#hySoft)"/>
+  <circle cx="0" cy="201" r="7" fill="#FFF0B8"/>
+  <path d="M-2 404v-23h14v23" fill="#294452" stroke="#9CB4AE" stroke-width="2"/>
+  <path d="M-44 410c17-11 70-13 93 0" fill="none" stroke="#D9C59B" stroke-width="5"/>
+</g>
+<g fill="#D4E2C0" opacity=".65">
+  <circle cx="225" cy="346" r="5"/><circle cx="275" cy="367" r="4"/><circle cx="490" cy="337" r="5"/>
+  <circle cx="570" cy="386" r="4"/><circle cx="870" cy="359" r="5"/>
+</g>
+<g fill="none" stroke="#B9E1D6" stroke-linecap="round" opacity=".42">
+  <path d="M164 470c46 10 92 14 140 11" stroke-width="3"/>
+  <path d="M641 480c52-4 104-13 151-27" stroke-width="3"/>
+</g>
+</svg>
+</div>
 <script>
 /* Start the decorative 3D island only after the page has become usable. */
 (() => {
   const canvas = document.getElementById('hydroyarIsland3D');
-  if (!canvas) return;
+  const host = canvas?.closest('.calm-waves');
+  if (!canvas || !host) return;
+
+  function showIslandFallback() {
+    host.classList.add('island-fallback-active');
+    document.body.classList.add('hydroyar-island-ready');
+  }
 
   function supportsWebGL() {
     try {
@@ -504,7 +588,7 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     }
   }
 
-  const version = '20261102-performance';
+  const version = '20261102-desktop-fallback';
   let started = false;
 
   function loadScript(path) {
@@ -533,14 +617,16 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     // WebGL setup can stall some desktop drivers; defer it until the page is usable.
     if (!supportsWebGL()) {
       canvas.style.display = 'none';
-      return; // Keep the lightweight SVG waves and hero fallback.
+      showIslandFallback();
+      return;
     }
     started = true;
     loadScript('/assets/vendor/three-r160.min.js')
       .then(() => loadScript('/assets/hydroyar-island-3d.js'))
       .catch(() => {
         canvas.style.display = 'none';
-        console.warn('HydroYar: using the lightweight background because WebGL assets did not load.');
+        showIslandFallback();
+        console.warn('HydroYar: using the lightweight island illustration because WebGL assets did not load.');
       });
   }
 

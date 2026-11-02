@@ -4,7 +4,18 @@
   'use strict';
   const canvas = document.getElementById('hydroyarIsland3D');
   const host = document.querySelector('.calm-waves');
-  if (!canvas || !host || !window.THREE) return;
+  if (!canvas || !host) return;
+
+  function showIslandFallback() {
+    canvas.hidden = true;
+    host.classList.add('island-fallback-active');
+    document.body.classList.add('hydroyar-island-ready');
+  }
+
+  if (!window.THREE) {
+    showIslandFallback();
+    return;
+  }
 
   const T = window.THREE;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -31,7 +42,7 @@
       depth: true
     });
   } catch (error) {
-    canvas.hidden = true;
+    showIslandFallback();
     return;
   }
 
