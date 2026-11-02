@@ -7,8 +7,6 @@
   if (!canvas || !host || !window.THREE) return;
 
   const T = window.THREE;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const pointerFine = window.matchMedia('(hover: hover) and (pointer: fine)');
   let renderer;
   try {
     renderer = new T.WebGLRenderer({
@@ -25,7 +23,7 @@
   }
 
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.2));
+  renderer.setPixelRatio(1);
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.16;
@@ -329,7 +327,6 @@
     rockMat,
     ringMaterial
   };
-  const pointer = { x: 0, y: 0 };
   function applyTheme() {
     const night = document.body.classList.contains('dark');
     seaUniforms.uNight.value = night ? 1 : 0;
@@ -351,31 +348,19 @@
       ring.material.opacity = (night ? 0.24 : 0.15) - i * 0.035;
     });
     canvas.style.opacity = smallScreen() ? (night ? '0.78' : '0.62') : (night ? '0.96' : '0.84');
-    if (reducedMotion.matches) renderStatic();
+    renderStatic();
   }
   applyTheme();
   const themeObserver = new MutationObserver(applyTheme);
   themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
-  if (pointerFine.matches) {
-    window.addEventListener('pointermove', event => {
-      pointer.x = (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
-      pointer.y = (event.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
-    }, { passive: true });
-  }
-
   let width = 1;
   let height = 1;
-  let frame = 0;
-  let lastFrame = 0;
-  let visible = true;
-  const clock = new T.Clock();
-
   function resize() {
     width = Math.max(1, window.innerWidth);
     height = Math.max(1, window.innerHeight);
     const mobile = smallScreen();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.2));
+    renderer.setPixelRatio(1);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.fov = mobile ? 44 : 39;
@@ -394,60 +379,23 @@
     renderStatic();
   }
 
-  function render(time) {
-    seaUniforms.uTime.value = time;
-    island.rotation.y = Math.sin(time * 0.12) * 0.045 + pointer.x * 0.035;
-    island.position.y += 0; // Keep the island stable; only the sea and camera breathe.
-    beamPivot.rotation.y = time * 0.34 + pointer.x * 0.12;
-    lampGlow.intensity = (document.body.classList.contains('dark') ? 2.7 : 1.2) + Math.sin(time * 2.4) * 0.08;
-    camera.position.x += ((smallScreen() ? 0 : -0.25 + pointer.x * 0.18) - camera.position.x) * 0.025;
-    camera.position.y += ((smallScreen() ? 5.15 : 4.65 + pointer.y * -0.10) - camera.position.y) * 0.025;
+  function render() {
+    // One static frame: no continuous GPU animation or pointer tracking.
+    seaUniforms.uTime.value = 0;
+    island.rotation.y = 0;
+    beamPivot.rotation.y = 0;
+    lampGlow.intensity = document.body.classList.contains('dark') ? 2.7 : 1.2;
     camera.lookAt(smallScreen() ? 0 : -1.28, smallScreen() ? -0.38 : 0.16, 0);
     renderer.render(scene, camera);
   }
 
   function renderStatic() {
     if (!renderer) return;
-    const prev = seaUniforms.uTime.value;
-    render(reducedMotion.matches ? 0 : prev);
+    render();
   }
 
-  function animate(now) {
-    if (!visible || reducedMotion.matches) return;
-    frame = requestAnimationFrame(animate);
-    const minFrame = 1000 / 30;
-    if (now - lastFrame < minFrame) return;
-    lastFrame = now;
-    render(clock.getElapsedTime());
-  }
-
-  function start() {
-    if (frame || !visible || reducedMotion.matches) return;
-    clock.start();
-    frame = requestAnimationFrame(animate);
-  }
-  function stop() {
-    if (frame) cancelAnimationFrame(frame);
-    frame = 0;
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    visible = !document.hidden;
-    if (visible) start();
-    else stop();
-  });
-  reducedMotion.addEventListener?.('change', () => {
-    if (reducedMotion.matches) {
-      stop();
-      renderStatic();
-    } else {
-      clock.start();
-      start();
-    }
-  });
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('pagehide', () => {
-    stop();
     themeObserver.disconnect();
     renderer.dispose();
   }, { once: true });
@@ -456,5 +404,4 @@
   resize();
   document.body.classList.add('hydroyar-island-ready');
   host.classList.add('has-island-3d');
-  if (!reducedMotion.matches) start();
 })();

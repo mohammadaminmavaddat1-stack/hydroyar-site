@@ -412,6 +412,10 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 /* Keep the fixed 3D scene visible behind transparent page surfaces. */
 body.hydroyar-brand-page{background:transparent!important}
 body.hydroyar-brand-page.dark{background:transparent!important}
+/* Keep decorative backgrounds still to avoid continuous CPU/GPU work. */
+body.hydroyar-brand-page .calm-waves .water{animation:none!important;transform:none!important;will-change:auto!important}
+body.hydroyar-brand-page .launch-stage-aura{animation:none!important}
+
 .calm-waves.has-island-3d .water-svg{z-index:1;opacity:.24;transition:opacity .5s ease}
 /* Let the fixed 3D island show through the large page surfaces without lowering text contrast. */
 body.hydroyar-brand-page .hero{background:linear-gradient(145deg,rgba(17,33,45,.32) 0%,rgba(11,27,37,.38) 58%,rgba(6,20,27,.48) 100%)!important}
@@ -1483,62 +1487,52 @@ async function chat(){
 }
  </script>
 <script>
-/* HydroYar StarField: subtle, transparent particles layered over the existing water background. */
+/* HydroYar StarField: lightweight static stars, drawn only on load or resize. */
 (function(){
-  const canvas=document.getElementById('hydroyarStarField');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d',{alpha:true});
-  if(!ctx)return;
-  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const pointer={x:0,y:0};
-  const stars=Array.from({length:window.innerWidth<700?96:180},()=>({x:Math.random(),y:Math.random(),r:.35+Math.random()*1.15,a:.12+Math.random()*.36,phase:Math.random()*Math.PI*2,depth:.3+Math.random()*.7}));
-  const meteors=Array.from({length:window.innerWidth<700?1:2},()=>({x:Math.random()*1.3-.15,y:Math.random()*.85,length:0.08+Math.random()*.10,speed:0.004+Math.random()*.004,wait:Math.random()*260,active:false,alpha:0}));
-  const speed=0.002; // User-requested slower starfall speed
-  let width=0,height=0,ratio=1,frame=0,lastDraw=0;
-  function resize(){const rect=canvas.getBoundingClientRect();width=rect.width;height=rect.height;ratio=Math.min(window.devicePixelRatio||1,1.25);canvas.width=Math.max(1,Math.floor(width*ratio));canvas.height=Math.max(1,Math.floor(height*ratio));ctx.setTransform(ratio,0,0,ratio,0,0);draw(0);}
-  function draw(time){
-     ctx.clearRect(0,0,width,height);
-     for(const s of stars){
-       if(!reduced){s.y+=speed*s.depth;if(s.y>1.02){s.y=-.02;s.x=Math.random();}}
-       const twinkle=reduced?1:(.72+.28*Math.sin(time*.0007+s.phase));
-       const x=s.x*width+pointer.x*s.depth*10;
-       const y=s.y*height+pointer.y*s.depth*8;
-       ctx.beginPath();ctx.arc(x,y,s.r,0,Math.PI*2);
-       ctx.fillStyle='rgba(65,119,210,'+(s.a*twinkle)+')';ctx.fill();
-       if(s.r>1.15){
-         ctx.beginPath();ctx.moveTo(x-2.5,y);ctx.lineTo(x+2.5,y);
-         ctx.moveTo(x,y-2.5);ctx.lineTo(x,y+2.5);
-         ctx.strokeStyle='rgba(100,170,245,'+(s.a*.45*twinkle)+')';
-         ctx.lineWidth=.5;ctx.stroke();
-       }
-     }
-     if(!reduced){
-       for(const m of meteors){
-         if(m.wait>0){m.wait--;continue;}
-         if(!m.active){m.active=true;m.x=Math.random()*1.25-.1;m.y=Math.random()*.62;m.alpha=0;}
-         m.x+=m.speed;m.y+=m.speed*.58;m.alpha=Math.min(1,m.alpha+.08);
-         const tail=m.length*width,x=m.x*width,y=m.y*height;
-         const grad=ctx.createLinearGradient(x-tail,y-tail*.58,x,y);
-         grad.addColorStop(0,'rgba(125,211,252,0)');
-         grad.addColorStop(.72,'rgba(125,211,252,'+(.45*m.alpha)+')');
-         grad.addColorStop(1,'rgba(255,255,255,'+(.95*m.alpha)+')');
-         ctx.beginPath();ctx.moveTo(x-tail,y-tail*.58);ctx.lineTo(x,y);
-         ctx.strokeStyle=grad;ctx.lineWidth=1.5;ctx.stroke();
-         ctx.beginPath();ctx.arc(x,y,1.6,0,Math.PI*2);
-         ctx.fillStyle='rgba(255,255,255,'+m.alpha+')';ctx.fill();
-         if(m.x>1.2||m.y>.9){m.active=false;m.wait=180+Math.random()*500;}
-       }
-     }
-   }
-   function animate(time){
-     frame=requestAnimationFrame(animate);
-     if(time-lastDraw<1000/30)return;
-     lastDraw=time;
-     draw(time);
-   }
-  const observer=new ResizeObserver(resize);observer.observe(canvas);resize();if(!reduced)frame=requestAnimationFrame(animate);
-  if(!reduced&&window.matchMedia('(hover:hover) and (pointer:fine)').matches){window.addEventListener('pointermove',e=>{pointer.x=e.clientX/window.innerWidth-.5;pointer.y=e.clientY/window.innerHeight-.5;},{passive:true});}
-  window.addEventListener('pagehide',()=>{cancelAnimationFrame(frame);observer.disconnect();},{once:true});
+  const canvas = document.getElementById('hydroyarStarField');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
+  const stars = Array.from(
+    { length: window.innerWidth < 700 ? 64 : 120 },
+    () => ({
+      x: Math.random(),
+      y: Math.random(),
+      r: 0.35 + Math.random() * 0.95,
+      a: 0.12 + Math.random() * 0.34
+    })
+  );
+  let width = 0, height = 0, observer;
+  function draw(){
+    ctx.clearRect(0, 0, width, height);
+    for (const star of stars) {
+      const x = star.x * width, y = star.y * height;
+      ctx.beginPath();
+      ctx.arc(x, y, star.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(65,119,210,' + star.a + ')';
+      ctx.fill();
+    }
+  }
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    width = rect.width;
+    height = rect.height;
+    const ratio = Math.min(window.devicePixelRatio || 1, 1);
+    canvas.width = Math.max(1, Math.floor(width * ratio));
+    canvas.height = Math.max(1, Math.floor(height * ratio));
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    draw();
+  }
+  if ('ResizeObserver' in window) {
+    observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+  } else {
+    window.addEventListener('resize', resize, { passive: true });
+  }
+  resize();
+  window.addEventListener('pagehide', () => {
+    observer?.disconnect();
+  }, { once: true });
 })();
 </script>
 <script>
@@ -1552,20 +1546,7 @@ async function chat(){
     }),{threshold:.12,rootMargin:'0px 0px -35px 0px'});
     revealTargets.forEach((el,i)=>{el.classList.add('motion-reveal');const launchPart=el.classList.contains('launch-copy')||el.classList.contains('launch-stage');el.dataset.motionDelay=String(launchPart?0:i%4);observer.observe(el);});
   }
-  const waves=document.querySelector('.calm-waves');
-  if(waves && !reduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
-    let frame=0;
-    document.addEventListener('mousemove',e=>{
-      if(frame)return;
-      frame=requestAnimationFrame(()=>{
-        const x=(e.clientX/window.innerWidth-.5)*24;
-        const y=(e.clientY/window.innerHeight-.5)*18;
-        waves.style.setProperty('--pointer-x',x.toFixed(1)+'px');
-        waves.style.setProperty('--pointer-y',y.toFixed(1)+'px');
-        frame=0;
-      });
-    },{passive:true});
-  }
+  // Decorative background is static for low-power devices; no pointer parallax loop.
 })();
 </script>
 <script>
