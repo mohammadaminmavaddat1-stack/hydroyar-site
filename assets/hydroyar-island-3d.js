@@ -452,8 +452,9 @@
     renderer.dispose();
   }, { once: true });
 
+  // Render one complete frame before hiding the lightweight hero fallback.
+  resize();
   document.body.classList.add('hydroyar-island-ready');
   host.classList.add('has-island-3d');
-  resize();
   if (!reducedMotion.matches) start();
 })();
