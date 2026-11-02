@@ -486,11 +486,6 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     }
   }
 
-  if (!supportsWebGL()) {
-    canvas.style.display = 'none';
-    return; // Keep the lightweight SVG waves and hero fallback.
-  }
-
   const version = '20261102-performance';
   let started = false;
 
@@ -516,6 +511,11 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
       };
       document.addEventListener('visibilitychange', resume);
       return;
+    }
+    // WebGL setup can stall some desktop drivers; defer it until the page is usable.
+    if (!supportsWebGL()) {
+      canvas.style.display = 'none';
+      return; // Keep the lightweight SVG waves and hero fallback.
     }
     started = true;
     loadScript('/assets/vendor/three-r160.min.js')
