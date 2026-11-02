@@ -409,6 +409,8 @@ button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:ma
 <link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
 <style id="hydroyar-island-3d-styles">
 #hydroyarIsland3D{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;pointer-events:none;opacity:.9;transition:opacity .5s ease}
+/* Keep the fixed 3D scene visible behind transparent page surfaces. */
+body.hydroyar-brand-page{background:transparent!important}
 .calm-waves.has-island-3d .water-svg{z-index:1;opacity:.24;transition:opacity .5s ease}
 /* Let the fixed 3D island show through the large page surfaces without lowering text contrast. */
 body.hydroyar-brand-page .hero{background:linear-gradient(145deg,rgba(17,33,45,.32) 0%,rgba(11,27,37,.38) 58%,rgba(6,20,27,.48) 100%)!important}
