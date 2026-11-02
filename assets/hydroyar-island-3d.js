@@ -14,7 +14,7 @@
     renderer = new T.WebGLRenderer({
       canvas,
       alpha: true,
-      antialias: window.innerWidth > 700,
+      antialias: false,
       powerPreference: 'low-power',
       stencil: false,
       depth: true
@@ -25,7 +25,7 @@
   }
 
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.15 : 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.2));
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.16;
@@ -91,7 +91,7 @@
       }
     `
   });
-  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, 92, 92), seaMaterial);
+  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, 64, 64), seaMaterial);
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = -0.56;
   island.add(sea);
@@ -104,8 +104,8 @@
   }
 
   function makeIslandTerrain() {
-    const rings = 18;
-    const segments = 112;
+    const rings = 15;
+    const segments = 88;
     const positions = [];
     const colors = [];
     const indices = [];
@@ -194,7 +194,7 @@
       [0.0, 1.72, 0.01, 0.30]
     ];
     foliage.forEach((item, index) => {
-      const crown = new T.Mesh(new T.IcosahedronGeometry(item[3], 2), leafMats[index % leafMats.length]);
+      const crown = new T.Mesh(new T.IcosahedronGeometry(item[3], 1), leafMats[index % leafMats.length]);
       crown.position.set(item[0], item[1], item[2]);
       crown.scale.set(1.12, 0.92, 0.98);
       tree.add(crown);
@@ -314,7 +314,7 @@
   });
   const waterRings = [];
   [2.58, 2.88, 3.20].forEach((radius, index) => {
-    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.012, 128), ringMaterial.clone());
+    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.012, 80), ringMaterial.clone());
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = -0.50 + index * 0.006;
     island.add(ring);
@@ -375,7 +375,7 @@
     width = Math.max(1, window.innerWidth);
     height = Math.max(1, window.innerHeight);
     const mobile = smallScreen();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.15 : 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.2));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.fov = mobile ? 44 : 39;
@@ -415,7 +415,7 @@
   function animate(now) {
     if (!visible || reducedMotion.matches) return;
     frame = requestAnimationFrame(animate);
-    const minFrame = smallScreen() ? 1000 / 30 : 1000 / 42;
+    const minFrame = 1000 / 30;
     if (now - lastFrame < minFrame) return;
     lastFrame = now;
     render(clock.getElapsedTime());
