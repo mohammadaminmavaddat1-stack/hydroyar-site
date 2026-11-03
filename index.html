@@ -564,20 +564,68 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 </g>
 </svg>
 </div>
-<link rel="preload" href="/assets/vendor/three-r160.min.js?v=20261103-desktop-3d-direct" as="script" fetchpriority="high">
-<link rel="preload" href="/assets/hydroyar-island-3d.js?v=20261103-desktop-3d-direct" as="script" fetchpriority="high">
-<script defer src="/assets/vendor/three-r160.min.js?v=20261103-desktop-3d-direct"></script>
-<script defer src="/assets/hydroyar-island-3d.js?v=20261103-desktop-3d-direct"></script>
 <script>
 (() => {
   const canvas = document.getElementById('hydroyarIsland3D');
   const host = canvas?.closest('.calm-waves');
   if (!canvas || !host) return;
-  window.setTimeout(() => {
-    if (document.body.classList.contains('hydroyar-island-ready')) return;
+
+  const showFallback = () => {
     canvas.hidden = true;
     host.classList.add('island-fallback-active');
     document.body.classList.add('hydroyar-island-ready');
+  };
+  const loadScript = (src, verifyThree = false) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    let settled = false;
+    const timeout = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      script.remove();
+      reject(new Error('3D background asset timed out'));
+    }, 10000);
+    script.src = src;
+    script.async = true;
+    script.fetchPriority = 'high';
+    script.onload = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      if (verifyThree && !window.THREE) {
+        reject(new Error('Three.js did not initialize'));
+        return;
+      }
+      resolve();
+    };
+    script.onerror = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeout);
+      reject(new Error('3D background asset failed to load'));
+    };
+    document.head.appendChild(script);
+  });
+
+  let started = false;
+  const start = async () => {
+    if (started) return;
+    started = true;
+    try {
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js', true);
+      await loadScript('/assets/hydroyar-island-3d.js?v=20261103-cdn-three-final', false);
+    } catch (error) {
+      showFallback();
+      console.warn('HydroYar: the 3D island is using its lightweight fallback.');
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.setTimeout(start, 250), { once: true });
+  } else {
+    window.setTimeout(start, 250);
+  }
+  window.setTimeout(() => {
+    if (!document.body.classList.contains('hydroyar-island-ready')) showFallback();
   }, 12000);
 })();
 </script>
