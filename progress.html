@@ -8,8 +8,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#06141B">
 <title>مرکز پیشرفت هیدرویار | وضعیت پروژه</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
 :root{color-scheme:dark;--bg:#0b0d10;--panel:#111419;--panel2:#171b21;--line:#292f38;--text:#eef2f7;--muted:#9aa5b4;--blue:#60a5fa;--cyan:#22d3ee;--green:#4ade80;--amber:#fbbf24}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% -15%,#122d46 0,transparent 45%),var(--bg);color:var(--text);font-family:Vazirmatn,Tahoma,sans-serif;line-height:1.8}a{color:inherit;text-decoration:none}.wrap{width:min(1100px,calc(100% - 32px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}.brand{font-size:23px;font-weight:900}.brand span{color:var(--cyan)}.tiny{font:12px monospace;color:var(--muted);direction:ltr}.hero{padding:54px 0 28px}.eyebrow{color:var(--cyan);font-size:13px;font-weight:800;letter-spacing:.4px}.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.35;margin:8px 0 14px}.hero p{color:var(--muted);max-width:720px;margin:0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn,button{font-family:Vazirmatn,Tahoma,sans-serif}.btn{display:inline-flex;padding:10px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);font-weight:700}.btn.primary{background:linear-gradient(120deg,#2563eb,#0891b2);border-color:transparent}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}.card{background:linear-gradient(145deg,#151a21,#101318);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}.label{font-size:13px;color:var(--muted)}.value{font-size:22px;font-weight:900;margin-top:5px}.status{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;border-radius:30px;padding:4px 10px;background:#12301f;color:var(--green)}.status.pending{background:#332811;color:var(--amber)}.pulse{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor}.section-title{font-size:22px;margin:32px 0 12px}.task{display:flex;gap:13px;align-items:flex-start;padding:17px 0;border-bottom:1px solid var(--line)}.task:last-child{border:0}.icon{flex:0 0 38px;height:38px;display:grid;place-items:center;border:1px solid #29394a;border-radius:12px;background:#101e2c;color:var(--cyan);font-size:18px}.task h3{font-size:15px;margin:0 0 3px}.task p{font-size:13px;color:var(--muted);margin:0}.right{margin-right:auto;white-space:nowrap}.meter{height:8px;background:#252b34;border-radius:30px;overflow:hidden;margin-top:15px}.meter span{display:block;width:68%;height:100%;background:linear-gradient(90deg,#2563eb,#22d3ee);border-radius:30px}.note{color:var(--muted);font-size:12px;margin-top:12px}.foot{padding:28px 0 45px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);margin-top:35px}.error{color:#fca5a5}.status.failed{background:#3b171b;color:#fca5a5}.live{display:flex;gap:10px;align-items:center}.spinner{width:14px;height:14px;border:2px solid #334155;border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 /* Tiny animated Hydroyar support team */
@@ -564,27 +566,33 @@ checkApi();
 setInterval(checkQaStatus,15000);
 setInterval(()=>{checkSeoStatus();checkOperationalAgents();checkAiStatus();checkSupervisorStatus();},60000);
 </script>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}
-</script>
+<script defer src="/assets/vendor/three-r160.min.js"></script>
 <script type="module">
 const host=document.querySelector('.team-floor'), canvas=document.getElementById('team3d');
 try {
- // Load optional 3D dependencies inside the error boundary so the support page still works if a CDN or WebGL fails.
- const loadModule=(url,label)=>Promise.race([import(url),new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),8000))]);
- const [THREE,controlsModule]=await Promise.all([
-  loadModule('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js','Three.js'),
-  loadModule('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js','OrbitControls')
- ]);
- const {OrbitControls}=controlsModule;
+ // Let the dashboard paint first; the optional 3D room starts only when the browser is idle.
+ await new Promise(resolve=>{const start=()=>{if('requestIdleCallback' in window)requestIdleCallback(()=>resolve(),{timeout:1400});else setTimeout(resolve,650);};if(document.visibilityState==='visible')setTimeout(start,350);else document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')start();},{once:true});});
+ const THREE=window.THREE;
+ if(!THREE)throw new Error('Local Three.js asset unavailable');
+ // Lightweight pointer orbit controls avoid a second remote module request.
+ class OrbitControls {
+  constructor(camera,element){this.camera=camera;this.domElement=element;this.target=new THREE.Vector3(0,1.15,0);this.minDistance=8;this.maxDistance=22;this.maxPolarAngle=Math.PI*.48;this.drag=null;this.spherical=new THREE.Spherical();
+   element.addEventListener('pointerdown',e=>{if(e.button!==0)return;this.drag={x:e.clientX,y:e.clientY,id:e.pointerId};element.setPointerCapture?.(e.pointerId);});
+   element.addEventListener('pointermove',e=>{if(!this.drag||this.drag.id!==e.pointerId)return;const dx=e.clientX-this.drag.x,dy=e.clientY-this.drag.y;this.drag.x=e.clientX;this.drag.y=e.clientY;this.spherical.setFromVector3(this.camera.position.clone().sub(this.target));this.spherical.theta-=dx*.005;this.spherical.phi=THREE.MathUtils.clamp(this.spherical.phi-dy*.005,.22,this.maxPolarAngle);this.apply();});
+   const stop=e=>{if(this.drag&&(!e||e.pointerId===this.drag.id))this.drag=null;};element.addEventListener('pointerup',stop);element.addEventListener('pointercancel',stop);
+   element.addEventListener('wheel',e=>{e.preventDefault();this.spherical.setFromVector3(this.camera.position.clone().sub(this.target));this.spherical.radius=THREE.MathUtils.clamp(this.spherical.radius*Math.exp(e.deltaY*.001),this.minDistance,this.maxDistance);this.apply();},{passive:false});
+  }
+  apply(){this.camera.position.setFromSpherical(this.spherical).add(this.target);this.camera.lookAt(this.target);}
+  update(){this.spherical.setFromVector3(this.camera.position.clone().sub(this.target));this.spherical.radius=THREE.MathUtils.clamp(this.spherical.radius,this.minDistance,this.maxDistance);this.spherical.phi=THREE.MathUtils.clamp(this.spherical.phi,.22,this.maxPolarAngle);this.apply();}
+ }
  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.25)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.25;
  const scene=new THREE.Scene(); scene.background=new THREE.Color('#0b1420'); scene.fog=new THREE.Fog('#0b1420',17,34);
  const camera=new THREE.PerspectiveCamera(42,1,.1,100); camera.position.set(10,11,13);
  const controls=new OrbitControls(camera,renderer.domElement); controls.target.set(0,1.15,0); controls.enableDamping=true; controls.minDistance=8; controls.maxDistance=22; controls.maxPolarAngle=Math.PI*.48;
  scene.add(new THREE.HemisphereLight(0xbfeaff,0x18202d,2.2));
- const key=new THREE.DirectionalLight(0xffffff,3); key.position.set(-5,10,7); key.castShadow=true; key.shadow.mapSize.set(1024,1024); scene.add(key);
+ const key=new THREE.DirectionalLight(0xffffff,3); key.position.set(-5,10,7); key.castShadow=true; key.shadow.mapSize.set(512,512); scene.add(key);
  const cyanLight=new THREE.PointLight(0x22d3ee,28,15); cyanLight.position.set(0,4,-4); scene.add(cyanLight);
  const goldLight=new THREE.PointLight(0xfbbf24,10,8); goldLight.position.set(-4,2,2); scene.add(goldLight);
  const mat=(color,roughness=.65,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
@@ -813,7 +821,7 @@ try {
  const resize=()=>{const w=Math.max(320,host.clientWidth),h=Math.max(300,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
  host.classList.add('real-3d');resize();new ResizeObserver(resize).observe(host);
  const clock=new THREE.Clock();
- function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();
+ let lastFrame=0; function animate(now=0){requestAnimationFrame(animate);if(now-lastFrame<1000/60)return;lastFrame=now;const t=clock.getElapsedTime();
    // Show at most one bubble, and only for a queued, explicitly reported event.
    if(eventQueue.length&&!activeBubbles.some(b=>b.sprite.visible)){
      const event=eventQueue.shift();
