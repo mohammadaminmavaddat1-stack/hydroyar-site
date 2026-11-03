@@ -500,14 +500,14 @@ async function checkSupervisorStatus(){
    const hasValidUpdate=updated&&!Number.isNaN(updated.getTime());
    const isStale=!hasValidUpdate||(Date.now()-updated.getTime()>24*60*60*1000);
    if(isStale)staleAgentCount++;
-   const displayState=isStale&&['active','ready','healthy'].includes(agent.state)?'stale':agent.state;
    const card=document.createElement('div');card.className='card supervisor-agent-card';
    const title=document.createElement('h3');title.className='supervisor-agent-title';title.textContent=agent.name||agent.id;
-   const state=document.createElement('div');state.className='status '+(['attention','failed','unavailable','rolled-back','blocked'].includes(displayState)?'failed':['approval','awaiting_owner','staged','testing','deploying','waiting','stale'].includes(displayState)?'pending':'');state.textContent=stateLabelsFa[displayState]||displayState;
+   const state=document.createElement('div');state.className='status '+(['attention','failed','unavailable','rolled-back','blocked'].includes(agent.state)?'failed':['approval','awaiting_owner','staged','testing','deploying','waiting','stale'].includes(agent.state)?'pending':'');state.textContent=stateLabelsFa[agent.state]||agent.state;
+   const freshnessBadge=document.createElement('div');freshnessBadge.className='status '+(isStale?'pending':'');freshnessBadge.textContent=!hasValidUpdate?'زمان گزارش نامشخص':isStale?'گزارش قدیمی':'گزارش تازه';
    const mode=document.createElement('div');mode.className='note supervisor-agent-mode';mode.textContent='نوع فعالیت: '+(modeLabels[agent.mode]||agent.mode);
    const freshness=document.createElement('div');freshness.className='note supervisor-agent-freshness';freshness.textContent=hasValidUpdate?'آخرین گزارش: '+formatDate(agent.updatedAt):'زمان آخرین گزارش ثبت نشده است';
    const detail=document.createElement('p');detail.className='supervisor-agent-detail';detail.textContent=agent.detail||'';
-   card.append(title,state,mode,freshness,detail);grid.append(card);
+   card.append(title,state,freshnessBadge,mode,freshness,detail);grid.append(card);
   }
   const freshnessNote=byId('supervisorFreshnessNote');
   if(freshnessNote){freshnessNote.textContent=staleAgentCount?'توجه: '+staleAgentCount+' عامل از '+(snap.agents||[]).length+' عامل، گزارش تازه‌تر از ۲۴ ساعت ندارند؛ وضعیت آن‌ها به‌عنوان گزارش قدیمی مشخص شده است.':'گزارش همه عامل‌ها در ۲۴ ساعت اخیر به‌روزرسانی شده است.';freshnessNote.className='note '+(staleAgentCount?'status pending':'status');}
