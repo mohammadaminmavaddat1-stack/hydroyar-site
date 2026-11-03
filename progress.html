@@ -564,12 +564,13 @@ checkApi();
 setInterval(checkQaStatus,15000);
 setInterval(()=>{checkSeoStatus();checkOperationalAgents();checkAiStatus();checkSupervisorStatus();},60000);
 </script>
-<script defer src="/assets/vendor/three-r160.min.js"></script>
 <script type="module">
 const host=document.querySelector('.team-floor'), canvas=document.getElementById('team3d');
 try {
  // Let the dashboard paint first; the optional 3D room starts only when the browser is idle.
  await new Promise(resolve=>{const start=()=>{if('requestIdleCallback' in window)requestIdleCallback(()=>resolve(),{timeout:1400});else setTimeout(resolve,650);};if(document.visibilityState==='visible')setTimeout(start,350);else document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')start();},{once:true});});
+ // Fetch the large 3D engine asynchronously so it never holds up the dashboard parser or status panels.
+ await new Promise((resolve,reject)=>{if(window.THREE){resolve();return;}const script=document.createElement('script');script.src='/assets/vendor/three-r160.min.js';script.async=true;const timer=setTimeout(()=>reject(new Error('Local Three.js asset timed out')),20000);script.onload=()=>{clearTimeout(timer);resolve();};script.onerror=()=>{clearTimeout(timer);reject(new Error('Local Three.js asset failed to load'));};document.head.appendChild(script);});
  const THREE=window.THREE;
  if(!THREE)throw new Error('Local Three.js asset unavailable');
  // Lightweight pointer orbit controls avoid a second remote module request.
