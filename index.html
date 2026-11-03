@@ -588,16 +588,16 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     }
   }
 
-  const version = '20261102-desktop-fallback';
+  const version = '20261103-desktop-3d-loader-fix';
   let started = false;
 
   function loadScript(path) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = path + '?v=' + version;
-      script.async = false;
-      script.fetchPriority = 'low';
-      script.onload = resolve;
+      script.async = true;
+      script.fetchPriority = 'high';
+      script.onload = () => { if (path.includes('three-r160') && !window.THREE) { reject(new Error('Three.js loaded without exposing its global API')); return; } resolve(); };
       script.onerror = () => reject(new Error('3D background asset failed to load'));
       document.head.appendChild(script);
     });
