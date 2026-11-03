@@ -47,6 +47,35 @@
 .team-memory-photo{margin:0 auto;max-width:900px;text-align:center}
 .team-memory-photo img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:18px;border:1px solid #34536a;box-shadow:0 18px 42px #0006,0 0 26px #22d3ee16}
 .team-memory-photo figcaption{margin-top:12px;color:#a9c4d4;font-size:12px}
+
+/* HYDROYAR_PROGRESS_MOBILE_FIX */
+@media (max-width: 750px) {
+  .wrap { width: min(100% - 24px, 680px); }
+  #supervisor-live-panel { padding: 14px; min-width: 0; }
+  #supervisor-live-panel > .grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px; }
+  #supervisor-live-panel > .grid > .card { min-width: 0; padding: 11px 10px; border-radius: 13px; }
+  #supervisor-live-panel .label { font-size: 11px; line-height: 1.7; }
+  #supervisor-live-panel .value { font-size: clamp(16px, 4.2vw, 20px); line-height: 1.7; overflow-wrap: anywhere; }
+  #supervisor-live-panel #supervisorAgentGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px; }
+  #supervisor-live-panel #supervisorAgentGrid > .card { min-width: 0; padding: 12px 10px; border-radius: 14px; }
+  #supervisor-live-panel #supervisorAgentGrid .value { font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+  #supervisor-live-panel #supervisorAgentGrid .note { font-size: 11px; line-height: 1.9; overflow-wrap: anywhere; }
+  #supervisor-live-panel .task { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; align-items: start; padding: 13px 8px; }
+  #supervisor-live-panel .task > div:nth-child(2) { min-width: 0; }
+  #supervisor-live-panel .task h3 { font-size: 13px; line-height: 1.8; }
+  #supervisor-live-panel .task p { font-size: 11px; line-height: 1.9; overflow-wrap: anywhere; }
+  #supervisor-live-panel .task .right { grid-column: 2; justify-self: start; margin: 0; white-space: normal; }
+  #supervisor-live-panel .note { line-height: 1.9; overflow-wrap: anywhere; }
+}
+@media (max-width: 380px) {
+  #supervisor-live-panel > .grid,
+  #supervisor-live-panel #supervisorAgentGrid { grid-template-columns: minmax(0, 1fr) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #supervisor-live-panel .card,
+  #supervisor-live-panel .task { transform: none !important; transition: none !important; }
+}
+/* /HYDROYAR_PROGRESS_MOBILE_FIX */
 </style>
 <meta name="robots" content="noindex,follow"><link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
 </head>
