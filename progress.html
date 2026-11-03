@@ -76,6 +76,46 @@
   #supervisor-live-panel .task { transform: none !important; transition: none !important; }
 }
 /* /HYDROYAR_PROGRESS_MOBILE_FIX */
+
+/* Supervisor cards: clearer hierarchy and visible report freshness. */
+#supervisor-live-panel #supervisorAgentGrid > .supervisor-agent-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+  padding: 15px;
+}
+#supervisor-live-panel .supervisor-agent-title {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+#supervisor-live-panel .supervisor-agent-mode,
+#supervisor-live-panel .supervisor-agent-freshness {
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+#supervisor-live-panel .supervisor-agent-detail {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.95;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+#supervisorFreshnessNote.status {
+  display: block;
+  white-space: normal;
+  line-height: 1.9;
+}
+@media (max-width: 750px) {
+  #supervisor-live-panel #supervisorAgentGrid > .supervisor-agent-card { padding: 13px 11px; gap: 6px; }
+  #supervisor-live-panel .supervisor-agent-title { font-size: 13px; }
+  #supervisor-live-panel .supervisor-agent-detail { font-size: 11px; line-height: 1.9; }
+}
+
 </style>
 <meta name="robots" content="noindex,follow"><link rel="stylesheet" href="/assets/hydroyar-palette.css?v=20261101">
 </head>
@@ -116,8 +156,9 @@
  <p id="supervisorDecision" style="margin:0 0 8px;color:var(--text)">در حال دریافت تصمیم مرکزی…</p>
  <p id="supervisorNextAction" class="note" style="margin:0 0 12px"></p>
  <div id="supervisorAssignments"></div>
- <h3 style="margin:18px 0 8px">وضعیت زنده ۱۱ عضو تیم</h3>
+ <h3 style="margin:18px 0 8px">وضعیت اعضای تیم و تازگی گزارش‌ها</h3>
  <div id="supervisorAgentGrid" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(175px,1fr))"></div>
+ <p id="supervisorFreshnessNote" class="note" role="status" aria-live="polite" style="margin:10px 0;padding:9px 11px;border-radius:10px"></p>
  <p class="note" style="margin-top:12px">«آماده ارجاع» یعنی متخصص هنگام دریافت کار فعال می‌شود، نه اینکه دائماً در پس‌زمینه اجرا شود. انتشار، پرداخت، حذف داده، تغییرات امنیتی حساس و پیام نهایی مشتری همچنان نیازمند تأیید مالک‌اند.</p>
  <div class="note">آخرین همگام‌سازی سرپرست: <span id="supervisorUpdatedAt">—</span></div>
 </section>
@@ -453,14 +494,23 @@ async function checkSupervisorStatus(){
   const stateLabelsFa={active:'فعال',ready:'آماده ارجاع',planned:'طرح آماده • منتظر تأیید',planning:'در حال برنامه‌ریزی',working:'در حال اجرا',completed:'آخرین اجرا موفق',healthy:'سالم',passed:'موفق',warning:'هشدار',attention:'نیازمند رسیدگی',approval:'نیازمند تأیید مالک',awaiting_owner:'منتظر تأیید مالک',staged:'آماده انتشار',testing:'در حال آزمون',deploying:'در حال انتشار',deployed:'منتشر شد',blocked:'انتشار مسدود شد',waiting:'در انتظار داده',stale:'گزارش قدیمی',unavailable:'در دسترس نیست',failed:'ناموفق','rolled-back':'بازگشت امن'};
   const modeLabels={live:'زنده', 'live-status':'گزارش زنده','live-diagnostics':'آزمون واقعی','live-queue':'صف واقعی','on-demand':'هنگام ارجاع','review-only':'بازبینی محدود','owner-approval':'با تأیید مالک','controlled-release':'انتشار کنترل‌شده','live-security':'ممیزی امنیت زنده','live-control':'کنترل مرکزی','live-telegram':'اتصال تلگرام','live-runtime':'اجرای محلی پیوسته'};
   const grid=byId('supervisorAgentGrid');grid.replaceChildren();
+  let staleAgentCount=0;
   for(const agent of snap.agents||[]){
-   const card=document.createElement('div');card.className='card';card.style.padding='12px';
-   const title=document.createElement('h3');title.style.margin='0 0 5px';title.textContent=agent.name||agent.id;
-   const state=document.createElement('div');state.className='status '+(['attention','failed','unavailable','rolled-back','blocked'].includes(agent.state)?'failed':['approval','awaiting_owner','staged','testing','deploying','waiting','stale'].includes(agent.state)?'pending':'');state.textContent=stateLabelsFa[agent.state]||agent.state;
-   const mode=document.createElement('div');mode.className='note';mode.style.marginTop='5px';mode.textContent='نوع فعالیت: '+(modeLabels[agent.mode]||agent.mode);
-   const detail=document.createElement('p');detail.style.margin='6px 0 0';detail.style.fontSize='12px';detail.style.color='var(--muted)';detail.textContent=agent.detail||'';
-   card.append(title,state,mode,detail);grid.append(card);
+   const updated=agent.updatedAt?new Date(agent.updatedAt):null;
+   const hasValidUpdate=updated&&!Number.isNaN(updated.getTime());
+   const isStale=!hasValidUpdate||(Date.now()-updated.getTime()>24*60*60*1000);
+   if(isStale)staleAgentCount++;
+   const displayState=isStale&&['active','ready','healthy'].includes(agent.state)?'stale':agent.state;
+   const card=document.createElement('div');card.className='card supervisor-agent-card';
+   const title=document.createElement('h3');title.className='supervisor-agent-title';title.textContent=agent.name||agent.id;
+   const state=document.createElement('div');state.className='status '+(['attention','failed','unavailable','rolled-back','blocked'].includes(displayState)?'failed':['approval','awaiting_owner','staged','testing','deploying','waiting','stale'].includes(displayState)?'pending':'');state.textContent=stateLabelsFa[displayState]||displayState;
+   const mode=document.createElement('div');mode.className='note supervisor-agent-mode';mode.textContent='نوع فعالیت: '+(modeLabels[agent.mode]||agent.mode);
+   const freshness=document.createElement('div');freshness.className='note supervisor-agent-freshness';freshness.textContent=hasValidUpdate?'آخرین گزارش: '+formatDate(agent.updatedAt):'زمان آخرین گزارش ثبت نشده است';
+   const detail=document.createElement('p');detail.className='supervisor-agent-detail';detail.textContent=agent.detail||'';
+   card.append(title,state,mode,freshness,detail);grid.append(card);
   }
+  const freshnessNote=byId('supervisorFreshnessNote');
+  if(freshnessNote){freshnessNote.textContent=staleAgentCount?'توجه: '+staleAgentCount+' عامل از '+(snap.agents||[]).length+' عامل، گزارش تازه‌تر از ۲۴ ساعت ندارند؛ وضعیت آن‌ها به‌عنوان گزارش قدیمی مشخص شده است.':'گزارش همه عامل‌ها در ۲۴ ساعت اخیر به‌روزرسانی شده است.';freshnessNote.className='note '+(staleAgentCount?'status pending':'status');}
   byId('supervisorUpdatedAt').textContent=formatDate(snap.updatedAt);  const securityAgent=(snap.agents||[]).find(agent=>agent.id==='security');
   if(securityAgent){
    const securitySignature=[securityAgent.state,securityAgent.updatedAt||''].join('|');
