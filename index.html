@@ -586,7 +586,7 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     }, 10000);
     script.src = src;
     script.async = true;
-    script.fetchPriority = 'high';
+    script.fetchPriority = 'low';
     script.onload = () => {
       if (settled) return;
       settled = true;
@@ -619,10 +619,18 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
     }
   };
 
+  const scheduleStart = () => {
+    // Let the first render and critical content settle before requesting the decorative WebGL scene.
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(start, { timeout: 1800 });
+    } else {
+      window.setTimeout(start, 900);
+    }
+  };
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.setTimeout(start, 250), { once: true });
+    document.addEventListener('DOMContentLoaded', scheduleStart, { once: true });
   } else {
-    window.setTimeout(start, 250);
+    scheduleStart();
   }
   window.setTimeout(() => {
     if (!document.body.classList.contains('hydroyar-island-ready')) showFallback();

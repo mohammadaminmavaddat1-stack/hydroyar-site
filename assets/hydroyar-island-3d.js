@@ -23,7 +23,8 @@
   const memoryGb = Number(navigator.deviceMemory || 0);
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const lowPowerDevice = saveData || (hardwareCores > 0 && hardwareCores <= 4) || (memoryGb > 0 && memoryGb <= 4);
-  let targetFPS = lowPowerDevice ? 30 : 120;
+  // Cap the background at 60 FPS: visually smooth on normal displays without wasting GPU cycles.
+  let targetFPS = lowPowerDevice || window.innerWidth < 700 ? 30 : 60;
   let activeFPS = targetFPS;
   let frame = 0;
   let lastFrame = 0;
@@ -113,7 +114,7 @@
       }
     `
   });
-  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, 64, 64), seaMaterial);
+  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, 40, 40), seaMaterial);
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = -0.56;
   island.add(sea);
@@ -336,7 +337,7 @@
   });
   const waterRings = [];
   [2.58, 2.88, 3.20].forEach((radius, index) => {
-    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.012, 80), ringMaterial.clone());
+    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.012, 56), ringMaterial.clone());
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = -0.50 + index * 0.006;
     island.add(ring);
