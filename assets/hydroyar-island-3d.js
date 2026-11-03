@@ -488,6 +488,9 @@
   // Render one complete frame before hiding the lightweight hero fallback.
   resize();
   document.body.classList.add('hydroyar-island-ready');
+  host.classList.remove('island-fallback-active');
+  canvas.hidden = false;
+  canvas.style.display = 'block';
   host.classList.add('has-island-3d');
   if (!reducedMotion.matches) startAnimation();
 })();
