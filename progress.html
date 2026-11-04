@@ -493,15 +493,16 @@ async function checkOperationalAgents(){
   if(supportResponse.ok){
    const s=await supportResponse.json();
    const state=s.needsAttention?'نیازمند پیگیری':s.configured?.ticketStore&&s.configured?.telegram&&s.configured?.ai?'متصل و آماده':'اتصال ناقص';
-   byId('supportAgentStatus').textContent=state;
-   byId('supportAgentDetail').textContent='پرونده‌های اخیر: '+(s.totalRecent??0)+' • باز: '+(s.pending??0)+' • نیازمند توجه: '+(s.needsAttention??0)+' • تلگرام: '+(s.configured?.telegram?'متصل':'نامشخص');
+    byId('supportAgentStatus').textContent=(s.unassigned??0)>0?'نیازمند تخصیص':state;
+    byId('supportAgentDetail').textContent='درخواست‌های اخیر: '+(s.totalRecent??0)+' | باز: '+(s.pending??0)+' | مسئول‌دار: '+(s.assigned??0)+' | بدون مسئول: '+(s.unassigned??0)+' | فوری: '+(s.urgent??0)+' | نیازمند تصمیم مدیر: '+(s.ownerPending??0)+' | تلگرام: '+(s.configured?.telegram?'فعال':'نامشخص');
    if(s.latestUpdatedAt&&window.hydroyarLastSupportUpdate!==s.latestUpdatedAt){
     window.hydroyarLastSupportUpdate=s.latestUpdatedAt;
     queueTeamEvent('customer_found','support-'+s.latestUpdatedAt);
    }
   }
  }catch(error){
-  if(byId('supportAgentDetail'))byId('supportAgentDetail').textContent='وضعیت پشتیبانی موقتاً قابل دریافت نیست.';
+   if(byId('supportAgentStatus'))byId('supportAgentStatus').textContent='عدم دسترسی';
+   if(byId('supportAgentDetail'))byId('supportAgentDetail').textContent='وضعیت پشتیبانی موقتاً قابل دریافت نیست.';
  }
 }
 async function renderCategorizedLiveReports(agents,snapshotUpdatedAt=null){
