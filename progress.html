@@ -184,6 +184,12 @@
  <div id="supervisorAssignments"></div>
  <h3 style="margin:18px 0 8px">وضعیت اعضای تیم و تازگی گزارش‌ها</h3>
  <div id="supervisorAgentGrid" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(175px,1fr))"></div>
+ <section id="liveReportGroups" aria-live="polite" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+  <h3 style="margin:0 0 6px">گزارش‌های زنده دسته‌بندی‌شده</h3>
+  <p class="note" style="margin:0 0 12px">آخرین گزارش‌های ذخیره‌شده از سرور؛ هر بخش جداگانه به‌روزرسانی می‌شود.</p>
+  <div class="actions" style="margin:0 0 12px"><button class="btn" id="refreshCategorizedReports" type="button">به‌روزرسانی همه گزارش‌ها ↻</button><span class="note" id="categorizedReportsUpdated">—</span></div>
+  <div id="liveReportGroupsBody" style="display:grid;gap:14px"><p class="note">در حال دریافت گزارش‌ها…</p></div>
+ </section>
  <p id="supervisorFreshnessNote" class="note" role="status" aria-live="polite" style="margin:10px 0;padding:9px 11px;border-radius:10px"></p>
  <p class="note" style="margin-top:12px">«آماده ارجاع» یعنی متخصص هنگام دریافت کار فعال می‌شود، نه اینکه دائماً در پس‌زمینه اجرا شود. انتشار، پرداخت، حذف داده، تغییرات امنیتی حساس و پیام نهایی مشتری همچنان نیازمند تأیید مالک‌اند.</p>
  <div class="note">آخرین همگام‌سازی سرپرست: <span id="supervisorUpdatedAt">—</span></div>
@@ -425,7 +431,7 @@ async function checkSeoStatus(){
   }
   const gsc=payload.gsc;
   if(!gsc){
-   byId('gscSourceNote').textContent='اتصال Search Console موجود است؛ منتظر ذخیره snapshot برای نمایش در اتاق تیم هستیم.';
+   byId('gscSourceNote').textContent='snapshot داده‌های Google Search Console هنوز وارد نشده است؛ اتصال حساب و آمار واقعی کلیک، نمایش و رتبه از این داشبورد تأیید نشده.';
    byId('gscSubmitted').textContent='—';byId('gscErrors').textContent='—';byId('gscPages').textContent='—';
    byId('gscSummary').textContent='آمار زنده در دسترس این داشبورد نیست تا snapshot معتبر وارد شود.';
    byId('gscPageRows').replaceChildren();
@@ -488,6 +494,40 @@ async function checkOperationalAgents(){
  }catch(error){
   if(byId('supportAgentDetail'))byId('supportAgentDetail').textContent='وضعیت پشتیبانی موقتاً قابل دریافت نیست.';
  }
+}
+async function renderCategorizedLiveReports(agents){
+ const root=byId("liveReportGroupsBody");if(!root)return;root.replaceChildren();
+ const refresh=byId("refreshCategorizedReports");if(refresh&&!refresh.dataset.bound){refresh.dataset.bound="1";refresh.addEventListener("click",async()=>{refresh.disabled=true;refresh.textContent="در حال دریافت…";try{await Promise.all([checkSupervisorStatus(),checkSeoStatus(),checkOperationalAgents()]);const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین دریافت: "+formatDate(new Date().toISOString());}catch(e){console.warn("Report refresh failed",e);}finally{refresh.disabled=false;refresh.textContent="به‌روزرسانی همه گزارش‌ها ↻";}});}
+ const groups=[
+  {title:"زیرساخت، برنامه‌نویسی و انتشار",ids:["project","developer","deploy","supervisor"]},
+  {title:"امنیت، آزمون و کیفیت",ids:["security","qa"]},
+  {title:"سئو، گوگل و ارتباط با مشتری",ids:["seo","support","telegram","ai","design"]}
+ ];
+ const endpoints={deploy:"/deployment/status",security:"/security/status",seo:"/seo/status",qa:"/qa/status",developer:"/developer/status",ai:"/ai/status",supervisor:"/ai/supervisor/status"};
+ const stateFa={active:"فعال",ready:"آماده",healthy:"سالم",passed:"موفق",warning:"هشدار",attention:"نیازمند رسیدگی",failed:"ناموفق",stale:"گزارش قدیمی",unavailable:"در دسترس نیست",deployed:"منتشرشده",awaiting_owner:"منتظر تأیید مالک",planned:"برنامه‌ریزی‌شده",working:"در حال اجرا",completed:"تکمیل‌شده",pending:"در انتظار گزارش"};
+ const fetches=await Promise.all((agents||[]).map(async a=>{let extra=null;const path=endpoints[a.id];if(path){try{const r=await fetch(API+path,{cache:"no-store",headers:{Accept:"application/json"}});if(r.ok)extra=await r.json();}catch(e){}}return {agent:a,extra};}));
+ const makeCard=(item)=>{
+  const a=item.agent,x=item.extra||{},report=x.report||x.snapshot||null;
+  const card=document.createElement("article");card.className="card";card.style.cssText="padding:12px;display:grid;gap:7px;min-width:0";
+  const head=document.createElement("div");head.style.cssText="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap";
+  const name=document.createElement("strong");name.textContent=a.name||a.id;
+  const state=document.createElement("span");state.className="status "+(["failed","attention","unavailable","warning"].includes(a.state)?"failed":["stale","awaiting_owner","pending"].includes(a.state)?"pending":"");state.textContent=stateFa[a.state]||a.state||"نامشخص";head.append(name,state);card.append(head);
+  const detail=document.createElement("p");detail.className="note";detail.style.cssText="margin:0;overflow-wrap:anywhere";detail.textContent=(report&&(report.summary||report.decision))||a.detail||"جزئیات گزارش ثبت نشده است.";card.append(detail);
+  const when=document.createElement("p");when.className="note";when.style.margin="0";when.textContent="آخرین به‌روزرسانی: "+(report&&(report.completedAt||report.updatedAt)||a.updatedAt?formatDate(report&&(report.completedAt||report.updatedAt)||a.updatedAt):"زمان ثبت نشده");card.append(when);
+  if(a.id==="seo"){
+   const metrics=x.gscMetrics||null;const gsc=document.createElement("div");gsc.style.cssText="padding:10px;border:1px solid var(--line);border-radius:10px;display:grid;gap:5px";
+   const gtitle=document.createElement("strong");gtitle.textContent="وضعیت Google Search Console";gsc.append(gtitle);
+   const gtext=document.createElement("p");gtext.className="note";gtext.style.margin="0";
+   if(metrics){gtext.textContent="کلیک ارگانیک: "+(metrics.clicks??"—")+" | نمایش: "+(metrics.impressions??"—")+" | CTR: "+(metrics.ctr==null?"—":(metrics.ctr*100).toFixed(1)+"%")+" | میانگین جایگاه: "+(metrics.averagePosition==null?"—":metrics.averagePosition.toFixed(1))+" | بازه: "+((metrics.range&&metrics.range.startDate)||"—")+" تا "+((metrics.range&&metrics.range.endDate)||"—");}
+   else gtext.textContent="هنوز snapshot عملکرد سرچ کنسول به این داشبورد وارد نشده؛ بنابراین کلیک، نمایش، CTR و رتبه واقعی گوگل قابل اعلام نیست. ممیزی فنی سایت جداگانه در حال ثبت است.";
+   gsc.append(gtext);const link=document.createElement("a");link.href="https://search.google.com/search-console?resource_id=sc-domain%3Aaminmvt.ir";link.target="_blank";link.rel="noopener noreferrer";link.textContent="باز کردن Google Search Console ↗";link.className="note";gsc.append(link);card.append(gsc);
+   if(report&&Array.isArray(report.checks)){const counts={passed:0,failed:0,warning:0};report.checks.forEach(c=>{if(counts[c.status]!==undefined)counts[c.status]++;});const count=document.createElement("p");count.className="note";count.style.margin="0";count.textContent="ممیزی فنی: "+counts.passed+" موفق، "+counts.warning+" هشدار، "+counts.failed+" خطا از "+report.checks.length+" بررسی";card.append(count);}
+  }
+  if(report&&Array.isArray(report.checks)){const details=report.checks.filter(c=>c.status!=="passed").slice(0,5);if(details.length){const list=document.createElement("div");list.className="note";list.style.cssText="display:grid;gap:4px";details.forEach(c=>{const row=document.createElement("div");row.textContent=(c.status==="failed"?"خطا: ":"هشدار: ")+c.label+" — "+c.detail;list.append(row);});card.append(list);}}
+  return card;
+ };
+ for(const group of groups){const agentsInGroup=fetches.filter(item=>group.ids.includes(item.agent.id));if(!agentsInGroup.length)continue;const section=document.createElement("section");section.style.cssText="display:grid;gap:8px";const h=document.createElement("h4");h.style.margin="0";h.textContent=group.title;section.append(h);const grid=document.createElement("div");grid.style.cssText="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:9px";agentsInGroup.forEach(item=>grid.append(makeCard(item)));section.append(grid);root.append(section);}
+ if(!root.childElementCount){const empty=document.createElement("p");empty.className="note";empty.textContent="گزارش زنده‌ای برای نمایش موجود نیست.";root.append(empty);}
 }
 async function checkSupervisorStatus(){
  const panel=byId('supervisor-live-panel');
@@ -563,6 +603,7 @@ async function checkSupervisorStatus(){
     }
    }
   }catch(eventError){console.warn('Agent event history unavailable',eventError);}
+  await renderCategorizedLiveReports(snap.agents||[]).catch(error=>console.warn("Categorized reports unavailable",error));
   const freshnessNote=byId('supervisorFreshnessNote');
   if(freshnessNote){freshnessNote.textContent=staleAgentCount?'توجه: '+staleAgentCount+' عامل از '+(snap.agents||[]).length+' عامل، گزارش تازه‌تر از ۲۴ ساعت ندارند؛ وضعیت آن‌ها به‌عنوان گزارش قدیمی مشخص شده است.':'گزارش همه عامل‌ها در ۲۴ ساعت اخیر به‌روزرسانی شده است.';freshnessNote.className='note '+(staleAgentCount?'status pending':'status');}
   byId('supervisorUpdatedAt').textContent=formatDate(snap.updatedAt);  const securityAgent=(snap.agents||[]).find(agent=>agent.id==='security');
