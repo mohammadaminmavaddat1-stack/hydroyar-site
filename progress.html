@@ -701,8 +701,8 @@ async function checkSupervisorStatus(){
    card.addEventListener('keydown',event=>{if(event.target.closest('a,button'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();refreshHydroyarReportCard(agent,card,state,actionHint,detail);}});
    grid.append(card);
   }
-  try{
-   const eventResponse=await fetch(API+'/ai/agents/events?limit=120',{cache:'no-store',headers:{Accept:'application/json'}});
+  void (async()=>{try{
+   const eventResponse=await fetch(API+'/ai/agents/events?limit=120',{cache:'no-store',headers:{Accept:'application/json'},signal:AbortSignal.timeout(5000)});
    if(eventResponse.ok){
     const eventPayload=await eventResponse.json(),events=Array.isArray(eventPayload.events)?eventPayload.events:[];
     for(const agent of snap.agents||[]){
@@ -720,7 +720,7 @@ async function checkSupervisorStatus(){
      }
     }
    }
-  }catch(eventError){console.warn('Agent event history unavailable',eventError);}
+  }catch(eventError){console.warn('Agent event history unavailable',eventError);}})();
   await renderCategorizedLiveReports(snap.agents||[],snap.updatedAt).catch(error=>console.warn("Categorized reports unavailable",error));
   const freshnessNote=byId('supervisorFreshnessNote');
   if(freshnessNote){freshnessNote.textContent=staleAgentCount?'توجه: '+staleAgentCount+' عامل از '+(snap.agents||[]).length+' عامل، گزارش تازه‌تر از ۲۴ ساعت ندارند؛ وضعیت آن‌ها به‌عنوان گزارش قدیمی مشخص شده است.':'گزارش همه عامل‌ها در ۲۴ ساعت اخیر به‌روزرسانی شده است.';freshnessNote.className='note '+(staleAgentCount?'status pending':'status');}
