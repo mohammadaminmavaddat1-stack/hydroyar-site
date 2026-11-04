@@ -1026,6 +1026,8 @@ function setNotificationSuccess(statusId,ticketCode){
  const status=document.getElementById(statusId);if(!status)return;
  status.className='lead-status show';
  status.textContent='درخواست در سامانه پشتیبانی ثبت شد و به پشتیبانی اطلاع داده شد.'+(ticketCode?'\nکد پیگیری: '+ticketCode:'')+' این مرحله به معنی تأیید قرارداد یا پرداخت نیست.';
+
+ if(authCurrentUser)window.setTimeout(()=>loadAuthWorkspace(authCurrentUser,true),0);
 }
 function scheduleHydroYarLeadCaptcha(){
  const form=document.querySelector('#leadbox form');
