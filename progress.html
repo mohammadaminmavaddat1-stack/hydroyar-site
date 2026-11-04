@@ -492,7 +492,7 @@ async function checkOperationalAgents(){
   }
   if(supportResponse.ok){
    const s=await supportResponse.json();
-   const state=s.needsAttention?'نیازمند پیگیری':s.configured?.ticketStore&&s.configured?.telegram&&s.configured?.ai?'متصل و آماده':'اتصال ناقص';
+   const state=s.needsAttention?'نیازمند پیگیری':(s.unassigned??0)>0?'نیازمند تخصیص':(s.ownerPending??0)>0?'در انتظار تصمیم مدیر':s.configured?.ticketStore&&s.configured?.telegram&&s.configured?.ai?'متصل و آماده':'اتصال ناقص';
     byId('supportAgentStatus').textContent=(s.unassigned??0)>0?'نیازمند تخصیص':state;
     byId('supportAgentDetail').textContent='درخواست‌های اخیر: '+(s.totalRecent??0)+' | باز: '+(s.pending??0)+' | مسئول‌دار: '+(s.assigned??0)+' | بدون مسئول: '+(s.unassigned??0)+' | فوری: '+(s.urgent??0)+' | نیازمند تصمیم مدیر: '+(s.ownerPending??0)+' | تلگرام: '+(s.configured?.telegram?'فعال':'نامشخص');
    if(s.latestUpdatedAt&&window.hydroyarLastSupportUpdate!==s.latestUpdatedAt){
