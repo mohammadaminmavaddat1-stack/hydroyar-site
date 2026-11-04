@@ -264,6 +264,23 @@ body.dark .hydroyar-turnstile-feedback{color:#cbd5e1;}
 .auth-session-panel{margin:14px 0;padding:16px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;}
 .auth-session-panel p{overflow-wrap:anywhere;margin:0 0 12px;font-size:13px;line-height:1.8;}
 .auth-session-panel button{border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:10px;padding:10px 14px;cursor:pointer;font:inherit;font-size:13px;font-weight:800;}
+.account-workspace{display:grid;gap:14px;margin-top:14px;text-align:right}
+.account-profile-form{display:grid;gap:10px}
+.account-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.account-profile-label{display:block;font-size:12px;font-weight:700;color:#334155}
+.account-profile-label input{display:block;width:100%;margin-top:6px;padding:10px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#172033;font:inherit;min-width:0}
+.account-profile-form button{width:100%}
+.account-profile-status,.account-ticket-list-note{font-size:11px;line-height:1.8;color:#64748b;margin:0}
+.account-ticket-list{display:grid;gap:8px}
+.account-ticket{padding:11px;border:1px solid #cbd5e1;border-radius:11px;background:#ffffffa8}
+.account-ticket strong{display:block;font-size:12px;margin-bottom:4px}
+.account-ticket p{font-size:11px;margin:5px 0;line-height:1.8}
+.account-ticket small{display:block;color:#64748b;font-size:10px}
+body.dark .account-profile-label{color:#dbeafe}
+body.dark .account-profile-label input{background:#0b1220;color:#e5e7eb;border-color:#334155}
+body.dark .account-profile-status,body.dark .account-ticket-list-note,body.dark .account-ticket small{color:#a8b0c0}
+body.dark .account-ticket{background:#0b1220;border-color:#334155}
+@media(max-width:520px){.account-profile-grid{grid-template-columns:1fr}}
 .auth-status[data-kind="error"]{background:#fef2f2;color:#991b1b;}
 .auth-status[data-kind="success"]{background:#f0fdf4;color:#166534;}
 body.dark .auth-extra-btn{color:#93c5fd;}
@@ -804,7 +821,7 @@ body:not(.dark) #themeToggle .bulb-bead{fill:#b7791f;stroke:#fff7da}
 
 <footer><div class="wrap"><div class="foot"><div><h3>هیدرویار</h3><p>طراحی سایت، برنامه‌نویسی، هوش مصنوعی و راهکارهای دیجیتال اختصاصی.</p></div><div><h3>خدمات</h3><p><a href="#services">طراحی سایت</a></p><p><a href="#services">فروشگاه اینترنتی</a></p><p><a href="#services">هوش مصنوعی</a></p></div><div><h3>دسته‌بندی‌ها</h3><p><a href="#categories">فروشگاه و آنلاین‌شاپ</a></p><p><a href="#categories">املاک</a></p><p><a href="#categories">پزشکی و کلینیک</a></p><p><a href="#categories">رستوران و کافه</a></p><p><a href="#categories">خدمات و شرکت‌ها</a></p></div><div><h3>دسترسی سریع</h3><p><a href="#portfolio">نمونه‌کارها</a></p><p><a href="#prices">تعرفه‌ها</a></p><p><a href="#faq">سؤالات متداول</a></p><p><a href="#about">درباره هیدرویار</a></p></div><div><h3>ارتباط</h3><p><a href="https://t.me/Aminmvt" target="_blank" rel="noopener">مشاوره در تلگرام</a></p><p>پاسخ‌گویی آنلاین</p></div></div><div class="copy">© ۱۴۰۵ هیدرویار — تمامی حقوق محفوظ است. <span aria-label="پیوندهای حقوقی">| <a href="./privacy.html">حریم خصوصی</a> | <a href="./terms.html">شرایط استفاده</a></span></div></div></footer>
 
-<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><button type="button" class="auth-extra-btn" id="authForgotPassword" onclick="sendAuthPasswordReset()">فراموشی رمز عبور؟</button><button type="button" class="auth-extra-btn" id="authResendConfirmation" onclick="sendAuthConfirmationEmail()" hidden>ارسال مجدد ایمیل تأیید</button><div class="auth-session-panel" id="authSessionPanel" hidden><p id="authSessionUser"></p><button type="button" id="authLogoutBtn" onclick="signOutHydroyar()">خروج از حساب</button></div><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
+<div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()"><div class="auth-modal"><button class="auth-close" type="button" onclick="closeAuth()" aria-label="بستن">×</button><div class="auth-logo">هیدرویار</div><h2 id="authTitle">ورود به حساب کاربری</h2><p class="auth-sub">برای ادامه، وارد حساب خود شو یا حساب جدید بساز.</p><div class="auth-tabs"><button type="button" id="authLoginTab" class="active" onclick="setAuthMode('login')">ورود</button><button type="button" id="authRegisterTab" onclick="setAuthMode('register')">ثبت‌نام</button></div><form id="authForm" onsubmit="submitAuth(event)"><label class="auth-field" id="authNameWrap" hidden>نام و نام خانوادگی<input id="authName" autocomplete="name" placeholder="نام شما"></label><label class="auth-field" id="authIdentityLabel">ایمیل<input id="authIdentity" type="email" autocomplete="email" placeholder="you@example.com" required></label><label class="auth-field" id="authPasswordWrap">رمز عبور<input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></label><button class="btn auth-submit" id="authSubmit" type="submit">ورود به حساب</button></form><button type="button" class="auth-extra-btn" id="authForgotPassword" onclick="sendAuthPasswordReset()">فراموشی رمز عبور؟</button><button type="button" class="auth-extra-btn" id="authResendConfirmation" onclick="sendAuthConfirmationEmail()" hidden>ارسال مجدد ایمیل تأیید</button><div class="auth-session-panel" id="authSessionPanel" hidden><p id="authSessionUser"></p><div class="account-workspace" id="authWorkspace"><form class="account-profile-form" id="accountProfileForm" onsubmit="saveAuthProfile(event)"><div class="account-profile-grid"><label class="account-profile-label">نام و نام خانوادگی<input id="accountProfileName" name="full_name" autocomplete="name" maxlength="100" required></label><label class="account-profile-label">شماره تماس<input id="accountProfilePhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="اختیاری"></label></div><label class="account-profile-label">شهر<input id="accountProfileCity" name="city" autocomplete="address-level2" maxlength="100" placeholder="اختیاری"></label><button class="btn" type="submit" id="accountProfileSave">ذخیره اطلاعات حساب</button><p class="account-profile-status" id="accountProfileStatus" role="status">اطلاعات حساب در حال بارگذاری است…</p></form><section class="account-ticket-section"><h3 style="font-size:14px;margin:0 0 8px">درخواست‌ها و سفارش‌های من</h3><div class="account-ticket-list" id="accountTicketList" aria-live="polite"><p class="account-ticket-list-note">در حال دریافت درخواست‌های حساب…</p></div></section></div><button type="button" id="authLogoutBtn" onclick="signOutHydroyar()">خروج از حساب</button></div><div class="auth-status" id="authStatus" role="status">برای ثبت‌نام از ایمیل معتبر و رمز عبور استفاده کن. ممکن است لازم باشد ایمیلت را تأیید کنی.</div><p class="auth-privacy">اطلاعات حساب برای احراز هویت از طریق سرویس Supabase پردازش می‌شود. رمز عبور را در پیام‌ها ارسال نکن. <a href="./privacy.html" target="_blank" rel="noopener noreferrer">سیاست حریم خصوصی</a></p></div></div>
 <div class="chat"><button class="btn chatbtn" onclick="toggleChat()">🤖</button><div class="chatbox" id="chatbox"><div class="chathead">دستیار هیدرویار</div><div class="messages" id="messages"><div class="msg">سلام 👋 درباره خدمات، قیمت یا سفارش سؤال کن.</div></div><div class="chatinput"><input id="chatinput" placeholder="سؤالت را بنویس..." onkeydown="if(event.key==='Enter')chat()"><button onclick="chat()">ارسال</button></div></div></div>
 
 <script>
@@ -970,6 +987,8 @@ function setNotificationFailure(statusId,reason){
  else if(reason==='script-load-failed')detail='سرویس کپچا از Cloudflare بارگذاری نشد. شبکه، VPN یا افزونه‌های مسدودکننده را بررسی کن.';
  else if(reason==='challenge-timeout'||reason==='token-expired'||String(reason).startsWith('turnstile-error'))detail='Cloudflare این مرورگر را تأیید نکرد. پیام کنار کپچا را ببین؛ دوباره تلاش کن و اگر خطا تکرار شد VPN/پروکسی یا افزونه‌های مسدودکننده را موقتاً خاموش یا مرورگر دیگری را امتحان کن.';
  else if(String(reason).startsWith('server-403'))detail='سرور توکن کپچا را نپذیرفت. دوباره کپچا را کامل کن؛ اگر تکرار شد صفحه را تازه‌سازی کن و با پشتیبانی تماس بگیر.';
+ else if(reason==='server-401')detail='نشست حساب کاربری معتبر نیست. دوباره وارد حساب شو و درخواست را تکرار کن.';
+ else if(reason==='server-503')detail='سرویس ثبت درخواست یا اعتبارسنجی حساب فعلاً در دسترس نیست. چند لحظه بعد دوباره تلاش کن.';
  else if(reason==='network-error')detail='ارتباط با سرور هیدرویار برقرار نشد. کمی بعد دوباره تلاش کن.';
  status.textContent=detail;
 }
@@ -979,8 +998,15 @@ async function notifyHydroYarProject(type,fields,formSelector){
  if(!verification.token)return {ok:false,reason:verification.error||'verification-failed'};
  let response;
  try{
+  const headers={'Content-Type':'application/json'};
+  if(hydroyarSupabase){
+   const sessionResult=await hydroyarSupabase.auth.getSession();
+   if(sessionResult.error)throw sessionResult.error;
+   const accessToken=sessionResult.data?.session?.access_token;
+   if(accessToken)headers.Authorization='Bearer '+accessToken;
+  }
   response=await fetch(HYDROYAR_PROJECT_NOTIFY_ENDPOINT,{
-   method:'POST',headers:{'Content-Type':'application/json'},
+   method:'POST',headers,
    body:JSON.stringify({...fields,type,turnstileToken:verification.token,website:''})
   });
  }catch(error){
@@ -1197,6 +1223,8 @@ function recommendTemplate(e){
 }function openWorkDetails(button){const card=button.closest('.work');if(!card)return;const title=card.querySelector('h3')?.textContent||'نمونه مفهومی';const desc=card.querySelector('.workbody p')?.textContent||'نمونه نمایشی';const modal=document.getElementById('workModal');document.getElementById('workModalTitle').textContent=title;document.getElementById('workModalDescription').textContent=desc;const list=document.getElementById('workModalFeatures');list.replaceChildren();const items=title.includes('فروشگاه')?['ساختار دسته‌بندی و صفحه محصول','طراحی واکنش‌گرا','مسیر سفارش و تماس']:title.includes('شرکتی')?['معرفی خدمات و برند','صفحات اطلاعاتی و راه تماس','دعوت به ثبت درخواست']:title.includes('رستوران')?['نمایش منو و اطلاعات مجموعه','مسیر تماس و سفارش','نمایش مناسب موبایل']:title.includes('املاک')?['ساختار نمایش فایل‌ها','فیلتر و جست‌وجوی قابل توسعه','فرم درخواست مشاوره']:title.includes('رزومه')?['معرفی و مهارت‌ها','سوابق و نمونه‌کارها','راه ارتباطی حرفه‌ای']:['داشبورد و ساختار پنل','فرم ثبت درخواست','امکان توسعه بر اساس نیاز'];items.forEach(t=>{const li=document.createElement('li');li.textContent=t;list.appendChild(li)});modal.classList.add('open');document.body.style.overflow='hidden'}function closeWorkDetails(){const m=document.getElementById('workModal');if(m)m.classList.remove('open');if(!document.getElementById('authOverlay')?.classList.contains('open'))document.body.style.overflow=''}document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWorkDetails()});
 let authMode='login';
 let authCurrentUser=null;
+let authCurrentProfile=null;
+let authWorkspaceLoadUserId="";
 let authRecoveryActive=false;
 
 function authStatus(message,kind='info'){
@@ -1276,7 +1304,7 @@ function renderAuthSession(user){
  if(forgot)forgot.hidden=true;
  if(resend)resend.hidden=true;
  if(panel)panel.hidden=false;
- const fullName=String(user.user_metadata?.full_name||'').trim();
+ const fullName=String(authCurrentProfile?.full_name||user.user_metadata?.full_name||'').trim();
  const identity=String(user.email||user.phone||'');
  const display=fullName?fullName+(identity?' — '+identity:''):identity||'حساب کاربری شما';
  authText('authSessionUser','وارد شده‌ای: '+display);
@@ -1284,6 +1312,95 @@ function renderAuthSession(user){
  const sub=document.querySelector('.auth-sub');
  if(sub)sub.textContent='نشست کاربری از طریق سرویس امن احراز هویت مدیریت می‌شود.';
  authStatus('ورود به حساب برقرار است. می‌توانی از اینجا خارج شوی.','success');
+ window.setTimeout(()=>loadAuthWorkspace(user),0);
+}
+async function loadAuthWorkspace(user,force=false){
+ if(!user?.id||!hydroyarSupabase)return;
+ if(!force&&authWorkspaceLoadUserId===user.id)return;
+ authWorkspaceLoadUserId=user.id;
+ const profileStatus=document.getElementById('accountProfileStatus');
+ const ticketList=document.getElementById('accountTicketList');
+ try{
+  const {data:profile,error}=await hydroyarSupabase.from('profiles').select('full_name,phone,city').eq('id',user.id).maybeSingle();
+  if(error)throw error;
+  authCurrentProfile=profile||{full_name:String(user.user_metadata?.full_name||''),phone:'',city:''};
+  const name=document.getElementById('accountProfileName');
+  const phone=document.getElementById('accountProfilePhone');
+  const city=document.getElementById('accountProfileCity');
+  if(name)name.value=String(authCurrentProfile.full_name||'');
+  if(phone)phone.value=String(authCurrentProfile.phone||'');
+  if(city)city.value=String(authCurrentProfile.city||'');
+  const identity=String(user.email||user.phone||'');
+  const display=String(authCurrentProfile.full_name||'').trim();
+  authText('authSessionUser','وارد شده‌ای: '+(display?display+(identity?' — '+identity:''):identity||'حساب کاربری شما'));
+  if(profileStatus)profileStatus.textContent='اطلاعات حساب از پایگاه‌داده بارگذاری شد.';
+ }catch(error){
+  authWorkspaceLoadUserId='';
+  if(profileStatus)profileStatus.textContent='بارگذاری پروفایل انجام نشد؛ اتصال حساب و مجوزهای پایگاه‌داده را بررسی کن.';
+  console.warn('HydroYar profile load failed:',String(error?.message||error));
+ }
+ try{
+  const {data,error}=await hydroyarSupabase.auth.getSession();
+  if(error)throw error;
+  const accessToken=data?.session?.access_token;
+  if(!accessToken)throw new Error('No active access token');
+  const response=await fetch(HYDROYAR_PAYMENT_API+'/account/tickets',{headers:{Authorization:'Bearer '+accessToken},cache:'no-store'});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||result.ok!==true)throw new Error(String(result.error||('HTTP '+response.status)));
+  renderAuthAccountTickets(result.tickets||[]);
+ }catch(error){
+  if(ticketList){ticketList.replaceChildren();const note=document.createElement('p');note.className='account-ticket-list-note';note.textContent='بازیابی درخواست‌ها فعلاً ممکن نشد. اتصال حساب را بررسی کن و دوباره وارد شو.';ticketList.appendChild(note);}
+  console.warn('HydroYar account ticket load failed:',String(error?.message||error));
+ }
+}
+function renderAuthAccountTickets(tickets){
+ const list=document.getElementById('accountTicketList');
+ if(!list)return;
+ list.replaceChildren();
+ if(!Array.isArray(tickets)||!tickets.length){
+  const note=document.createElement('p');note.className='account-ticket-list-note';
+  note.textContent='هنوز درخواست یا سفارشی به این حساب متصل نشده است. درخواست‌های جدیدی که پس از ورود ثبت کنی اینجا نمایش داده می‌شوند.';
+  list.appendChild(note);return;
+ }
+ const labels={received:'دریافت شده',analyzing:'در حال بررسی',awaiting_owner:'در انتظار بررسی مدیریت',approved:'تأیید شده',rejected:'رد شده',completed:'تکمیل شده',paid:'پرداخت شده',pending:'در انتظار بررسی'};
+ for(const ticket of tickets){
+  const card=document.createElement('article');card.className='account-ticket';
+  const title=document.createElement('strong');title.textContent=String(ticket.title||'درخواست هیدرویار');card.appendChild(title);
+  const meta=document.createElement('small');meta.textContent='کد پیگیری: '+String(ticket.ticketCode||'—')+' • '+(labels[ticket.status]||'در حال پیگیری');card.appendChild(meta);
+  if(ticket.detail){const detail=document.createElement('p');detail.textContent=String(ticket.detail);card.appendChild(detail);}
+  const date=new Date(ticket.createdAt||'');
+  if(Number.isFinite(date.getTime())){const time=document.createElement('small');time.textContent='ثبت‌شده در '+date.toLocaleDateString('fa-IR');card.appendChild(time);}
+  list.appendChild(card);
+ }
+}
+async function saveAuthProfile(event){
+ event.preventDefault();
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست.','error');return;}
+ const button=document.getElementById('accountProfileSave');
+ const status=document.getElementById('accountProfileStatus');
+ const fullName=String(document.getElementById('accountProfileName')?.value||'').trim();
+ const phone=String(document.getElementById('accountProfilePhone')?.value||'').trim();
+ const city=String(document.getElementById('accountProfileCity')?.value||'').trim();
+ if(!fullName){if(status)status.textContent='نام و نام خانوادگی را وارد کن.';return;}
+ if(button){button.disabled=true;button.textContent='در حال ذخیره…';}
+ try{
+  const {data:userResult,error:userError}=await hydroyarSupabase.auth.getUser();
+  if(userError)throw userError;
+  if(!userResult?.user?.id)throw new Error('No authenticated user');
+  const {error}=await hydroyarSupabase.from('profiles').update({full_name:fullName,phone:phone||null,city:city||null}).eq('id',userResult.user.id);
+  if(error)throw error;
+  authCurrentProfile={full_name:fullName,phone,city};
+  const identity=String(userResult.user.email||userResult.user.phone||'');
+  authText('authSessionUser','وارد شده‌ای: '+fullName+(identity?' — '+identity:''));
+  if(status)status.textContent='اطلاعات حساب با موفقیت ذخیره شد.';
+  authStatus('اطلاعات پروفایل ذخیره شد.','success');
+ }catch(error){
+  if(status)status.textContent='ذخیره اطلاعات انجام نشد؛ نشست حساب و مجوز دسترسی را بررسی کن.';
+  authStatus('ذخیره پروفایل انجام نشد. دوباره وارد حساب شو و تلاش کن.','error');
+  console.warn('HydroYar profile update failed:',String(error?.message||error));
+ }finally{
+  if(button){button.disabled=false;button.textContent='ذخیره اطلاعات حساب';}
+ }
 }
 function showAuthRecoveryForm(){
  authRecoveryActive=true;
@@ -1388,13 +1505,14 @@ async function sendAuthPasswordReset(){
 }
 async function signOutHydroyar(){
  const button=document.getElementById('authLogoutBtn');
- if(!hydroyarSupabase)await ensureHydroYarSupabase();
-  if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست.','error');return;}
+ if(!hydroyarSupabase){authStatus('اتصال به سرویس احراز هویت آماده نیست.','error');return;}
  if(button){button.disabled=true;button.textContent='در حال خروج…';}
  try{
   const {error}=await hydroyarSupabase.auth.signOut();
   if(error)throw error;
   authCurrentUser=null;
+  authCurrentProfile=null;
+  authWorkspaceLoadUserId='';
   authRecoveryActive=false;
   updateAuthButton(null);
   setAuthMode('login');
