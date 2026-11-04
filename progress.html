@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -504,7 +504,7 @@ async function checkOperationalAgents(){
   if(byId('supportAgentDetail'))byId('supportAgentDetail').textContent='وضعیت پشتیبانی موقتاً قابل دریافت نیست.';
  }
 }
-async function renderCategorizedLiveReports(agents){
+async function renderCategorizedLiveReports(agents,snapshotUpdatedAt=null){
  const root=byId("liveReportGroupsBody");if(!root)return;root.replaceChildren();
  const refresh=byId("refreshCategorizedReports");
  if(refresh&&!refresh.dataset.bound){
@@ -512,10 +512,13 @@ async function renderCategorizedLiveReports(agents){
   refresh.addEventListener("click",async()=>{
    refresh.disabled=true;refresh.textContent="در حال دریافت…";
    try{
-    await Promise.all([checkSupervisorStatus(),checkSeoStatus(),checkOperationalAgents()]);
-    const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین دریافت: "+formatDate(new Date().toISOString());
-   }catch(e){console.warn("Report refresh failed",e);}
-   finally{refresh.disabled=false;refresh.textContent="به‌روزرسانی همه گزارش‌ها ↻";}
+    const [snapshot]=await Promise.all([requestFreshSupervisorSnapshot(),checkSeoStatus(),checkQaStatus(),checkOperationalAgents(),checkAiStatus()]);
+    if(a.id==='seo')await checkSeoStatus();if(a.id==='qa')await checkQaStatus();await checkSupervisorStatus();
+    const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین دریافت موفق: "+formatDate(snapshot.updatedAt||new Date().toISOString());
+   }catch(e){
+    console.warn("Report refresh failed",e);
+    const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="دریافت کامل نشد: "+String(e.message||e);
+   }finally{refresh.disabled=false;refresh.textContent="به‌روزرسانی همه گزارش‌ها ↻";}
   });
  }
  const groups=[
@@ -523,14 +526,10 @@ async function renderCategorizedLiveReports(agents){
   {title:"امنیت، آزمون و کیفیت",ids:["security","qa"]},
   {title:"سئو، گوگل و ارتباط با مشتری",ids:["seo","support","telegram","ai","design"]}
  ];
- const endpoints={deploy:"/deployment/status",security:"/security/status",seo:"/seo/status",qa:"/qa/status",developer:"/developer/status",ai:"/ai/status",supervisor:"/ai/supervisor/status"};
  const stateFa={active:"فعال",ready:"آماده",healthy:"سالم",passed:"موفق",warning:"هشدار",attention:"نیازمند رسیدگی",failed:"ناموفق",stale:"گزارش قدیمی",unavailable:"در دسترس نیست",deployed:"منتشرشده",awaiting_owner:"منتظر تأیید مالک",planned:"برنامه‌ریزی‌شده",working:"در حال اجرا",completed:"تکمیل‌شده",pending:"در انتظار گزارش",waiting:"در انتظار گزارش",best:"بهترین وضعیت",acceptable:"قابل قبول",revise:"نیازمند اصلاح",stop:"توقف و ارجاع به مالک"};
  const runnable=new Set(["seo","security","qa"]);
- const fetches=await Promise.all((agents||[]).map(async a=>{
-  let extra=null;const path=endpoints[a.id];
-  if(path){try{const r=await fetch(API+path,{cache:"no-store",headers:{Accept:"application/json"}});if(r.ok)extra=await r.json();}catch(e){}}
-  return {agent:a,extra};
- }));
+ // Build immediately from this fresh supervisor snapshot; avoid blocking the cards on redundant per-agent API calls.
+ const fetches=(agents||[]).map(agent=>({agent,extra:null}));
  const makeCard=(item)=>{
   const a=item.agent,x=item.extra||{},report=x.report||x.snapshot||null;
   const card=document.createElement("article");card.className="card report-refresh-card";card.dataset.agentId=a.id;
@@ -543,13 +542,20 @@ async function renderCategorizedLiveReports(agents){
   const effectiveState=report&&(report.status||report.state)||a.state||"pending";
   const state=document.createElement("span");state.className="status "+(["failed","attention","unavailable","warning","revise","stop"].includes(effectiveState)?"failed":["stale","awaiting_owner","pending","waiting","acceptable"].includes(effectiveState)?"pending":"");state.textContent=stateFa[effectiveState]||effectiveState;
   head.append(name,state);card.append(head);
-  const reportTime=report&&(report.completedAt||report.updatedAt)||a.updatedAt||null;
+  const isAuditReport=["seo","security","qa"].includes(a.id);
+  const reportTime=(report&&(report.completedAt||report.updatedAt))||(isAuditReport?a.updatedAt:null);
   const parsedTime=Date.parse(reportTime||"");
-  const isStale=!Number.isFinite(parsedTime)||(Date.now()-parsedTime>24*60*60*1000)||["stale","unavailable"].includes(a.state);
-  const freshness=document.createElement("span");freshness.className="status "+(isStale?"pending":"");freshness.textContent=!Number.isFinite(parsedTime)?"زمان گزارش نامشخص":isStale?"گزارش قدیمی":"گزارش تازه";
+  const checkedTime=snapshotUpdatedAt||null;
+  const parsedCheckedTime=Date.parse(checkedTime||"");
+  const freshnessTime=isAuditReport?parsedTime:parsedCheckedTime;
+  const isStale=!Number.isFinite(freshnessTime)||(Date.now()-freshnessTime>(isAuditReport?24*60*60*1000:5*60*1000))||(isAuditReport&&["stale","unavailable"].includes(a.state));
+  const freshness=document.createElement("span");freshness.className="status "+(isStale?"pending":"");freshness.textContent=isAuditReport?(!Number.isFinite(parsedTime)?"زمان ممیزی نامشخص":isStale?"ممیزی قدیمی":"ممیزی تازه"):(!Number.isFinite(parsedCheckedTime)?"زمان بازخوانی نامشخص":isStale?"وضعیت نیازمند بازخوانی":"وضعیت همین الآن بررسی شد");
   card.append(freshness);
   const detail=document.createElement("p");detail.className="note";detail.style.cssText="margin:0;overflow-wrap:anywhere";detail.textContent=(report&&(report.summary||report.decision))||a.detail||"جزئیات گزارش ثبت نشده است.";card.append(detail);
-  const when=document.createElement("p");when.className="note";when.style.margin="0";when.textContent=Number.isFinite(parsedTime)?"آخرین گزارش ثبت‌شده: "+formatDate(reportTime):"زمان گزارش مشخص نیست";card.append(when);
+  const when=document.createElement("p");when.className="note";when.style.margin="0";
+  if(isAuditReport)when.textContent=Number.isFinite(parsedTime)?"آخرین ممیزی: "+formatDate(reportTime):"زمان ممیزی ثبت نشده است.";
+  else when.textContent=Number.isFinite(parsedCheckedTime)?"آخرین بازخوانی وضعیت: "+formatDate(checkedTime)+(a.updatedAt?" • آخرین فعالیت ثبت‌شده: "+formatDate(a.updatedAt):""):"زمان آخرین بازخوانی ثبت نشده است.";
+  card.append(when);
   if(a.id==="seo"){
    const metrics=x.gscMetrics||null;const gsc=document.createElement("div");gsc.style.cssText="padding:10px;border:1px solid var(--line);border-radius:10px;display:grid;gap:5px";
    const gtitle=document.createElement("strong");gtitle.textContent="وضعیت Google Search Console";gsc.append(gtitle);
@@ -565,7 +571,7 @@ async function renderCategorizedLiveReports(agents){
   }
   const hint=document.createElement("p");hint.className="report-refresh-hint";hint.textContent=canRun?"↻ برای اجرای ممیزی تازه کلیک کن":"↻ برای بازخوانی آخرین وضعیت کلیک کن";card.append(hint);
   const activate=async()=>{
-   if(card.dataset.running==="1")return;
+   window.hydroyarReportRuns=window.hydroyarReportRuns||{};if(card.dataset.running==="1"||window.hydroyarReportRuns[a.id])return;window.hydroyarReportRuns[a.id]=true;
    card.dataset.running="1";card.dataset.lastAction="running";card.classList.add("is-running");
    state.className="status pending";state.textContent=canRun?"در حال اجرای ممیزی…":"در حال بازخوانی…";
    hint.textContent=canRun?"در حال اجرای بررسی واقعی روی سایت…":"در حال دریافت تازه‌ترین وضعیت ذخیره‌شده…";
@@ -575,21 +581,17 @@ async function renderCategorizedLiveReports(agents){
     const response=await fetch(API+"/reports/run",{method:"POST",cache:"no-store",headers:{Accept:"application/json","Content-Type":"application/json"},body:JSON.stringify({agent:target})});
     const result=await response.json().catch(()=>({}));
     if(!response.ok||result.ok!==true)throw new Error(result.error||("HTTP "+response.status));
-    const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین بررسی داشبورد: "+formatDate(result.completedAt||new Date().toISOString());
-    if(canRun){
-     await checkSupervisorStatus();
-    }else if(Array.isArray(result.report&&result.report.agents)){
-     await renderCategorizedLiveReports(result.report.agents);
-    }else{
-     await checkSupervisorStatus();
-    }
+    const snapshot=canRun?await requestFreshSupervisorSnapshot():result.report;
+    if(!snapshot||!Array.isArray(snapshot.agents))throw new Error("گزارش تازهٔ سرپرست ساختار معتبر ندارد.");
+    await renderCategorizedLiveReports(snapshot.agents,snapshot.updatedAt);
+    const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین دریافت موفق: "+formatDate(snapshot.updatedAt||result.completedAt||new Date().toISOString());
    }catch(error){
     card.dataset.lastAction="error";state.className="status failed";state.textContent="گزارش دریافت نشد";
     detail.textContent="اجرای بررسی ناموفق بود: "+String(error.message||error);
     hint.textContent="برای تلاش دوباره کلیک کن";
     console.warn("Dashboard report action failed",a.id,error);
    }finally{
-    card.dataset.running="0";card.classList.remove("is-running");
+    delete window.hydroyarReportRuns[a.id];card.dataset.running="0";card.classList.remove("is-running");
    }
   };
   card.addEventListener("click",event=>{if(event.target.closest("a"))return;activate();});
@@ -604,6 +606,39 @@ async function renderCategorizedLiveReports(agents){
   agentsInGroup.forEach(item=>grid.append(makeCard(item)));section.append(grid);root.append(section);
  }
  if(!root.childElementCount){const empty=document.createElement("p");empty.className="note";empty.textContent="گزارش زنده‌ای برای نمایش موجود نیست.";root.append(empty);}
+}
+async function requestFreshSupervisorSnapshot(){
+ const response=await fetch(API+"/reports/run",{method:"POST",cache:"no-store",headers:{Accept:"application/json","Content-Type":"application/json"},body:JSON.stringify({agent:"supervisor"})});
+ const payload=await response.json().catch(()=>({}));
+ if(!response.ok||payload.ok!==true||!payload.report||!Array.isArray(payload.report.agents))throw new Error(payload.error||("HTTP "+response.status));
+ return payload.report;
+}
+async function refreshHydroyarReportCard(agent,card,state,hint,detail){
+ const id=String(agent?.id||'');if(!id)return;
+ window.hydroyarReportRuns=window.hydroyarReportRuns||{};
+ if(window.hydroyarReportRuns[id])return;
+ window.hydroyarReportRuns[id]=true;card.dataset.running='1';card.classList.add('is-running');
+ const canRun=['seo','security','qa'].includes(id);
+ state.className='status pending';state.textContent=canRun?'در حال اجرای ممیزی…':'در حال بازخوانی…';
+ hint.textContent=canRun?'ممیزی تازه در حال اجراست…':'در حال دریافت وضعیت تازه از سرور…';
+ try{
+  if(canRun){
+   const response=await fetch(API+'/reports/run',{method:'POST',cache:'no-store',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({agent:id})});
+   const payload=await response.json().catch(()=>({}));
+   if(!response.ok||payload.ok!==true)throw new Error(payload.error||('HTTP '+response.status));
+  }
+  const snapshot=await requestFreshSupervisorSnapshot();
+  if(!snapshot||!Array.isArray(snapshot.agents))throw new Error('گزارش تازهٔ سرپرست معتبر نیست.');
+  if(id==='seo')await checkSeoStatus();
+  if(id==='qa')await checkQaStatus();
+  await checkSupervisorStatus();
+  const stamp=byId('categorizedReportsUpdated');if(stamp)stamp.textContent='آخرین دریافت موفق: '+formatDate(snapshot.updatedAt||new Date().toISOString());
+ }catch(error){
+  state.className='status failed';state.textContent='گزارش تازه دریافت نشد';
+  hint.textContent='برای تلاش دوباره کلیک کن';
+  if(detail)detail.textContent='خطا در دریافت گزارش: '+String(error.message||error);
+  console.warn('Main team report refresh failed',id,error);
+ }finally{delete window.hydroyarReportRuns[id];card.dataset.running='0';card.classList.remove('is-running');}
 }
 async function checkSupervisorStatus(){
  const panel=byId('supervisor-live-panel');
@@ -640,16 +675,19 @@ async function checkSupervisorStatus(){
   const grid=byId('supervisorAgentGrid');grid.replaceChildren();
   let staleAgentCount=0;
   for(const agent of snap.agents||[]){
+   const auditAgent=["seo","security","qa"].includes(agent.id);
    const updated=agent.updatedAt?new Date(agent.updatedAt):null;
-   const hasValidUpdate=updated&&!Number.isNaN(updated.getTime());
-   const isStale=!hasValidUpdate||(Date.now()-updated.getTime()>24*60*60*1000);
+   const checkedAt=snap.updatedAt?new Date(snap.updatedAt):null;
+   const freshnessDate=auditAgent?updated:checkedAt;
+   const hasValidUpdate=freshnessDate&&!Number.isNaN(freshnessDate.getTime());
+   const isStale=!hasValidUpdate||(Date.now()-freshnessDate.getTime()>(auditAgent?24*60*60*1000:5*60*1000));
    if(isStale)staleAgentCount++;
-   const card=document.createElement('div');card.className='card supervisor-agent-card';card.dataset.agentId=agent.id;
+   const card=document.createElement('div');card.className='card supervisor-agent-card report-refresh-card';card.dataset.agentId=agent.id;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',(agent.name||agent.id)+'؛ بازخوانی گزارش');
    const title=document.createElement('h3');title.className='supervisor-agent-title';title.textContent=agent.name||agent.id;
    const state=document.createElement('div');state.className='status '+(['attention','failed','unavailable','rolled-back','blocked'].includes(agent.state)?'failed':['approval','awaiting_owner','staged','testing','deploying','waiting','stale'].includes(agent.state)?'pending':'');state.textContent=stateLabelsFa[agent.state]||agent.state;
-   const freshnessBadge=document.createElement('div');freshnessBadge.className='status '+(isStale?'pending':'');freshnessBadge.textContent=!hasValidUpdate?'زمان گزارش نامشخص':isStale?'گزارش قدیمی':'گزارش تازه';
+   const freshnessBadge=document.createElement('div');freshnessBadge.className='status '+(isStale?'pending':'');freshnessBadge.textContent=auditAgent?(!hasValidUpdate?'زمان ممیزی نامشخص':isStale?'ممیزی قدیمی':'ممیزی تازه'):(!hasValidUpdate?'زمان بازخوانی نامشخص':isStale?'وضعیت نیازمند بازخوانی':'وضعیت همین الآن بررسی شد');
    const mode=document.createElement('div');mode.className='note supervisor-agent-mode';mode.textContent='نوع فعالیت: '+(modeLabels[agent.mode]||agent.mode);
-   const freshness=document.createElement('div');freshness.className='note supervisor-agent-freshness';freshness.textContent=hasValidUpdate?'آخرین گزارش: '+formatDate(agent.updatedAt):'زمان آخرین گزارش ثبت نشده است';
+   const freshness=document.createElement('div');freshness.className='note supervisor-agent-freshness';freshness.textContent=auditAgent?(hasValidUpdate?'آخرین ممیزی: '+formatDate(agent.updatedAt):'زمان ممیزی ثبت نشده است'):(hasValidUpdate?'آخرین بازخوانی: '+formatDate(snap.updatedAt)+(agent.updatedAt?' • آخرین فعالیت: '+formatDate(agent.updatedAt):''):'زمان بازخوانی ثبت نشده است');
    const detail=document.createElement('p');detail.className='supervisor-agent-detail';detail.textContent=agent.detail||'';
    const assigned=(manager.assignments||[]).find(item=>(item.to||[]).includes(agent.name));
    const task=document.createElement('div');task.className='agent-current-task';
@@ -657,7 +695,11 @@ async function checkSupervisorStatus(){
    const taskDetail=document.createElement('p');taskDetail.className='note';taskDetail.textContent=assigned?.reason||'\u062f\u0631\u0020\u062d\u0627\u0644\u0020\u062d\u0627\u0636\u0631\u0020\u0648\u0638\u06cc\u0641\u0647\u0020\u0645\u0634\u062e\u0635\u06cc\u0020\u0628\u0647\u0020\u0627\u06cc\u0646\u0020\u0639\u0636\u0648\u0020\u0627\u0631\u062c\u0627\u0639\u0020\u0646\u0634\u062f\u0647\u0020\u0627\u0633\u062a.';
    task.append(taskTitle,taskDetail);
    const history=document.createElement('div');history.className='agent-event-history';history.dataset.agentHistory=agent.id;history.innerHTML='<div class="note">\u062f\u0631\u0020\u062d\u0627\u0644\u0020\u062f\u0631\u06cc\u0627\u0641\u062a\u0020\u062a\u0627\u0631\u06cc\u062e\u0686\u0647\u0020\u062a\u063a\u06cc\u06cc\u0631\u0627\u062a\u2026</div>';
-   card.append(title,state,freshnessBadge,mode,freshness,detail,task,history);grid.append(card);
+   const actionHint=document.createElement('p');actionHint.className='report-refresh-hint';actionHint.textContent=auditAgent?'↻ برای اجرای ممیزی تازه کلیک کن':'↻ برای بازخوانی وضعیت کلیک کن';
+   card.append(title,state,freshnessBadge,mode,freshness,detail,task,history,actionHint);
+   card.addEventListener('click',event=>{if(event.target.closest('a,button'))return;refreshHydroyarReportCard(agent,card,state,actionHint,detail);});
+   card.addEventListener('keydown',event=>{if(event.target.closest('a,button'))return;if(event.key==='Enter'||event.key===' '){event.preventDefault();refreshHydroyarReportCard(agent,card,state,actionHint,detail);}});
+   grid.append(card);
   }
   try{
    const eventResponse=await fetch(API+'/ai/agents/events?limit=120',{cache:'no-store',headers:{Accept:'application/json'}});
@@ -679,7 +721,7 @@ async function checkSupervisorStatus(){
     }
    }
   }catch(eventError){console.warn('Agent event history unavailable',eventError);}
-  await renderCategorizedLiveReports(snap.agents||[]).catch(error=>console.warn("Categorized reports unavailable",error));
+  await renderCategorizedLiveReports(snap.agents||[],snap.updatedAt).catch(error=>console.warn("Categorized reports unavailable",error));
   const freshnessNote=byId('supervisorFreshnessNote');
   if(freshnessNote){freshnessNote.textContent=staleAgentCount?'توجه: '+staleAgentCount+' عامل از '+(snap.agents||[]).length+' عامل، گزارش تازه‌تر از ۲۴ ساعت ندارند؛ وضعیت آن‌ها به‌عنوان گزارش قدیمی مشخص شده است.':'گزارش همه عامل‌ها در ۲۴ ساعت اخیر به‌روزرسانی شده است.';freshnessNote.className='note '+(staleAgentCount?'status pending':'status');}
   byId('supervisorUpdatedAt').textContent=formatDate(snap.updatedAt);  const securityAgent=(snap.agents||[]).find(agent=>agent.id==='security');
