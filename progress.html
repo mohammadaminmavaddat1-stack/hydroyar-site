@@ -513,13 +513,14 @@ async function renderCategorizedLiveReports(agents,snapshotUpdatedAt=null){
    refresh.disabled=true;refresh.textContent="در حال دریافت…";
    try{
     const [snapshot]=await Promise.all([requestFreshSupervisorSnapshot(),checkSeoStatus(),checkQaStatus(),checkOperationalAgents(),checkAiStatus()]);
-    if(a.id==='seo')await checkSeoStatus();if(a.id==='qa')await checkQaStatus();await checkSupervisorStatus();
+    if(!snapshot||!Array.isArray(snapshot.agents))throw new Error("گزارش تازهٔ سرپرست معتبر نیست.");
+    await renderCategorizedLiveReports(snapshot.agents,snapshot.updatedAt);
     const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="آخرین دریافت موفق: "+formatDate(snapshot.updatedAt||new Date().toISOString());
    }catch(e){
     console.warn("Report refresh failed",e);
     const stamp=byId("categorizedReportsUpdated");if(stamp)stamp.textContent="دریافت کامل نشد: "+String(e.message||e);
    }finally{refresh.disabled=false;refresh.textContent="به‌روزرسانی همه گزارش‌ها ↻";}
-  });
+  });;
  }
  const groups=[
   {title:"زیرساخت، برنامه‌نویسی و انتشار",ids:["project","developer","deploy","supervisor"]},
