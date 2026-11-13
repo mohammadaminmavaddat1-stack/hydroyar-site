@@ -23,6 +23,9 @@
   const memoryGb = Number(navigator.deviceMemory || 0);
   const saveData = Boolean(navigator.connection && navigator.connection.saveData);
   const lowPowerDevice = saveData || (hardwareCores > 0 && hardwareCores <= 4) || (memoryGb > 0 && memoryGb <= 4);
+  const compactScreen = window.innerWidth < 700;
+  const enhancedQuality = !lowPowerDevice;
+  let qualityPixelRatio = lowPowerDevice ? 1 : Math.min(compactScreen ? 1.12 : 1.35, window.devicePixelRatio || 1);
   // Cap the background at 60 FPS: visually smooth on normal displays without wasting GPU cycles.
   let targetFPS = lowPowerDevice || window.innerWidth < 700 ? 30 : 60;
   let activeFPS = targetFPS;
@@ -37,7 +40,7 @@
     renderer = new T.WebGLRenderer({
       canvas,
       alpha: true,
-      antialias: false,
+      antialias: enhancedQuality && !compactScreen,
       powerPreference: 'low-power',
       stencil: false,
       depth: true
@@ -48,26 +51,59 @@
   }
 
   renderer.setClearColor(0x000000, 0);
-  renderer.setPixelRatio(1);
+  renderer.setPixelRatio(qualityPixelRatio);
   renderer.outputColorSpace = T.SRGBColorSpace;
   renderer.toneMapping = T.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.16;
+  renderer.toneMappingExposure = enhancedQuality ? 1.2 : 1.12;
 
   const scene = new T.Scene();
   const camera = new T.PerspectiveCamera(39, 1, 0.1, 80);
   const smallScreen = () => window.innerWidth < 700;
 
-  const hemi = new T.HemisphereLight(0xb8d9ed, 0x142a30, 1.85);
+  const hemi = new T.HemisphereLight(0xc6e4f5, 0x203a37, enhancedQuality ? 2.05 : 1.75);
   scene.add(hemi);
-  const keyLight = new T.DirectionalLight(0xf1e8cf, 3.0);
+  const keyLight = new T.DirectionalLight(0xffefd7, enhancedQuality ? 3.35 : 2.8);
   keyLight.position.set(-3.5, 7, 5);
   scene.add(keyLight);
-  const rimLight = new T.DirectionalLight(0x6fa5c2, 1.7);
+  const rimLight = new T.DirectionalLight(0x83c0df, enhancedQuality ? 2.0 : 1.45);
   rimLight.position.set(5, 3, -5);
   scene.add(rimLight);
+  const softFill = new T.DirectionalLight(0xd3e6d2, enhancedQuality ? 0.72 : 0.42);
+  softFill.position.set(1.5, 2.5, 4.5);
+  scene.add(softFill);
 
   const island = new T.Group();
   scene.add(island);
+
+  function createSoftShadow(width, depth, opacity) {
+    const material = new T.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      uniforms: { uOpacity: { value: opacity } },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uOpacity;
+        varying vec2 vUv;
+        void main() {
+          float radius = length((vUv - 0.5) * 2.0);
+          float alpha = (1.0 - smoothstep(0.12, 1.0, radius));
+          alpha *= alpha * uOpacity;
+          gl_FragColor = vec4(0.035, 0.075, 0.065, alpha);
+        }
+      `
+    });
+    const shadow = new T.Mesh(new T.PlaneGeometry(1, 1), material);
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.scale.set(width, depth, 1);
+    shadow.renderOrder = 1;
+    return shadow;
+  }
 
   const seaUniforms = {
     uTime: { value: 0 },
@@ -107,14 +143,17 @@
         vec3 dayWater = vec3(0.16, 0.42, 0.52);
         vec3 water = mix(dayWater, nightWater, uNight);
         water += vec3(0.07, 0.17, 0.20) * (ripple * 0.12 + glint * 0.12 + vWave * 1.4);
-        float alpha = edge * (0.16 + ripple * 0.06 + glint * 0.12);
+        float streak = smoothstep(0.91, 0.995, sin(vUv.x * 83.0 - vUv.y * 39.0 + uTime * 0.55) * 0.5 + 0.5);
+        water += vec3(0.16, 0.25, 0.24) * streak * 0.08;
+        float alpha = edge * (0.17 + ripple * 0.07 + glint * 0.15 + streak * 0.035);
         gl_FragColor = vec4(water, alpha);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }
     `
   });
-  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, 40, 40), seaMaterial);
+  const seaSegments = lowPowerDevice ? 32 : (smallScreen() ? 44 : 64);
+  const sea = new T.Mesh(new T.PlaneGeometry(11.5, 11.5, seaSegments, seaSegments), seaMaterial);
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = -0.56;
   island.add(sea);
@@ -127,8 +166,8 @@
   }
 
   function makeIslandTerrain() {
-    const rings = 15;
-    const segments = 88;
+    const rings = lowPowerDevice ? 13 : 20;
+    const segments = lowPowerDevice ? 72 : 112;
     const positions = [];
     const colors = [];
     const indices = [];
@@ -180,8 +219,8 @@
     geometry.computeVertexNormals();
     const material = new T.MeshStandardMaterial({
       vertexColors: true,
-      roughness: 0.94,
-      metalness: 0.02,
+      roughness: enhancedQuality ? 0.82 : 0.94,
+      metalness: 0.025,
       flatShading: false
     });
     const mesh = new T.Mesh(geometry, material);
@@ -191,12 +230,14 @@
   }
   makeIslandTerrain();
 
-  const grassMat = new T.MeshStandardMaterial({ color: 0x376b52, roughness: 1 });
-  const trunkMat = new T.MeshStandardMaterial({ color: 0x71533c, roughness: 1 });
+  const grassMat = new T.MeshStandardMaterial({ color: 0x3d7656, roughness: 0.94 });
+  const trunkMat = new T.MeshStandardMaterial({ color: 0x79563c, roughness: 0.9 });
+  const barkMat = new T.MeshStandardMaterial({ color: 0x4e392d, roughness: 0.96 });
   const leafMats = [
-    new T.MeshStandardMaterial({ color: 0x245c49, roughness: 0.94 }),
-    new T.MeshStandardMaterial({ color: 0x34765a, roughness: 0.92 }),
-    new T.MeshStandardMaterial({ color: 0x4b8965, roughness: 0.94 })
+    new T.MeshStandardMaterial({ color: 0x245c49, roughness: 0.86 }),
+    new T.MeshStandardMaterial({ color: 0x34765a, roughness: 0.84 }),
+    new T.MeshStandardMaterial({ color: 0x4b8965, roughness: 0.88 }),
+    new T.MeshStandardMaterial({ color: 0x78a96c, roughness: 0.9 })
   ];
 
   function addTree(x, z) {
@@ -204,10 +245,30 @@
     tree.position.set(x, terrainHeight(x, z), z);
     tree.scale.setScalar(0.72); // Keep the tree clearly shorter than the lighthouse.
     island.add(tree);
-    const trunk = new T.Mesh(new T.CylinderGeometry(0.075, 0.115, 0.94, 12), trunkMat);
+    const trunk = new T.Mesh(new T.CylinderGeometry(0.075, 0.115, 0.94, 18), trunkMat);
     trunk.position.y = 0.44;
     trunk.rotation.z = -0.08;
     tree.add(trunk);
+    [-0.34, -0.08, 0.19, 0.37].forEach((y, index) => {
+      const line = new T.Mesh(new T.CylinderGeometry(0.077 - index * 0.002, 0.093 - index * 0.002, 0.018, 14), barkMat);
+      line.position.set(0, y + 0.44, 0);
+      line.rotation.z = -0.08;
+      tree.add(line);
+    });
+    const branchSpecs = [
+      { start: [-0.01, 0.56, 0], end: [-0.34, 1.03, 0.02] },
+      { start: [0.01, 0.68, -0.01], end: [0.31, 1.18, -0.08] },
+      { start: [0, 0.82, 0.02], end: [-0.22, 1.47, 0.07] }
+    ];
+    branchSpecs.forEach((branch) => {
+      const a = new T.Vector3(...branch.start);
+      const b = new T.Vector3(...branch.end);
+      const direction = new T.Vector3().subVectors(b, a);
+      const mesh = new T.Mesh(new T.CylinderGeometry(0.028, 0.055, direction.length(), 9), trunkMat);
+      mesh.position.copy(a).add(b).multiplyScalar(0.5);
+      mesh.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), direction.normalize());
+      tree.add(mesh);
+    });
     const foliage = [
       [-0.22, 0.92, 0.02, 0.42],
       [0.17, 1.06, -0.05, 0.48],
@@ -217,79 +278,161 @@
       [0.0, 1.72, 0.01, 0.30]
     ];
     foliage.forEach((item, index) => {
-      const crown = new T.Mesh(new T.IcosahedronGeometry(item[3], 1), leafMats[index % leafMats.length]);
+      const crown = new T.Mesh(
+        new T.SphereGeometry(item[3], enhancedQuality ? 18 : 12, enhancedQuality ? 14 : 9),
+        leafMats[index % leafMats.length]
+      );
       crown.position.set(item[0], item[1], item[2]);
       crown.scale.set(1.12, 0.92, 0.98);
+      crown.rotation.set(index * 0.13, index * 0.47, index * 0.09);
       tree.add(crown);
+      if (enhancedQuality && index % 2 === 0) {
+        const highlight = new T.Mesh(new T.SphereGeometry(item[3] * 0.42, 10, 8), leafMats[3]);
+        highlight.position.set(item[0] - 0.06, item[1] + item[3] * 0.28, item[2] + item[3] * 0.32);
+        highlight.scale.set(1.08, 0.72, 0.9);
+        tree.add(highlight);
+      }
     });
-    const rootRim = new T.Mesh(new T.CylinderGeometry(0.30, 0.36, 0.06, 20), grassMat);
+    const rootRim = new T.Mesh(new T.CylinderGeometry(0.30, 0.36, 0.06, 28), grassMat);
     rootRim.position.y = 0.035;
     tree.add(rootRim);
+    const mossPads = [[-0.22, 0.04, 0.12], [0.18, 0.04, -0.17], [0.08, 0.045, 0.22]];
+    mossPads.forEach((spot, index) => {
+      const pad = new T.Mesh(new T.SphereGeometry(0.14, 10, 7), leafMats[index + 1]);
+      pad.position.set(spot[0], spot[1], spot[2]);
+      pad.scale.set(1.5, 0.22, 0.85);
+      tree.add(pad);
+    });
     return tree;
   }
   const tree = addTree(-0.72, 0.27);
+  const treeShadow = createSoftShadow(1.15, 0.82, enhancedQuality ? 0.36 : 0.26);
+  treeShadow.position.set(-0.80, terrainHeight(-0.72, 0.27) + 0.022, 0.34);
+  island.add(treeShadow);
 
   // Seven small 3D seagulls: four perched in the canopy and three gliding above it.
-  const gullBodyMat = new T.MeshStandardMaterial({ color: 0xf3f5f2, roughness: 0.88 });
-  const gullWingMat = new T.MeshStandardMaterial({ color: 0x87949d, roughness: 0.92, side: T.DoubleSide });
-  const gullBillMat = new T.MeshStandardMaterial({ color: 0xd58b42, roughness: 0.76 });
-  const gullEyeMat = new T.MeshBasicMaterial({ color: 0x18232a });
-  const gullLegMat = new T.MeshStandardMaterial({ color: 0xd58b42, roughness: 0.8 });
+  const gullBodyMat = new T.MeshStandardMaterial({ color: 0xf7f8f5, roughness: 0.76 });
+  const gullBreastMat = new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72 });
+  const gullWingMat = new T.MeshStandardMaterial({ color: 0x8998a3, roughness: 0.78, metalness: 0.025, side: T.DoubleSide });
+  const gullWingEdgeMat = new T.MeshStandardMaterial({ color: 0xc0cbd0, roughness: 0.82 });
+  const gullBillMat = new T.MeshStandardMaterial({ color: 0xe7a34b, roughness: 0.62 });
+  const gullBillTipMat = new T.MeshStandardMaterial({ color: 0x9f6040, roughness: 0.72 });
+  const gullEyeWhiteMat = new T.MeshBasicMaterial({ color: 0xffffff });
+  const gullEyeMat = new T.MeshBasicMaterial({ color: 0x17232b });
+  const gullLegMat = new T.MeshStandardMaterial({ color: 0xd78d4e, roughness: 0.7 });
   const gullWingShape = new T.Shape();
-  gullWingShape.moveTo(0, 0);
-  gullWingShape.bezierCurveTo(0.22, 0.15, 0.52, 0.17, 0.82, 0.09);
-  gullWingShape.lineTo(1.04, 0.035);
-  gullWingShape.lineTo(0.91, 0.005);
-  gullWingShape.lineTo(1.00, -0.045);
-  gullWingShape.lineTo(0.86, -0.035);
-  gullWingShape.lineTo(0.91, -0.105);
-  gullWingShape.bezierCurveTo(0.58, -0.12, 0.25, -0.09, 0, 0);
-  const gullWingGeometry = new T.ShapeGeometry(gullWingShape, 7);
+  gullWingShape.moveTo(0, 0.012);
+  gullWingShape.bezierCurveTo(0.18, 0.16, 0.50, 0.23, 0.83, 0.13);
+  gullWingShape.quadraticCurveTo(0.98, 0.105, 1.16, 0.045);
+  gullWingShape.lineTo(1.02, 0.018);
+  gullWingShape.lineTo(1.13, -0.025);
+  gullWingShape.lineTo(0.98, -0.025);
+  gullWingShape.lineTo(1.04, -0.082);
+  gullWingShape.lineTo(0.88, -0.055);
+  gullWingShape.lineTo(0.92, -0.125);
+  gullWingShape.bezierCurveTo(0.58, -0.16, 0.24, -0.105, 0, 0.012);
+  const gullWingGeometry = new T.ExtrudeGeometry(gullWingShape, {
+    depth: 0.026,
+    bevelEnabled: true,
+    bevelSegments: 2,
+    steps: 1,
+    bevelSize: 0.012,
+    bevelThickness: 0.008,
+    curveSegments: 9
+  });
+  gullWingGeometry.computeVertexNormals();
+  const gullFeatherGeometry = new T.SphereGeometry(0.1, 10, 7);
   const flyingGulls = [];
   const perchedGulls = [];
 
   function makeGull(scale, heading, perched = false) {
     const bird = new T.Group();
-    const body = new T.Mesh(new T.SphereGeometry(0.18, 12, 8), gullBodyMat);
-    body.scale.set(0.82, 0.48, 1.28);
+    const body = new T.Mesh(new T.SphereGeometry(0.18, enhancedQuality ? 20 : 13, enhancedQuality ? 14 : 9), gullBodyMat);
+    body.scale.set(0.82, 0.49, 1.28);
     bird.add(body);
-    const head = new T.Mesh(new T.SphereGeometry(0.073, 10, 8), gullBodyMat);
-    head.position.set(0, 0.045, 0.205);
-    bird.add(head);
-    [-0.052, 0.052].forEach((eyeX) => {
-      const eye = new T.Mesh(new T.SphereGeometry(0.012, 6, 6), gullEyeMat);
-      eye.position.set(eyeX, 0.055, 0.244);
-      bird.add(eye);
+
+    const breast = new T.Mesh(new T.SphereGeometry(0.125, 14, 10), gullBreastMat);
+    breast.position.set(0, -0.018, 0.075);
+    breast.scale.set(0.78, 0.76, 0.92);
+    bird.add(breast);
+
+    const headPivot = new T.Group();
+    headPivot.position.set(0, 0.045, 0.205);
+    const head = new T.Mesh(new T.SphereGeometry(0.073, 16, 12), gullBodyMat);
+    headPivot.add(head);
+    [-1, 1].forEach((side) => {
+      const eyeSocket = new T.Mesh(new T.SphereGeometry(0.019, 9, 7), gullEyeWhiteMat);
+      eyeSocket.position.set(side * 0.051, 0.012, 0.042);
+      eyeSocket.scale.set(1, 0.92, 0.62);
+      headPivot.add(eyeSocket);
+      const pupil = new T.Mesh(new T.SphereGeometry(0.0105, 8, 7), gullEyeMat);
+      pupil.position.set(side * 0.054, 0.012, 0.063);
+      headPivot.add(pupil);
     });
-    const bill = new T.Mesh(new T.ConeGeometry(0.027, 0.105, 7), gullBillMat);
-    bill.rotation.x = Math.PI / 2;
-    bill.position.set(0, 0.027, 0.30);
-    bird.add(bill);
-    const tail = new T.Mesh(new T.ConeGeometry(0.075, 0.16, 7), gullBodyMat);
-    tail.rotation.x = -Math.PI / 2;
-    tail.position.z = -0.23;
+    const beak = new T.Mesh(new T.ConeGeometry(0.029, 0.112, 9), gullBillMat);
+    beak.rotation.x = Math.PI / 2;
+    beak.position.set(0, -0.012, 0.105);
+    headPivot.add(beak);
+    const beakTip = new T.Mesh(new T.ConeGeometry(0.009, 0.026, 7), gullBillTipMat);
+    beakTip.rotation.x = Math.PI / 2;
+    beakTip.position.set(0, -0.012, 0.162);
+    headPivot.add(beakTip);
+    bird.add(headPivot);
+
+    const tail = new T.Group();
+    tail.position.set(0, -0.005, -0.205);
+    [-0.055, 0, 0.055].forEach((offset, index) => {
+      const feather = new T.Mesh(gullFeatherGeometry, index === 1 ? gullBodyMat : gullWingEdgeMat);
+      feather.position.set(offset, 0, -0.035);
+      feather.scale.set(0.26, 0.25, 1.35);
+      feather.rotation.y = offset * 1.6;
+      tail.add(feather);
+    });
     bird.add(tail);
+
     for (let i = 0; i < 2; i++) {
-      const leg = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 0.105, 5), gullLegMat);
-      leg.position.set(i ? 0.045 : -0.045, -0.105, 0.025);
+      const leg = new T.Group();
+      const side = i ? 1 : -1;
+      const shin = new T.Mesh(new T.CylinderGeometry(0.008, 0.009, 0.105, 7), gullLegMat);
+      shin.position.y = -0.052;
+      leg.add(shin);
+      const foot = new T.Mesh(new T.SphereGeometry(0.025, 8, 6), gullLegMat);
+      foot.position.set(0, -0.108, 0.025);
+      foot.scale.set(1.5, 0.35, 1.8);
+      leg.add(foot);
+      leg.position.set(side * 0.045, -0.075, 0.035);
       bird.add(leg);
     }
+
     const leftWing = new T.Group();
-    leftWing.position.set(-0.115, 0.02, -0.035);
+    leftWing.position.set(-0.112, 0.02, -0.035);
     leftWing.scale.x = -1;
-    leftWing.add(new T.Mesh(gullWingGeometry, gullWingMat));
+    const leftWingMesh = new T.Mesh(gullWingGeometry, gullWingMat);
+    leftWingMesh.castShadow = false;
+    leftWing.add(leftWingMesh);
+    const leftHighlight = new T.Mesh(gullFeatherGeometry, gullWingEdgeMat);
+    leftHighlight.position.set(0.39, 0.018, 0.034);
+    leftHighlight.scale.set(0.68, 0.075, 0.12);
+    leftWing.add(leftHighlight);
     bird.add(leftWing);
+
     const rightWing = new T.Group();
-    rightWing.position.set(0.115, 0.02, -0.035);
-    rightWing.add(new T.Mesh(gullWingGeometry, gullWingMat));
+    rightWing.position.set(0.112, 0.02, -0.035);
+    const rightWingMesh = new T.Mesh(gullWingGeometry, gullWingMat);
+    rightWing.add(rightWingMesh);
+    const rightHighlight = new T.Mesh(gullFeatherGeometry, gullWingEdgeMat);
+    rightHighlight.position.set(0.39, 0.018, 0.034);
+    rightHighlight.scale.set(0.68, 0.075, 0.12);
+    rightWing.add(rightHighlight);
     bird.add(rightWing);
+
     bird.scale.setScalar(scale * (smallScreen() ? 1.22 : 1));
     bird.rotation.y = heading;
     if (perched) {
-      leftWing.rotation.z = 0.82;
-      rightWing.rotation.z = -0.82;
+      leftWing.rotation.z = 0.90;
+      rightWing.rotation.z = -0.90;
     }
-    return { group: bird, leftWing, rightWing };
+    return { group: bird, leftWing, rightWing, head: headPivot, tail };
   }
 
   [
@@ -313,6 +456,7 @@
   ].forEach((spot, index) => {
     const gull = makeGull(0.48, spot.heading, false);
     gull.group.position.set(spot.x, spot.y, spot.z);
+    gull.group.traverse((part) => { if (part.isMesh) part.frustumCulled = true; });
     island.add(gull.group);
     flyingGulls.push({ ...gull, ...spot, index });
   });
@@ -332,11 +476,11 @@
   lighthouse.add(tower);
 
   [0.38, 0.91].forEach(y => {
-    const band = new T.Mesh(new T.CylinderGeometry(0.176 - y * 0.031, 0.176 - y * 0.031, 0.13, 32), redMat);
+    const band = new T.Mesh(new T.CylinderGeometry(0.176 - y * 0.031, 0.176 - y * 0.031, 0.13, 40), redMat);
     band.position.y = y;
     lighthouse.add(band);
   });
-  const base = new T.Mesh(new T.CylinderGeometry(0.255, 0.29, 0.18, 32), stoneMaterial());
+  const base = new T.Mesh(new T.CylinderGeometry(0.255, 0.29, 0.18, 40), stoneMaterial());
   base.position.y = 0.11;
   lighthouse.add(base);
   function stoneMaterial() {
@@ -350,9 +494,19 @@
   doorCap.position.set(0, 0.315, 0.194);
   lighthouse.add(doorCap);
 
-  const balcony = new T.Mesh(new T.CylinderGeometry(0.255, 0.23, 0.09, 32), brass);
+  const balcony = new T.Mesh(new T.CylinderGeometry(0.255, 0.23, 0.09, 40), brass);
   balcony.position.y = 1.42;
   lighthouse.add(balcony);
+  const railing = new T.Mesh(new T.TorusGeometry(0.247, 0.012, 7, 40), brass);
+  railing.rotation.x = Math.PI / 2;
+  railing.position.y = 1.51;
+  lighthouse.add(railing);
+  for (let i = 0; i < 10; i++) {
+    const angle = (i / 10) * Math.PI * 2;
+    const post = new T.Mesh(new T.CylinderGeometry(0.008, 0.009, 0.16, 6), brass);
+    post.position.set(Math.sin(angle) * 0.247, 1.49, Math.cos(angle) * 0.247);
+    lighthouse.add(post);
+  }
   const lampGlassMat = new T.MeshStandardMaterial({
     color: 0xffe7ac,
     emissive: 0xffc96b,
@@ -362,10 +516,21 @@
     roughness: 0.16,
     metalness: 0.12
   });
-  const lampRoom = new T.Mesh(new T.CylinderGeometry(0.19, 0.19, 0.28, 24), lampGlassMat);
+  const lampRoom = new T.Mesh(new T.CylinderGeometry(0.19, 0.19, 0.28, 32), lampGlassMat);
   lampRoom.position.y = 1.60;
   lighthouse.add(lampRoom);
-  const roof = new T.Mesh(new T.ConeGeometry(0.245, 0.24, 24), redMat);
+  const lensGlowMat = new T.MeshBasicMaterial({ color: 0xffe8a8, transparent: true, opacity: 0.34, toneMapped: false });
+  const lensGlow = new T.Mesh(new T.SphereGeometry(0.09, 14, 10), lensGlowMat);
+  lensGlow.position.set(0, 1.60, 0);
+  lighthouse.add(lensGlow);
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const mullion = new T.Mesh(new T.BoxGeometry(0.012, 0.23, 0.012), brass);
+    mullion.position.set(Math.sin(angle) * 0.188, 1.60, Math.cos(angle) * 0.188);
+    mullion.rotation.y = angle;
+    lighthouse.add(mullion);
+  }
+  const roof = new T.Mesh(new T.ConeGeometry(0.245, 0.24, 32), redMat);
   roof.position.y = 1.86;
   lighthouse.add(roof);
   const roofTip = new T.Mesh(new T.SphereGeometry(0.045, 12, 8), brass);
@@ -378,24 +543,27 @@
   const lampGlow = new T.PointLight(0xffd58a, 2.1, 5.8, 1.8);
   lampGlow.position.set(0, 1.6, 0);
   lighthouse.add(lampGlow);
+  const lighthouseShadow = createSoftShadow(0.92, 0.68, enhancedQuality ? 0.38 : 0.27);
+  lighthouseShadow.position.set(lighthouseX - 0.18, terrainHeight(lighthouseX, lighthouseZ) + 0.025, lighthouseZ + 0.06);
+  island.add(lighthouseShadow);
 
   const beamPivot = new T.Group();
   beamPivot.position.set(0, 1.6, 0);
   lighthouse.add(beamPivot);
   const beamMaterial = new T.MeshBasicMaterial({
-    color: 0xffc84a,
+    color: 0xffd879,
     transparent: true,
-    opacity: 0.22,
+    opacity: 0.12,
     depthWrite: false,
     toneMapped: false,
     side: T.DoubleSide,
     blending: T.AdditiveBlending
   });
-  const beam = new T.Mesh(new T.ConeGeometry(1.15, 4.4, 36, 1, true), beamMaterial);
+  const beam = new T.Mesh(new T.ConeGeometry(0.78, 3.7, enhancedQuality ? 48 : 28, 1, true), beamMaterial);
   beam.rotation.z = Math.PI / 2;
-  beam.position.x = 2.2;
+  beam.position.x = 1.86;
   beamPivot.add(beam);
-  const beamSpot = new T.SpotLight(0xffd997, 5.0, 8.5, Math.PI / 10, 0.72, 1.5);
+  const beamSpot = new T.SpotLight(0xffe0a0, 3.8, 7.4, Math.PI / 14, 0.78, 1.45);
   beamSpot.position.set(0, 0, 0);
   const beamTarget = new T.Object3D();
   beamTarget.position.set(3.5, 0, 0);
@@ -403,18 +571,41 @@
   beamSpot.target = beamTarget;
 
   const smallRocks = [];
-  const rockMat = new T.MeshStandardMaterial({ color: 0x42545a, roughness: 0.98 });
+  const rockMat = new T.MeshStandardMaterial({ color: 0x536b6b, roughness: enhancedQuality ? 0.84 : 0.96 });
   for (let i = 0; i < 7; i++) {
     const angle = (i / 7) * Math.PI * 2 + 0.24;
     const radius = 1.94 + 0.10 * Math.sin(i * 2.1);
     const x = Math.cos(angle) * radius;
     const z = Math.sin(angle) * radius;
-    const rock = new T.Mesh(new T.DodecahedronGeometry(0.16 + (i % 3) * 0.045, 0), rockMat);
+    const rock = new T.Mesh(new T.DodecahedronGeometry(0.16 + (i % 3) * 0.045, enhancedQuality ? 1 : 0), rockMat);
     rock.position.set(x, terrainHeight(x, z) + 0.06, z);
     rock.scale.set(1.35, 0.86, 1.08);
     island.add(rock);
     smallRocks.push(rock);
   }
+
+  const grassTuftCount = enhancedQuality ? 26 : 14;
+  const grassTuftGeometry = new T.ConeGeometry(0.018, 0.13, 5);
+  const grassTufts = new T.InstancedMesh(grassTuftGeometry, grassMat, grassTuftCount);
+  const grassDummy = new T.Object3D();
+  const grassColor = new T.Color();
+  for (let i = 0; i < grassTuftCount; i++) {
+    const angle = i * 2.399963229728653;
+    const radius = 1.12 + 0.26 * (0.5 + 0.5 * Math.sin(i * 1.73));
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    grassDummy.position.set(x, terrainHeight(x, z) + 0.045, z);
+    grassDummy.rotation.set(0.08 * Math.sin(i), angle, 0.12 * Math.cos(i * 0.7));
+    const heightScale = 0.65 + (i % 4) * 0.13;
+    grassDummy.scale.set(0.72, heightScale, 0.72);
+    grassDummy.updateMatrix();
+    grassTufts.setMatrixAt(i, grassDummy.matrix);
+    grassColor.setHSL(0.30 + (i % 3) * 0.018, 0.36, 0.42 + (i % 4) * 0.035);
+    grassTufts.setColorAt(i, grassColor);
+  }
+  grassTufts.instanceMatrix.needsUpdate = true;
+  if (grassTufts.instanceColor) grassTufts.instanceColor.needsUpdate = true;
+  island.add(grassTufts);
 
   const ringMaterial = new T.MeshBasicMaterial({
     color: 0x70b7c7,
@@ -425,7 +616,7 @@
   });
   const waterRings = [];
   [2.58, 2.88, 3.20].forEach((radius, index) => {
-    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.012, 56), ringMaterial.clone());
+    const ring = new T.Mesh(new T.RingGeometry(radius, radius + 0.016, enhancedQuality ? 80 : 48), ringMaterial.clone());
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = -0.50 + index * 0.006;
     island.add(ring);
@@ -443,17 +634,20 @@
   function applyTheme() {
     const night = document.body.classList.contains('dark');
     seaUniforms.uNight.value = night ? 1 : 0;
-    hemi.intensity = night ? 1.38 : 1.8;
-    keyLight.intensity = night ? 1.7 : 2.45;
-    rimLight.intensity = night ? 1.2 : 1.55;
+    hemi.intensity = night ? (enhancedQuality ? 1.55 : 1.38) : (enhancedQuality ? 2.05 : 1.8);
+    keyLight.intensity = night ? (enhancedQuality ? 2.05 : 1.7) : (enhancedQuality ? 2.8 : 2.45);
+    rimLight.intensity = night ? (enhancedQuality ? 1.48 : 1.2) : (enhancedQuality ? 1.85 : 1.55);
+    softFill.intensity = night ? 0.34 : (enhancedQuality ? 0.72 : 0.42);
     lampGlow.intensity = night ? 2.8 : 1.25;
-    beamMaterial.opacity = night ? 0.24 : 0.09;
+    beamMaterial.opacity = night ? 0.14 : 0.055;
     themeMaterials.towerMat.color.set(night ? 0xc5d0d0 : 0xf2f2e7);
     themeMaterials.redMat.color.set(night ? 0x99524b : 0xb95645);
     themeMaterials.grassMat.color.set(night ? 0x315d4c : 0x4b825d);
     themeMaterials.leafMats[0].color.set(night ? 0x245744 : 0x32734d);
     themeMaterials.leafMats[1].color.set(night ? 0x34765a : 0x4f9464);
     themeMaterials.leafMats[2].color.set(night ? 0x4b8965 : 0x71a56c);
+    themeMaterials.leafMats[3].color.set(night ? 0x5b8a62 : 0x86b778);
+    barkMat.color.set(night ? 0x4b382e : 0x78553b);
     themeMaterials.rockMat.color.set(night ? 0x3c5056 : 0x65736e);
     ringMaterial.color.set(night ? 0x66b4ca : 0x4d9bad);
     waterRings.forEach((ring, i) => {
@@ -473,7 +667,8 @@
     width = Math.max(1, window.innerWidth);
     height = Math.max(1, window.innerHeight);
     const mobile = smallScreen();
-    renderer.setPixelRatio(1);
+    qualityPixelRatio = lowPowerDevice ? 1 : Math.min(mobile ? 1.12 : 1.35, window.devicePixelRatio || 1);
+    renderer.setPixelRatio(qualityPixelRatio);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.fov = mobile ? 44 : 39;
@@ -498,6 +693,7 @@
     beamPivot.rotation.y = time * 0.22;
     lampGlow.intensity = (document.body.classList.contains('dark') ? 2.7 : 1.2)
       + Math.sin(time * 1.5) * 0.035;
+    lensGlowMat.opacity = 0.30 + Math.sin(time * 1.35) * 0.025;
 
     flyingGulls.forEach((gull) => {
       const flight = time * 0.62 + gull.phase;
@@ -507,16 +703,20 @@
         gull.z + Math.cos(flight * 0.85) * 0.08
       );
       gull.group.rotation.y = gull.heading + Math.sin(flight * 0.7) * 0.09;
-      const flap = Math.sin(time * 7.2 + gull.phase) * 0.48;
-      gull.leftWing.rotation.z = -flap;
-      gull.rightWing.rotation.z = flap;
+      const flap = Math.sin(time * 7.2 + gull.phase) * 0.52;
+      const glide = Math.max(0, Math.sin(flight * 0.8)) * 0.12;
+      gull.leftWing.rotation.z = -flap - glide;
+      gull.rightWing.rotation.z = flap + glide;
+      gull.group.rotation.z = Math.sin(flight * 0.7) * 0.045;
+      gull.head.rotation.y = Math.sin(flight * 0.55) * 0.12;
     });
 
     perchedGulls.forEach((gull) => {
       const settle = Math.sin(time * 1.15 + gull.phase) * 0.012;
       gull.group.position.y = gull.baseY + settle;
-      gull.leftWing.rotation.z = 0.82 + settle;
-      gull.rightWing.rotation.z = -0.82 - settle;
+      gull.leftWing.rotation.z = 0.90 + settle;
+      gull.rightWing.rotation.z = -0.90 - settle;
+      gull.head.rotation.y = Math.sin(time * 0.55 + gull.phase) * 0.16;
     });
 
     camera.lookAt(smallScreen() ? 0 : -1.28, smallScreen() ? -0.38 : 0.16, 0);
