@@ -229,6 +229,94 @@
   }
   const tree = addTree(-0.72, 0.27);
 
+  // Seven small 3D seagulls: four perched in the canopy and three gliding above it.
+  const gullBodyMat = new T.MeshStandardMaterial({ color: 0xf3f5f2, roughness: 0.88 });
+  const gullWingMat = new T.MeshStandardMaterial({ color: 0x87949d, roughness: 0.92, side: T.DoubleSide });
+  const gullBillMat = new T.MeshStandardMaterial({ color: 0xd58b42, roughness: 0.76 });
+  const gullEyeMat = new T.MeshBasicMaterial({ color: 0x18232a });
+  const gullLegMat = new T.MeshStandardMaterial({ color: 0xd58b42, roughness: 0.8 });
+  const gullWingShape = new T.Shape();
+  gullWingShape.moveTo(0, 0);
+  gullWingShape.bezierCurveTo(0.22, 0.15, 0.52, 0.17, 0.82, 0.09);
+  gullWingShape.lineTo(1.04, 0.035);
+  gullWingShape.lineTo(0.91, 0.005);
+  gullWingShape.lineTo(1.00, -0.045);
+  gullWingShape.lineTo(0.86, -0.035);
+  gullWingShape.lineTo(0.91, -0.105);
+  gullWingShape.bezierCurveTo(0.58, -0.12, 0.25, -0.09, 0, 0);
+  const gullWingGeometry = new T.ShapeGeometry(gullWingShape, 7);
+  const flyingGulls = [];
+  const perchedGulls = [];
+
+  function makeGull(scale, heading, perched = false) {
+    const bird = new T.Group();
+    const body = new T.Mesh(new T.SphereGeometry(0.18, 12, 8), gullBodyMat);
+    body.scale.set(0.82, 0.48, 1.28);
+    bird.add(body);
+    const head = new T.Mesh(new T.SphereGeometry(0.073, 10, 8), gullBodyMat);
+    head.position.set(0, 0.045, 0.205);
+    bird.add(head);
+    [-0.052, 0.052].forEach((eyeX) => {
+      const eye = new T.Mesh(new T.SphereGeometry(0.012, 6, 6), gullEyeMat);
+      eye.position.set(eyeX, 0.055, 0.244);
+      bird.add(eye);
+    });
+    const bill = new T.Mesh(new T.ConeGeometry(0.027, 0.105, 7), gullBillMat);
+    bill.rotation.x = Math.PI / 2;
+    bill.position.set(0, 0.027, 0.30);
+    bird.add(bill);
+    const tail = new T.Mesh(new T.ConeGeometry(0.075, 0.16, 7), gullBodyMat);
+    tail.rotation.x = -Math.PI / 2;
+    tail.position.z = -0.23;
+    bird.add(tail);
+    for (let i = 0; i < 2; i++) {
+      const leg = new T.Mesh(new T.CylinderGeometry(0.008, 0.008, 0.105, 5), gullLegMat);
+      leg.position.set(i ? 0.045 : -0.045, -0.105, 0.025);
+      bird.add(leg);
+    }
+    const leftWing = new T.Group();
+    leftWing.position.set(-0.115, 0.02, -0.035);
+    leftWing.scale.x = -1;
+    leftWing.add(new T.Mesh(gullWingGeometry, gullWingMat));
+    bird.add(leftWing);
+    const rightWing = new T.Group();
+    rightWing.position.set(0.115, 0.02, -0.035);
+    rightWing.add(new T.Mesh(gullWingGeometry, gullWingMat));
+    bird.add(rightWing);
+    bird.scale.setScalar(scale * (smallScreen() ? 1.22 : 1));
+    bird.rotation.y = heading;
+    if (perched) {
+      leftWing.rotation.z = 0.82;
+      rightWing.rotation.z = -0.82;
+    }
+    return { group: bird, leftWing, rightWing };
+  }
+
+  [
+    { x: -0.47, y: 1.37, z: 0.47, heading: Math.PI / 2 },
+    { x: -0.12, y: 1.67, z: 0.35, heading: -Math.PI / 2 },
+    { x: 0.25, y: 1.39, z: 0.47, heading: Math.PI / 2 },
+    { x: 0.02, y: 1.08, z: 0.56, heading: -Math.PI / 2 }
+  ].forEach((spot, index) => {
+    const gull = makeGull(0.40, spot.heading, true);
+    gull.group.position.set(spot.x, spot.y, spot.z);
+    gull.baseY = spot.y;
+    gull.phase = index * 1.7;
+    tree.add(gull.group);
+    perchedGulls.push(gull);
+  });
+
+  [
+    { x: -1.57, y: 2.32, z: 0.38, phase: 0.2, drift: 0.25, heading: 0.18 },
+    { x: -0.55, y: 2.86, z: 0.12, phase: 2.1, drift: 0.34, heading: -0.08 },
+    { x: 0.34, y: 2.42, z: -0.25, phase: 4.0, drift: 0.28, heading: -0.22 }
+  ].forEach((spot, index) => {
+    const gull = makeGull(0.48, spot.heading, false);
+    gull.group.position.set(spot.x, spot.y, spot.z);
+    island.add(gull.group);
+    flyingGulls.push({ ...gull, ...spot, index });
+  });
+
   const lighthouse = new T.Group();
   const lighthouseX = 0.75;
   const lighthouseZ = -0.24;
@@ -410,6 +498,27 @@
     beamPivot.rotation.y = time * 0.22;
     lampGlow.intensity = (document.body.classList.contains('dark') ? 2.7 : 1.2)
       + Math.sin(time * 1.5) * 0.035;
+
+    flyingGulls.forEach((gull) => {
+      const flight = time * 0.62 + gull.phase;
+      gull.group.position.set(
+        gull.x + Math.sin(flight) * gull.drift,
+        gull.y + Math.sin(flight * 1.55) * 0.10,
+        gull.z + Math.cos(flight * 0.85) * 0.08
+      );
+      gull.group.rotation.y = gull.heading + Math.sin(flight * 0.7) * 0.09;
+      const flap = Math.sin(time * 7.2 + gull.phase) * 0.48;
+      gull.leftWing.rotation.z = -flap;
+      gull.rightWing.rotation.z = flap;
+    });
+
+    perchedGulls.forEach((gull) => {
+      const settle = Math.sin(time * 1.15 + gull.phase) * 0.012;
+      gull.group.position.y = gull.baseY + settle;
+      gull.leftWing.rotation.z = 0.82 + settle;
+      gull.rightWing.rotation.z = -0.82 - settle;
+    });
+
     camera.lookAt(smallScreen() ? 0 : -1.28, smallScreen() ? -0.38 : 0.16, 0);
     renderer.render(scene, camera);
   }
